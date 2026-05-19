@@ -61,26 +61,6 @@ foreach ($fronting_session_members as $fsm) {
     }
 }
 
-// echo "<h1>" . htmlspecialchars($system['name']) . "</h1>";
-// echo "<p>Handle: @" . htmlspecialchars($system['handle']) . "</p>";
-// echo "<p>Owner: " . htmlspecialchars($user['username']) . "</p>";
-// echo "<p>Description: " . nl2br(htmlspecialchars($system['description'])) . "</p>";
-// echo "<p>Number of members: " . count($members) . "</p>";
-
-// echo "Now fronting: " . (count($fronting_session_members) > 0 ? implode(", ", array_map(function($fsm) use ($pdo) {
-//     $stmt = $pdo->prepare("SELECT name FROM members WHERE id = ?");
-//     $stmt->execute([$fsm['member_id']]);
-//     $member = $stmt->fetch(PDO::FETCH_ASSOC);
-//     return htmlspecialchars($member['name']);
-// }, $fronting_session_members)) : "No one") . "<br>";
-
-// echo "<h2>Members:</h2>";
-// echo "<ul>";
-// foreach ($members as $member) {
-//     echo "<li><a href='/system/" . htmlspecialchars($system['handle']) . "/" . htmlspecialchars($member['handle']) . "'>" . htmlspecialchars($member['name']) . "</a> (" . htmlspecialchars($member['pronouns']) . ", <span style='color: " . htmlspecialchars($member['color']) . "'>" . htmlspecialchars($member['color']) . "</span>)</li>";
-// }
-// echo "</ul>";
-
 
 $systemName = htmlspecialchars($system['name']);
 $systemDescription = htmlspecialchars($system['description'] ?? "No description provided.");
