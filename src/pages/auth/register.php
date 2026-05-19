@@ -62,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $auth->login($userId, false);
 
     Alert::success("Registration successful! Welcome, $username.");
+    Alert::warning("For better security, consider enabling two-factor authentication in your settings and/or setting up an email recovery option.");
 
     header("Location: /dashboard");
     exit;
