@@ -5,7 +5,6 @@
  * @var string $includesDir
  * @var string $cssDir
  * @var string $jsDir
-
  */
 require_once __DIR__ . '/../../php/totp.php';
 

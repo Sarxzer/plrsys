@@ -33,23 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: /settings');
             exit;
         }
-    } elseif (isset($_POST['new_email'], $_POST['password'])) {
-        // Handle email update
-        $new_email = $_POST['new_email'];
-        $password = $_POST['password'];
-
-        // Verify password
-        if ($auth->verifyPassword($userId, $password)) {
-            $auth->updateEmail($userId, $new_email);
-            Alert::success("Email updated successfully.");
-            header('Location: /settings');
-            exit;
-        } else {
-            // Handle incorrect password
-            Alert::error("Incorrect password.");
-            header('Location: /settings');
-            exit;
-        }
     } elseif (isset($_POST['new_password'], $_POST['new_password_confirm'], $_POST['password'])) {
         // Handle password update
         $new_password = $_POST['new_password'];
@@ -162,17 +145,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <button type="submit">Update Username</button>
                 </form>
 
-                <form action="settings" method="POST">
-                    <h2>Update Email</h2>
-                    <label for="new_email">New Email:</label>
-                    <input type="email" id="new_email" name="new_email">
-
-                    <label for="password">Actual Password:</label>
-                    <input type="password" id="password" name="password">
-
-                    <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
-                    <button type="submit">Update Email</button>
-                </form>
+                <div class="settings-card">
+                    <?php if (empty($user['email'])): ?>
+                        <p>You don't have an email set up for your account. We recommend adding one to enable password
+                            resets and 2FA.</p>
+                        <a href="/settings/email">Set up email</a>
+                    <?php else: ?>
+                        <h2>Update Email</h2>
+                        <p>Change your account email with a confirmation link sent to the new address.</p>
+                        <p><strong>Current email:</strong> <?= htmlspecialchars($user['email']) ?></p>
+                        <a href="/settings/email">Update Email</a>
+                    <?php endif; ?>
+                </div>
 
                 <form action="settings" method="POST">
                     <h2>Update Password</h2>

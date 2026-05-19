@@ -170,6 +170,7 @@ match ($parts[0]) {
         isset($parts[1]) && $parts[1] === 'backup-codes' => require $pagesDir . '/auth/backup-codes.php', // /register/backup-codes
         default                                     => require $pagesDir . '/auth/register.php',      // /register
     },
+    'confirm-email' => require $pagesDir . '/auth/confirm-email.php',
     'logout'    => require $pagesDir . '/auth/logout.php',
 
     // Public system/member viewing
@@ -204,6 +205,7 @@ match ($parts[0]) {
     'history'   => require $pagesDir . '/dashboard/history.php',
     // 'settings'  => require $pagesDir . '/settings/settings.php',
     'settings'  => match (true) {
+        isset($parts[1]) && $parts[1] === 'email' => require $pagesDir . '/settings/setup-email.php',          // /settings/setup-email
         isset($parts[1]) && $parts[1] === 'totp' => require $pagesDir . '/settings/setup-totp.php',          // /settings/setup-totp
         isset($parts[1]) && $parts[1] === 'backup-codes' => require $pagesDir . '/settings/backup-codes.php', // /settings/backup-codes
         default                                     => require $pagesDir . '/settings/settings.php',      // /settings

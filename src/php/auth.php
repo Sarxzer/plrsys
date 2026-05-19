@@ -294,8 +294,73 @@ class Auth
      */
     public function updateEmail(int $userId, string $newEmail): void
     {
-        $stmt = $this->pdo->prepare("UPDATE users SET email = ? WHERE id = ?");
+        $stmt = $this->pdo->prepare("UPDATE users SET email = ?, pending_email = NULL, pending_email_token_hash = NULL, pending_email_expires_at = NULL WHERE id = ?");
         $stmt->execute([$newEmail, $userId]);
+    }
+
+    /**
+     * Start an email change request and return the confirmation token.
+     * @param int $userId
+     * @param string $newEmail
+     * @return string|null Confirmation token, or null if the email is already in use
+     */
+    public function requestEmailChange(int $userId, string $newEmail): ?string
+    {
+        $stmt = $this->pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+        $stmt->execute([$newEmail, $userId]);
+        if ($stmt->fetch()) {
+            return null;
+        }
+
+        $token = bin2hex(random_bytes(32));
+        $tokenHash = hash('sha256', $token);
+
+        $stmt = $this->pdo->prepare("UPDATE users SET pending_email = ?, pending_email_token_hash = ?, pending_email_expires_at = DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE id = ?");
+        $stmt->execute([$newEmail, $tokenHash, $userId]);
+
+        return $token;
+    }
+
+    /**
+     * Confirm a pending email change.
+     * @param int $userId
+     * @param string $token
+     * @return bool
+     */
+    public function confirmEmailChange(int $userId, string $token): bool
+    {
+        $stmt = $this->pdo->prepare("SELECT email, pending_email, pending_email_token_hash, pending_email_expires_at FROM users WHERE id = ?");
+        $stmt->execute([$userId]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$user || empty($user['pending_email']) || empty($user['pending_email_token_hash']) || empty($user['pending_email_expires_at'])) {
+            return false;
+        }
+
+        if (strtotime($user['pending_email_expires_at']) < time()) {
+            $this->clearPendingEmailChange($userId);
+            return false;
+        }
+
+        if (!hash_equals($user['pending_email_token_hash'], hash('sha256', $token))) {
+            return false;
+        }
+
+        $stmt = $this->pdo->prepare("UPDATE users SET email = ?, pending_email = NULL, pending_email_token_hash = NULL, pending_email_expires_at = NULL WHERE id = ?");
+        $stmt->execute([$user['pending_email'], $userId]);
+
+        return true;
+    }
+
+    /**
+     * Clear a pending email change without applying it.
+     * @param int $userId
+     * @return void
+     */
+    public function clearPendingEmailChange(int $userId): void
+    {
+        $stmt = $this->pdo->prepare("UPDATE users SET pending_email = NULL, pending_email_token_hash = NULL, pending_email_expires_at = NULL WHERE id = ?");
+        $stmt->execute([$userId]);
     }
 
     /**

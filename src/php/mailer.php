@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -62,6 +62,16 @@ class Mailer
     {
         $subject = 'Your Innerspace 2FA Code';
         $body = "Hello,<br><br>Your Two-Factor Authentication code is: <strong>$code</strong><br><br>This code will expire in 5 minutes.<br><br>Best,<br>Innerspace Team";
+
+        return $this->sendEmail($to, $subject, $body, true);
+    }
+
+    public function sendEmailChangeConfirmation(string $to, int $userId, string $token): bool
+    {
+        $baseUrl = $_ENV['APP_URL'] ?? ('https://' . ($_SERVER['HTTP_HOST'] ?? 'localhost'));
+        $confirmationUrl = rtrim($baseUrl, '/') . '/confirm-email?user=' . urlencode((string) $userId) . '&token=' . urlencode($token);
+        $subject = 'Confirm your Innerspace email address';
+        $body = "Hello,<br><br>We received a request to update your Innerspace email address. Confirm it by clicking the link below:<br><a href='$confirmationUrl'>$confirmationUrl</a><br><br>If you did not request this change, you can ignore this email and your current address will remain unchanged.<br><br>Best,<br>Innerspace Team";
 
         return $this->sendEmail($to, $subject, $body, true);
     }
