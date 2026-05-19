@@ -18,7 +18,16 @@ $stmt->execute([$system_handle]);
 $system = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$system) {
-    die("System not found.");
+    Alert::error('System not found.');
+    header('Location: /');
+    exit;
+}
+
+$isOwner = Guards::isSystemOwner($pdo, (int) $system['id']);
+if ((int) $system['is_public'] !== 1 && !$isOwner) {
+    Alert::error('System not found.');
+    header('Location: /');
+    exit;
 }
 
 $stmt = $pdo->prepare("SELECT * FROM members WHERE system_id = ?");
@@ -137,7 +146,7 @@ $canonicalUrl = htmlspecialchars('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['
                         <div class="fronting-text"><?= $nowFrontingMembers ? "Now fronting: " . htmlspecialchars(implode(", ", $nowFrontingMembers)) : "No one is fronting" ?></div>
                     </div>
                     <div class="system-actions">
-                        <?php if ($auth->isLoggedIn() && Guards::isSystemOwner($pdo, (int) $system['id'])): ?>
+                        <?php if ($isOwner): ?>
                             <a href="/manage/s/<?= htmlspecialchars($system['handle']) ?>" class="btn btn-secondary">Manage System</a>
                         <?php endif; ?>
                     </div>
@@ -160,7 +169,7 @@ $canonicalUrl = htmlspecialchars('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['
                             <div class="card-arrow">[->]</div>
                         </a>
                     <?php endforeach; ?>
-                    <?php if ($auth->isLoggedIn() && Guards::isSystemOwner($pdo, (int) $system['id'])): ?>
+                    <?php if ($isOwner): ?>
                         <a href="/manage/s/<?= htmlspecialchars($system['handle']) ?>/new" class="member-card new-member-card">
                             <div class="new-member-content">
                                 <div class="plus-icon">+</div>

@@ -11,6 +11,8 @@
 include_once __DIR__ . '/../../php/auth.php';
 include_once __DIR__ . '/../../php/totp.php';
 
+Guards::requireLogin();
+
 $auth = new Auth($pdo);
 $user = $auth->requireCurrentUser();
 $userId = (int) $user['id'];

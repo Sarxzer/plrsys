@@ -8,8 +8,7 @@
  * @var array $current_user
  */
 
-$auth = new Auth($pdo);
-$auth->requireLogin();
+Guards::requireLogin();
 
 $handle = $parts[2] ?? null;
 

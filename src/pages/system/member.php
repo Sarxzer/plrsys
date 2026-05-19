@@ -16,7 +16,16 @@ $stmt->execute([$system_handle]);
 $system = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$system) {
-    die("System not found.");
+    Alert::error('System not found.');
+    header('Location: /');
+    exit;
+}
+
+$isOwner = Guards::isSystemOwner($pdo, (int) $system['id']);
+if ((int) $system['is_public'] !== 1 && !$isOwner) {
+    Alert::error('System not found.');
+    header('Location: /');
+    exit;
 }
 
 $stmt = $pdo->prepare("SELECT * FROM members WHERE system_id = ? AND handle = ?");
@@ -24,7 +33,9 @@ $stmt->execute([$system['id'], $member_handle]);
 $member = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$member) {
-    die("Member not found.");
+    Alert::error('Member not found.');
+    header('Location: /system/' . htmlspecialchars($system_handle));
+    exit;
 }
 
 $memberName = htmlspecialchars($member['name']);
@@ -83,7 +94,7 @@ $canonicalUrl = htmlspecialchars('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['
                 <p>Pronouns: <?= htmlspecialchars($member['pronouns'] ?? 'Not specified') ?></p>
                 <p>Color: <span style='color: <?= htmlspecialchars($member['color']) ?>'><?= htmlspecialchars($member['color']) ?></span></p>
 
-                <?php if ($auth->isLoggedIn() && Guards::isSystemOwner($pdo, (int) $system['id'])): ?>
+                <?php if ($isOwner): ?>
                     <a href="/manage/s/<?= htmlspecialchars($system['handle']) ?>/@<?= htmlspecialchars($member['handle']) ?>" class="btn btn-secondary">Edit Member</a>
                 <?php endif; ?>
             </div>

@@ -10,8 +10,8 @@
 
 $parts ??= explode('/', trim($_SERVER['REQUEST_URI'], '/'));
 
-$auth = new Auth($pdo);
-$auth->requireLogin();
+Guards::requireLogin();
+
 
 ?>
 <!DOCTYPE html>

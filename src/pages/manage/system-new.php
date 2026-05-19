@@ -8,6 +8,8 @@
  */
 // system creation page
 
+Guards::requireLogin();
+
 $auth = new Auth($pdo);
 $currentUser = $auth->requireCurrentUser();
 $userId = (int) $currentUser['id'];

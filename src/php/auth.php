@@ -31,6 +31,11 @@ class Auth
      */
     public function requireLogin(): void
     {
+        if (class_exists('Guards')) {
+            Guards::requireLogin();
+            return;
+        }
+
         if (!$this->isLoggedIn()) {
             header('Location: /login');
             exit;
@@ -488,6 +493,12 @@ class Auth
     private function clearRememberCookie(): void
     {
         $secure = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
-        setcookie('remember_token', '', time() - 3600, '/', '', $secure, true);
+        setcookie('remember_token', '', [
+            'expires' => time() - 3600,
+            'path' => '/',
+            'secure' => $secure,
+            'httponly' => true,
+            'samesite' => 'Strict',
+        ]);
     }
 }

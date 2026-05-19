@@ -8,7 +8,7 @@
 
  */
 $auth = new Auth($pdo);
-$auth->requireLogin();
+Guards::requireLogin();
 $auth->logout();
 
 Alert::success("You have been logged out.");

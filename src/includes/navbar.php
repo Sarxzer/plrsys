@@ -14,13 +14,12 @@
         </button>
     </div>
     <div class="nav-links">
-        <a href="/home" class="<?php echo ($parts[0] === 'home' || $parts[0] === '') ? 'active' : ''; ?>">Home</a>
-        <a href="/system" class="<?php echo ($parts[0] === 'system') ? 'active' : ''; ?>">System</a>
+        <a href="/home" class="<?= ($parts[0] === 'home' || $parts[0] === '') ? 'active' : ''; ?>">Home</a>
+        <a href="/system" class="<?= ($parts[0] === 'system') ? 'active' : ''; ?>">System</a>
         <?php if (isset($current_user)): ?>
-            <!-- <a href="/friends" class="<?php echo ($parts[0] === 'friends') ? 'active' : ''; ?>">Friends</a> -->
-            <a href="/dashboard" class="<?php echo ($parts[0] === 'dashboard') ? 'active' : ''; ?>">Dashboard</a>
-            <a href="/manage" class="<?php echo ($parts[0] === 'manage') ? 'active' : ''; ?>">Manage</a>
-            <a href="/settings" class="<?php echo ($parts[0] === 'settings') ? 'active' : ''; ?>">Settings</a>
+            <a href="/dashboard" class="<?= ($parts[0] === 'dashboard') ? 'active' : ''; ?>">Dashboard</a>
+            <a href="/manage" class="<?= ($parts[0] === 'manage') ? 'active' : ''; ?>">Manage</a>
+            <a href="/settings" class="<?= ($parts[0] === 'settings') ? 'active' : ''; ?>">Settings</a>
             <a href="/logout">Logout (<?= htmlspecialchars($current_user['username']) ?>)</a>
         <?php else: ?>
             <a href="/login" class="<?= ($parts[0] === 'login') ? 'active' : '' ?>">Login</a>
@@ -52,10 +51,6 @@
         <a href="/system" class="bottom-nav-item <?= ($parts[0] === 'system' || $parts[0] === 's') ? 'active' : '' ?>">
             <span class="bottom-nav-icon">✦</span>
             <span class="bottom-nav-label">System</span>
-        </a>
-        <a href="/friends" class="bottom-nav-item <?= ($parts[0] === 'friends') ? 'active' : '' ?>">
-            <span class="bottom-nav-icon">⬡</span>
-            <span class="bottom-nav-label">Friends</span>
         </a>
         <a href="/manage" class="bottom-nav-item <?= ($parts[0] === 'manage') ? 'active' : '' ?>">
             <span class="bottom-nav-icon">⚙</span>

@@ -7,6 +7,8 @@
  * @var string $jsDir
  */
 
+Guards::requireLogin();
+
 $auth = new Auth($pdo);
 $currentUser = $auth->requireCurrentUser();
 $currentUserId = (int) $currentUser['id'];

@@ -4,6 +4,9 @@
  * @var string $cssDir
  * @var string $jsDir
  */
+
+Guards::requireLogin();
+
 $codes = $_SESSION['show_backup_codes'] ?? null;
 if (!$codes) {
     header("Location: /settings");

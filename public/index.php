@@ -77,13 +77,6 @@ if (!is_dir($pagesDir)) {
 $uri    = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 $parts  = explode('/', $uri);
 
-// Auth guard
-$protected_routes = ['dashboard', 'manage', 'settings', 'fronting', 'history', 'friends'];
-if (in_array($parts[0], $protected_routes, true)) {
-    $auth->requireLogin();
-}
-
-
 // CSRF token generation and verification
 Csrf::generate();
 
@@ -96,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $current_user = $auth->getCurrentUser();
 
 
-// Get systen and memner names for navbar if we're on a system/member page
+// Get system and member names for navbar if we're on a system/member page
 if ($parts[0] === 's' && isset($parts[1])) {
     $stmt = $pdo->prepare("SELECT name FROM systems WHERE handle = ?");
     $stmt->execute([$parts[1]]);
@@ -159,12 +152,12 @@ match ($parts[0]) {
     'changelog' => require $pagesDir . '/changelog.php',
     // Alert tests
     'tests' => require $pagesDir . '/tests.php',
-    // 'login'     => require $pagesDir . '/auth/login.php',
+    // Auth
     'login'     => match (true) {
         isset($parts[1]) && $parts[1] === 'totp' => require $pagesDir . '/auth/login-totp.php', // /login/totp
         default                                     => require $pagesDir . '/auth/login.php',      // /login
     },
-    // 'register'  => require $pagesDir . '/auth/register.php',
+    // register
     'register'  => match (true) {
         isset($parts[1]) && $parts[1] === 'totp' => require $pagesDir . '/auth/setup-totp.php',          // /register/totp
         isset($parts[1]) && $parts[1] === 'backup-codes' => require $pagesDir . '/auth/backup-codes.php', // /register/backup-codes
@@ -217,6 +210,6 @@ match ($parts[0]) {
     },
     'friend' => require $pagesDir . '/friends/friend-view.php', // /friend/{token}  
 
-    // Fallback
+    // fallback to 404
     default => require $pagesDir . '/errors/404.php',
 };
