@@ -150,8 +150,12 @@ match ($parts[0]) {
     'home'  => require $pagesDir . '/home.php',
     // Changelog
     'changelog' => require $pagesDir . '/changelog.php',
-    // Alert tests
-    'tests' => require $pagesDir . '/tests.php',
+    // About
+    'about' => require $pagesDir . '/about.php',
+    // Privacy Policy
+    'privacy-policy' => require $pagesDir . '/privacy.php',
+    // Terms of Service
+    'terms' => require $pagesDir . '/terms.php',
     // Auth
     'login'     => match (true) {
         isset($parts[1]) && $parts[1] === 'totp' => require $pagesDir . '/auth/login-totp.php', // /login/totp

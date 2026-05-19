@@ -1,0 +1,253 @@
+// =====================
+// _manage-members.scss
+// Innerspace - Manage members page
+// =====================
+
+@use "variables" as *;
+@use "sass:color";
+
+.member-form-container {
+    max-width: 480px;
+    margin: 2.5rem auto;
+    position: relative;
+}
+
+.member-form-header {
+    background: $color-bg-card;
+    border: $border-pixel rgba($color-light-blue, 0.25);
+    box-shadow: $pixel-shadow;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    text-align: center;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: -6px;
+        left: -6px;
+        right: 6px;
+        bottom: 6px;
+        border: 1px solid rgba($color-light-blue, 0.08);
+        pointer-events: none;
+    }
+}
+
+.member-form-badge {
+    font-family: $font-pixel;
+    font-size: 8px;
+    color: $color-text-inverted;
+    background: $color-light-blue;
+    padding: 3px 8px;
+    display: inline-block;
+    margin-bottom: 0.75rem;
+    letter-spacing: 1px;
+}
+
+.member-form-title {
+    font-family: $font-pixel;
+    font-size: 11px;
+    color: $color-text-main;
+    text-shadow: 2px 2px 0 $shadow-dark;
+    line-height: 1.8;
+    margin-bottom: 0.5rem;
+}
+
+.member-form-subtitle {
+    font-family: $font-retro;
+    font-size: 18px;
+    color: $color-text-muted;
+}
+
+.member-form-card {
+    background: $color-bg-card;
+    border: 1px solid rgba($color-light-blue, 0.2);
+    box-shadow: 3px 3px 0 $shadow-dark;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.field-label {
+    font-family: "VT323", monospace;
+    font-size: 20px;
+    color: $color-text-muted;
+    letter-spacing: 1px;
+}
+
+.field-hint {
+    font-family: "VT323", monospace;
+    font-size: 15px;
+    color: rgba($color-text-muted, 0.6);
+    margin-top: 2px;
+}
+
+.field-input {
+    padding: 0.65rem 0.9rem;
+    border: 1px solid rgba($color-light-blue, 0.2);
+    background: rgba($color-light-blue, 0.1);
+    font-family: "VT323", monospace;
+    font-size: 22px;
+    color: $color-text-main;
+    outline: none;
+    transition:
+        border-color 0.15s,
+        background 0.15s;
+
+    &::placeholder {
+        color: rgba($color-text-muted, 0.4);
+    }
+
+    &:focus {
+        border-color: $color-light-blue;
+        background: rgba($color-light-blue, 0.15);
+    }
+}
+
+.handle-wrapper {
+    display: flex;
+    border: 1px solid rgba($color-light-blue, 0.2);
+    background: rgba($color-light-blue, 0.1);
+    transition:
+        border-color 0.15s,
+        background 0.15s;
+
+    &:focus-within {
+        border-color: $color-light-blue;
+        background: rgba($color-light-blue, 0.1);
+    }
+
+    .handle-prefix {
+        font-family: "VT323", monospace;
+        font-size: 18px;
+        color: rgba($color-text-muted, 0.7);
+    }
+
+    .handle-input {
+        flex: 1;
+        padding: 0.65rem 0.9rem 0.65rem 0.25rem;
+        border: none;
+        background: transparent;
+        font-family: "VT323", monospace;
+        font-size: 22px;
+        color: $color-text-main;
+        outline: none;
+
+        &::placeholder {
+            color: rgba($color-text-muted, 0.4);
+        }
+    }
+
+    .handle-at {
+        font-family: "VT323", monospace;
+        font-size: 22px;
+        color: rgba($color-text-muted, 0.7);
+        padding: 0.65rem 0.25rem 0.65rem 0.9rem;
+        user-select: none;
+        flex-shrink: 0;
+    }
+}
+
+.color-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    .color-picker {
+        width: 48px;
+        height: 48px;
+        padding: 2px;
+        border: 1px solid rgba($color-light-blue, 0.2);
+        background: rgba($color-light-blue, 0.1);
+        cursor: pointer;
+        flex-shrink: 0;
+
+        &::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        &::-webkit-color-swatch {
+            border: none;
+            border-radius: 0;
+        }
+    }
+
+    .color-hex-display {
+        font-family: $font-pixel;
+        font-size: 10px;
+        color: $color-text-muted;
+        letter-spacing: 2px;
+    }
+
+    .color-dot-preview {
+        width: 12px;
+        height: 12px;
+        flex-shrink: 0;
+        border: 2px solid $shadow-dark;
+        outline: 1px solid $color-light-blue;
+        transition:
+            background-color 0.15s,
+            box-shadow 0.15s;
+    }
+}
+
+.form-divider {
+    height: 1px;
+    background: rgba($color-light-blue, 0.2);
+    margin: 0;
+}
+
+.member-submit {
+    background: $color-light-blue;
+    border: none;
+    color: $color-text-inverted;
+    padding: 0.85rem;
+    font-family: $font-pixel;
+    font-size: 10px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition:
+        background-color 0.15s,
+        transform 0.08s;
+    width: 100%;
+    display: block;
+    text-align: center;
+
+    &:hover {
+        background-color: color.adjust($color-light-blue, $lightness: 10%);
+        transform: translate(-1px, -1px);
+    }
+
+    &:active {
+        transform: translate(1px, 1px);
+    }
+}
+
+.member-form-footer {
+    text-align: center;
+    margin-top: 1rem;
+
+    a {
+        font-family: $font-retro;
+        font-size: 15px;
+        color: $color-light-blue;
+        text-decoration: none;
+        transition: color 0.1s;
+
+        &:hover {
+            color: color.adjust($color-light-blue, $lightness: 10%);
+        }
+    }
+}
+
+.required-star {
+    color: $color-error;
+    margin-left: 2px;
+}

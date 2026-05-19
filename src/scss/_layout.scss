@@ -188,33 +188,55 @@
 // ── Footer ─────────────────────────────────────────────
 
 .site-footer {
-    background: #0f3460;
-    border-top: 3px solid #a3c4f3;
-    box-shadow: 0 -4px 0 #0a0a1a;
+    background: $color-bg-panel;
+    border-top: 3px solid $color-light-blue;
+    box-shadow: 0 -4px 0 $shadow-dark;
     padding: 0.75rem 1.5rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
     font-family: "VT323", monospace;
     font-size: 18px;
-    color: #9d9ab5;
+    color: $color-text-muted;
     margin-top: auto;
 
     .footer-version {
-        color: #a3c4f3;
+        color: $color-light-blue;
         letter-spacing: 1px;
     }
 
     .footer-sep {
-        color: rgba(163, 196, 243, 0.3);
+        color: rgba($color-light-blue, 0.4);
     }
 
     .footer-credit {
-        color: #9d9ab5;
+        color: $color-text-muted;
     }
 
     .footer-heart {
-        color: #c3b1e1;
+        color: $color-pink;
+    }
+
+    .footer-links {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        a {
+            color: $color-text-muted;
+            font-family: "VT323", monospace;
+            font-size: 16px;
+            transition: color 0.1s;
+
+            &:hover {
+                color: $color-light-blue;
+            }
+        }
+    }
+
+    .footer-dot {
+        color: rgba($color-light-blue, 0.2);
+        font-size: 14px;
     }
 }
 

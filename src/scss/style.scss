@@ -17,6 +17,17 @@
 // UI components
 @use '_components';
 
+// Page styles
+@use '_about';
+@use '_home';
+@use '_login';
+@use '_login-totp';
+@use '_register';
+@use '_setup-totp';
+@use '_backup-codes';
+@use '_manage-members';
+@use '_manage-system';
+
 // Page structure & layout
 @use '_layout';
 

@@ -1,0 +1,195 @@
+// =====================
+// _backup-codes.scss
+// Innerspace - Backup codes page
+// =====================
+
+@use "variables" as *;
+@use "sass:color";
+
+.backup-container {
+    max-width: 480px;
+    margin: 2.5rem auto;
+}
+
+.backup-header {
+    background: $color-bg-card;
+    border: $border-pixel rgba($color-warning, 0.4);
+    box-shadow: $pixel-shadow;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    text-align: center;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: -6px;
+        left: -6px;
+        right: 6px;
+        bottom: 6px;
+        border: 1px solid rgba($color-warning, 0.1);
+        pointer-events: none;
+    }
+}
+
+.backup-warn-badge {
+    font-family: $font-pixel;
+    font-size: 8px;
+    color: $shadow-dark;
+    background: $color-warning;
+    padding: 3px 8px;
+    display: inline-block;
+    margin-bottom: 0.75rem;
+    letter-spacing: 1px;
+}
+
+.backup-title {
+    font-family: $font-pixel;
+    font-size: 11px;
+    color: $color-warning;
+    text-shadow: 2px 2px 0 $shadow-dark;
+    line-height: 1.8;
+    margin-bottom: 0.5rem;
+}
+
+.backup-subtitle {
+    font-family: $font-retro;
+    font-size: 18px;
+    color: $color-text-muted;
+}
+
+.backup-warning {
+    background: rgba($color-warning, 0.08);
+    border: 1px solid rgba($color-warning, 0.3);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.backup-warning-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.backup-warning-text {
+    font-family: $font-retro;
+    font-size: 18px;
+    color: $color-warning;
+    line-height: 1.4;
+
+    strong {
+        color: color.adjust($color-warning, $lightness: 8%);
+    }
+}
+
+.backup-codes-panel {
+    background: $color-bg-card;
+    border: 1px solid rgba($color-light-blue, 0.2);
+    box-shadow: 3px 3px 0 $shadow-dark;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.backup-codes-label {
+    font-family: $font-pixel;
+    font-size: 8px;
+    color: $color-text-muted;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+}
+
+.backup-codes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.backup-code-item {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba($color-light-blue, 0.12);
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.backup-code-dot {
+    width: 6px;
+    height: 6px;
+    background: $color-online;
+    flex-shrink: 0;
+    box-shadow: 0 0 4px $color-online;
+}
+
+.backup-code-text {
+    font-family: $font-pixel;
+    font-size: 9px;
+    color: $color-text-main;
+    letter-spacing: 1px;
+}
+
+.backup-copy-btn {
+    background: none;
+    border: 1px solid rgba($color-light-blue, 0.3);
+    color: $color-text-muted;
+    font-family: $font-retro;
+    font-size: 18px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    width: 100%;
+    transition:
+        border-color 0.1s,
+        color 0.1s,
+        background 0.1s;
+    letter-spacing: 1px;
+
+    &:hover {
+        border-color: $color-light-blue;
+        color: $color-light-blue;
+        background: rgba($color-light-blue, 0.05);
+    }
+
+    &.copied {
+        border-color: $color-online;
+        color: $color-online;
+        background: rgba($color-online, 0.05);
+    }
+}
+
+.backup-cta {
+    background: $color-light-blue;
+    border: none;
+    color: $color-text-inverted;
+    padding: 0.85rem;
+    font-family: $font-pixel;
+    font-size: 10px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition:
+        background-color 0.15s,
+        transform 0.08s;
+    width: 100%;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+
+    &:hover {
+        background-color: color.adjust($color-light-blue, $lightness: 10%);
+        transform: translate(-1px, -1px);
+    }
+
+    &:active {
+        transform: translate(1px, 1px);
+    }
+}
+
+.backup-disclaimer {
+    font-family: $font-retro;
+    font-size: 15px;
+    color: rgba($color-text-muted, 0.5);
+    text-align: center;
+    margin-top: 0.75rem;
+}

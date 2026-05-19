@@ -1,0 +1,82 @@
+// =====================
+// _login.scss
+// Innerspace - Login page
+// =====================
+
+@use "variables" as *;
+@use "sass:color";
+
+.login-container {
+    max-width: 400px;
+    margin: 3rem auto;
+    padding: 2rem;
+    background: $color-bg-card;
+    border: $border-pixel rgba($color-light-blue, 0.25);
+    box-shadow: $pixel-shadow;
+}
+
+.login-title {
+    font-family: $font-pixel;
+    font-size: 24px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    label {
+        font-family: $font-retro;
+        font-size: 24px;
+    }
+
+    label.checkbox-label {
+        display: inline-flex;
+        align-items: center;
+        font-family: $font-retro;
+        font-size: 18px;
+        color: $color-text-main;
+        cursor: pointer;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        padding: 0.5rem;
+        border: 1px solid rgba($color-light-blue, 0.2);
+        background: rgba($color-light-blue, 0.1);
+        font-family: $font-retro;
+        font-size: 18px;
+        color: $color-text-main;
+    }
+
+    input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: $color-light-blue;
+        margin-right: 8px;
+    }
+
+    input[type="submit"] {
+        background: $color-light-blue;
+        border: none;
+        color: $color-text-inverted;
+        padding: 0.75rem;
+        font-family: $font-retro;
+        font-size: 28px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+
+        &:hover {
+            background-color: color.adjust($color-light-blue, $lightness: 10%);
+        }
+    }
+}
+
+.login-subtext {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: $color-text-muted;
+}

@@ -1,0 +1,189 @@
+// =====================
+// _register.scss
+// Innerspace - Register page
+// =====================
+
+@use "variables" as *;
+@use "sass:color";
+
+.register-layout {
+    position: relative;
+    width: 100%;
+}
+
+.register-container {
+    max-width: 400px;
+    margin: 3rem auto;
+    padding: 2rem;
+    background: $color-bg-card;
+    border: $border-pixel rgba($color-light-blue, 0.25);
+    box-shadow: $pixel-shadow;
+}
+
+.register-title {
+    font-family: $font-pixel;
+    font-size: 24px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    label {
+        font-family: $font-retro;
+        font-size: 24px;
+    }
+
+    label.checkbox-label {
+        display: inline-flex;
+        align-items: center;
+        font-family: $font-retro;
+        font-size: 18px;
+        color: $color-text-main;
+        cursor: pointer;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        padding: 0.5rem;
+        border: 1px solid rgba($color-light-blue, 0.2);
+        background: rgba($color-light-blue, 0.1);
+        font-family: $font-retro;
+        font-size: 18px;
+        color: $color-text-main;
+    }
+
+    input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: $color-light-blue;
+        margin-right: 8px;
+    }
+
+    input[type="submit"] {
+        background: $color-light-blue;
+        border: none;
+        color: $color-text-inverted;
+        padding: 0.75rem;
+        font-family: $font-retro;
+        font-size: 28px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+
+        &:hover {
+            background-color: color.adjust($color-light-blue, $lightness: 10%);
+        }
+    }
+}
+
+.register-subtext {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: $color-text-muted;
+}
+
+.password-requirements {
+    position: absolute;
+    top: 3rem;
+    left: 50%;
+    transform: translateX(calc(200px + 2rem));
+    width: 280px;
+    margin-top: 0;
+    padding: 1rem;
+    background: rgba($color-warning, 0.1);
+    border: 1px solid rgba($color-warning, 0.3);
+
+    .title {
+        font-family: $font-pixel;
+        font-size: 10px;
+        color: $color-warning;
+        margin-bottom: 0.75rem;
+    }
+
+    .group {
+        margin-bottom: 1rem;
+
+        .label {
+            font-family: $font-retro;
+            font-size: 16px;
+            color: $color-text-main;
+            margin-bottom: 0.5rem;
+        }
+
+        .list {
+            list-style: none;
+            padding-left: 0;
+
+            .item {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-family: $font-retro;
+                font-size: 14px;
+                color: $color-text-muted;
+
+                .pip {
+                    width: 10px;
+                    height: 10px;
+                    border: 1px solid rgba($color-warning, 0.3);
+                    background: rgba($color-warning, 0.3);
+                    flex-shrink: 0;
+                }
+
+                &.met {
+                    color: $color-success;
+
+                    .pip {
+                        background: $color-success;
+                        border: 1px solid rgba($color-success, 0.3);
+                        box-shadow: 0 0 4px $color-success;
+                    }
+                }
+
+                &.failed {
+                    color: $color-error;
+
+                    .pip {
+                        background: $color-error;
+                        border: 1px solid rgba($color-error, 0.3);
+                        box-shadow: 0 0 4px $color-error;
+                    }
+                }
+            }
+        }
+    }
+
+    .or {
+        font-family: $font-retro;
+        font-size: 16px;
+        color: rgba($color-text-muted, 0.4);
+        text-align: center;
+        margin: 0.5rem 0;
+        letter-spacing: 2px;
+    }
+
+    &.mode-passphrase {
+        .group:last-of-type {
+            opacity: 0.4;
+        }
+    }
+
+    &.mode-classic {
+        .group:first-of-type {
+            opacity: 0.4;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .password-requirements {
+        position: static;
+        transform: none;
+        width: min(360px, 92vw);
+        margin: 1.5rem auto 0;
+    }
+}

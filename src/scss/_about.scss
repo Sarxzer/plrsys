@@ -1,0 +1,261 @@
+// =====================
+// _about.scss
+// Innerspace - About page
+// =====================
+
+@use "variables" as *;
+
+.about-wrapper {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+// -- Hero block --
+
+.about-hero {
+    background: $color-bg-card;
+    border: 2px solid rgba($color-light-blue, 0.25);
+    box-shadow: $pixel-shadow;
+    padding: 2rem;
+    position: relative;
+    text-align: center;
+}
+
+.about-hero::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    right: 6px;
+    bottom: 6px;
+    border: 1px solid rgba($color-light-blue, 0.08);
+    pointer-events: none;
+}
+
+.about-hero-icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 0 10px rgba($color-light-blue, 0.4));
+}
+
+.about-hero-title {
+    font-family: $font-pixel;
+    font-size: 13px;
+    color: $color-light-blue;
+    text-shadow: 2px 2px 0 $shadow-dark;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+
+.about-hero-sub {
+    font-family: $font-retro;
+    font-size: 22px;
+    color: $color-text-muted;
+    line-height: 1.5;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+// -- Content cards --
+
+.about-card {
+    background: $color-bg-card;
+    border: 1px solid rgba($color-light-blue, 0.2);
+    box-shadow: 3px 3px 0 $shadow-dark;
+    padding: 1.5rem;
+    position: relative;
+
+    p {
+        font-family: $font-retro;
+        font-size: 20px;
+        color: $color-text-main;
+        line-height: 1.6;
+        margin-bottom: 0.75rem;
+    }
+
+    p:last-child {
+        margin-bottom: 0;
+    }
+
+    p a {
+        color: $color-light-blue;
+        text-decoration: underline;
+        text-decoration-style: dotted;
+    }
+
+    p a:hover {
+        color: $color-light-blue;
+    }
+}
+
+.about-card-label {
+    font-family: $font-pixel;
+    font-size: 8px;
+    color: $color-light-blue;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.about-card-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba($color-light-blue, 0.15);
+}
+
+// -- Highlight pill --
+
+.about-highlight {
+    display: inline-block;
+    background: rgba($color-light-blue, 0.12);
+    border: 1px solid rgba($color-light-blue, 0.3);
+    color: $color-light-blue;
+    font-family: $font-retro;
+    font-size: 18px;
+    padding: 2px 10px;
+    margin: 0 2px;
+}
+
+// -- "Built for" block --
+
+.about-skye {
+    background: rgba($color-light-purple, 0.06);
+    border: 1px solid rgba($color-light-purple, 0.25);
+    box-shadow: 3px 3px 0 $shadow-dark;
+    padding: 1.5rem;
+    text-align: center;
+
+    p {
+        font-family: $font-retro;
+        font-size: 20px;
+        color: $color-text-main;
+        line-height: 1.6;
+    }
+
+    .name {
+        color: $color-light-purple;
+        font-size: 22px;
+    }
+}
+
+.about-skye-heart {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 0.75rem;
+    filter: drop-shadow(0 0 6px rgba($color-pink, 0.6));
+}
+
+// -- Open source block --
+
+.about-oss {
+    background: rgba($color-online, 0.05);
+    border: 1px solid rgba($color-online, 0.2);
+    box-shadow: 3px 3px 0 $shadow-dark;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+}
+
+.about-oss-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 6px rgba($color-online, 0.4));
+}
+
+.about-oss-content {
+    .about-card-label {
+        color: $color-online;
+    }
+
+    .about-card-label::after {
+        background: rgba($color-online, 0.15);
+    }
+
+    p {
+        font-family: $font-retro;
+        font-size: 20px;
+        color: $color-text-main;
+        line-height: 1.6;
+        margin-bottom: 0.5rem;
+    }
+
+    p:last-child {
+        margin-bottom: 0;
+    }
+
+    a {
+        color: $color-online;
+        text-decoration: underline;
+        text-decoration-style: dotted;
+    }
+
+    a:hover {
+        color: rgba($color-online, 0.8);
+    }
+}
+
+// -- CTA block --
+ 
+.about-cta {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    a {
+        font-family: $font-pixel;
+        font-size: 9px;
+        padding: 0.85rem 1.5rem;
+        letter-spacing: 1px;
+        transition: transform 0.08s, box-shadow 0.08s;
+        display: inline-block;
+    }
+
+    a:hover {
+        transform: translate(-2px, -2px);
+    }
+
+    .cta-primary {
+        background: $color-light-blue;
+        color: $color-text-inverted;
+        border: none;
+        box-shadow: 3px 3px 0 $shadow-dark;
+    }
+
+    .cta-secondary {
+        background: transparent;
+        color: $color-light-blue;
+        border: 2px solid rgba($color-light-blue, 0.4);
+        box-shadow: 3px 3px 0 $shadow-dark;
+    }
+
+    .cta-primary:hover {
+        box-shadow: $pixel-shadow-hover;
+    }
+
+    .cta-secondary:hover {
+        box-shadow: $pixel-shadow-hover;
+        border-color: $color-light-blue;
+    }
+}
+
+@media (max-width: 768px) {
+    .about-oss {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .about-oss-icon {
+        font-size: 1.5rem;
+    }
+}
