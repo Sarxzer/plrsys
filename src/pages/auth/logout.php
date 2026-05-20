@@ -5,7 +5,6 @@
  * @var string $includesDir
  * @var string $cssDir
  * @var string $jsDir
-
  */
 $auth = new Auth($pdo);
 Guards::requireLogin();

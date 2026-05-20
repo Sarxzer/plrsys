@@ -17,9 +17,9 @@
 
 ## 🐛 Bugs
 
-- [ ] **[HIGH]** Gate `/tests` route behind `APP_DEBUG` check (currently publicly accessible in prod)
+- [x] **[HIGH]** Gate `/tests` route behind `APP_DEBUG` check (currently publicly accessible in prod)
 - [x] **[HIGH]** Fix `mailer.php` — `require_once` path points to `src/php/vendor/` which doesn't exist
-- [ ] **[HIGH]** `admin-test.php` is publicly accessible via `?user_id=N` and dumps full system data
+- [x] **[HIGH]** `admin-test.php` is publicly accessible via `?user_id=N` and dumps full system data
 - [ ] **[MEDIUM]** Fix potential undefined variable `$member_name` in breadcrumb generation (outside the if block)
 
 ---
@@ -49,7 +49,7 @@
 
 ## 🧹 Cleanup
 
-- [ ] **[MEDIUM]** Move or protect `admin-test.php` and `manual-signup.php`
+- [x] **[MEDIUM]** Move or protect `admin-test.php` and `manual-signup.php`
 - [x] **[LOW]** Remove all commented-out code blocks in `system/system.php`
 
 ---

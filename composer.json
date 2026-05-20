@@ -5,7 +5,9 @@
         "spomky-labs/otphp": "^11.4",
         "endroid/qr-code": "^6.1",
         "symfony/clock": "^8.0",
-        "phpmailer/phpmailer": "^7.0"
+        "phpmailer/phpmailer": "^7.0",
+        "erusev/parsedown": "^1.8",
+        "erusev/parsedown-extra": "^0.9.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^13.1"

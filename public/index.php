@@ -152,10 +152,12 @@ match ($parts[0]) {
     'changelog' => require $pagesDir . '/changelog.php',
     // About
     'about' => require $pagesDir . '/about.php',
-    // Privacy Policy
-    'privacy-policy' => require $pagesDir . '/privacy.php',
-    // Terms of Service
-    'terms' => require $pagesDir . '/terms.php',
+    // Privacy Policy and ToS
+    'legal' => match (true) {
+        isset($parts[1]) && $parts[1] === 'privacy' => require $pagesDir . '/legal/privacy.php', // /legal/privacy
+        isset($parts[1]) && $parts[1] === 'tos' => require $pagesDir . '/legal/terms.php', // /legal/terms
+        default                                     => header('Location: /home'), // Redirect /legal to home for now
+    },
     // Auth
     'login'     => match (true) {
         isset($parts[1]) && $parts[1] === 'totp' => require $pagesDir . '/auth/login-totp.php', // /login/totp
