@@ -88,3 +88,13 @@ CREATE TABLE oauth_connections (
     UNIQUE KEY (user_id, provider),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+
+CREATE TABLE visitor_events (
+  id VARCHAR(64),
+  user_id INT,
+  page VARCHAR(255),
+  ip VARCHAR(45),
+  user_agent TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

@@ -101,6 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <input type="submit" value="Login">
                     </form>
                     <p class="login-subtext"><a href="/register">Don't have an account? Register here.</a></p>
+                    <p class="login-subtext"><a href="/reset-password">Forgot your password?</a></p>
                 </div>
             </div>
 

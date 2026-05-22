@@ -98,6 +98,20 @@ class ActiveVisitors
             ':ip' => $ip,
             ':ua' => $ua,
         ]);
+
+
+        $stmt = $this->pdo->prepare("
+            INSERT INTO visitor_events (id, user_id, page, ip, user_agent)
+            VALUES (:id, :user_id, :page, :ip, :ua)
+        ");
+
+        $stmt->execute([
+            ':id' => $id . '-' . time(),
+            ':user_id' => $userId,
+            ':page' => $page,
+            ':ip' => $ip,
+            ':ua' => $ua,
+        ]);
     }
 
     /**

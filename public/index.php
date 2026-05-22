@@ -217,6 +217,11 @@ match ($parts[0]) {
             default => require $pagesDir . '/settings/settings.php',      // /settings
         },
 
+    'reset-password' => match (true) {
+            isset($parts[1]) && $parts[1] === 'confirm' => require $pagesDir . '/auth/reset-password-confirm.php',
+            default => require $pagesDir . '/auth/reset-password.php',
+        },
+
     'friends' => match (true) {
             isset($parts[1]) && $parts[1] === 'invite' => require $pagesDir . '/friends/invite.php',  // /friends/invite
             default => require $pagesDir . '/friends/friends.php', // /friends
