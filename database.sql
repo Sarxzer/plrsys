@@ -68,7 +68,23 @@ CREATE TABLE friends (
   FOREIGN KEY (friend_user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-
-
 ALTER TABLE users ADD COLUMN discord_id VARCHAR(20) DEFAULT NULL UNIQUE;
 ALTER TABLE members ADD COLUMN proxy_prefix VARCHAR(10) DEFAULT NULL;
+
+
+-- The oauth_connections table manages the connections between users and third-party OAuth providers (like Discord, GitHub, Google). It stores the provider's user ID, username, avatar, access token, refresh token, and token expiration time. Each connection is unique based on the combination of provider and provider_user_id, and a user can only have one connection per provider.
+CREATE TABLE oauth_connections (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    provider ENUM('discord', 'github', 'google') NOT NULL,
+    provider_user_id VARCHAR(50) NOT NULL,
+    provider_username VARCHAR(100),
+    provider_avatar VARCHAR(255),
+    access_token VARCHAR(255),
+    refresh_token VARCHAR(255),
+    token_expires_at TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY (provider, provider_user_id),
+    UNIQUE KEY (user_id, provider),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

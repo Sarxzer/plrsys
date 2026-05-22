@@ -51,8 +51,31 @@ if (empty($discord_user['id'])) {
     exit;
 }
 
-$stmt = $pdo->prepare('UPDATE users SET discord_id = ? WHERE id = ?');
-$stmt->execute([$discord_user['id'], $_SESSION['user_id']]);
+// save tokens + profile
+$stmt = $pdo->prepare('
+    INSERT INTO oauth_connections 
+        (user_id, provider, provider_user_id, provider_username, provider_avatar, access_token, refresh_token, token_expires_at)
+    VALUES (?, "discord", ?, ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL ? SECOND))
+    ON DUPLICATE KEY UPDATE
+        provider_username = VALUES(provider_username),
+        provider_avatar = VALUES(provider_avatar),
+        access_token = VALUES(access_token),
+        refresh_token = VALUES(refresh_token),
+        token_expires_at = VALUES(token_expires_at)
+');
+$stmt->execute([
+    $_SESSION['user_id'],
+    $discord_user['id'],
+    $discord_user['username'],
+    $discord_user['avatar'],
+    $token_data['access_token'],
+    $token_data['refresh_token'],
+    $token_data['expires_in'],
+]);
+
+// mirror ID for fast bot lookups
+$pdo->prepare('UPDATE users SET discord_id = ? WHERE id = ?')
+    ->execute([$discord_user['id'], $_SESSION['user_id']]);
 
 Alert::success('Discord account linked as ' . $discord_user['username'] . '!');
 header('Location: /settings');

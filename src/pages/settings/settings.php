@@ -17,6 +17,13 @@ $auth = new Auth($pdo);
 $user = $auth->requireCurrentUser();
 $userId = (int) $user['id'];
 
+$discord = null;
+if ($user['discord_id']) {
+    $stmt = $pdo->prepare('SELECT provider_username, provider_avatar FROM oauth_connections WHERE user_id = ? AND provider = "discord"');
+    $stmt->execute([$userId]);
+    $discord = $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle settings form submission here
@@ -195,8 +202,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </form>
                 <?php endif; ?>
 
+                <?php if ($user['discord_id']): ?>
+                    <div class="settings-card">
+                        <form action="settings/discord/unlink" method="POST">
+                            <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
+
+                            <h2>Discord Linked</h2>
+                            <p>Linked as <strong><?= htmlspecialchars($discord['provider_username']) ?></strong></p>
+
+                            <button type="submit" class="btn btn-danger">Unlink Discord account</button>
+                        </form>
+                    </div>
+                <?php else: ?>
+                    <div class="settings-card">
+                        <h2>Link Discord Account</h2>
+                        <p>Link your Discord account for easy login and community features.</p>
+                        <a href="/settings/discord/link" class="btn btn-primary">Link Discord account</a>
+                    </div>
+                <?php endif; ?>
+
                 <a href="/logout">Logout</a>
-                <a href="/settings/discord" class="btn btn-secondary">Link Discord account</a>
             </div>
 
             <?php include $includesDir . '/footer.php'; ?>

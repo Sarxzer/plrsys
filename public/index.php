@@ -205,9 +205,11 @@ match ($parts[0]) {
     'history' => require $pagesDir . '/dashboard/history.php',
     // 'settings'  => require $pagesDir . '/settings/settings.php',
     'settings' => match (true) {
+            isset($parts[1]) && $parts[1] === 'discord' && isset($parts[2]) && $parts[2] === 'unlink'
+            => require $pagesDir . '/settings/discord-unlink.php',
             isset($parts[1]) && $parts[1] === 'discord' && isset($parts[2]) && $parts[2] === 'callback'
             => require $pagesDir . '/settings/discord-callback.php',
-            isset($parts[1]) && $parts[1] === 'discord'
+            isset($parts[1]) && $parts[1] === 'discord' && isset($parts[2]) && $parts[2] === 'link'
             => require $pagesDir . '/settings/discord-redirect.php',
             isset($parts[1]) && $parts[1] === 'email' => require $pagesDir . '/settings/setup-email.php',          // /settings/setup-email
             isset($parts[1]) && $parts[1] === 'totp' => require $pagesDir . '/settings/setup-totp.php',          // /settings/setup-totp
