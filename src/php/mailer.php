@@ -51,7 +51,7 @@ class Mailer
 
     public function sendPasswordResetEmail(string $to, string $token): bool
     {
-        $resetLink = "https://innerspace.example.com/reset-password?token=$token";
+        $resetLink = ($_ENV['APP_URL'] ?? ('https://' . ($_SERVER['HTTP_HOST'] ?? 'localhost'))) . "/reset-password/confirm?token=$token";
         $subject = 'Innerspace Password Reset Request';
         $body = "Hello,<br><br>We received a request to reset your password. Click the link below to reset it:<br><a href='$resetLink'>$resetLink</a><br><br>If you didn't request this, please ignore this email.<br><br>Best,<br>Innerspace Team";
 
