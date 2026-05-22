@@ -15,7 +15,6 @@
     </div>
     <div class="nav-links">
         <a href="/home" class="<?= ($parts[0] === 'home' || $parts[0] === '') ? 'active' : ''; ?>">Home</a>
-        <a href="/system" class="<?= ($parts[0] === 'system') ? 'active' : ''; ?>">System</a>
         <?php if (isset($current_user)): ?>
             <a href="/dashboard" class="<?= ($parts[0] === 'dashboard') ? 'active' : ''; ?>">Dashboard</a>
             <a href="/manage" class="<?= ($parts[0] === 'manage') ? 'active' : ''; ?>">Manage</a>
@@ -26,6 +25,7 @@
             <a href="/register" class="nav-register <?= ($parts[0] === 'register') ? 'active' : '' ?>">Register</a>
         <?php endif; ?>
         <?php if ($_ENV['APP_DEBUG'] === 'true'): ?>
+            <a href="/system" class="<?= ($parts[0] === 'system') ? 'active' : ''; ?>">System</a>
             <span class="debug-indicator" title="Debug mode is ON">[DEBUG]</span>
         <?php endif; ?>
     </div>
@@ -59,6 +59,10 @@
         <a href="/settings" class="bottom-nav-item <?= ($parts[0] === 'settings') ? 'active' : '' ?>">
             <span class="bottom-nav-icon">◎</span>
             <span class="bottom-nav-label">Settings</span>
+        </a>
+        <a href="/logout" class="bottom-nav-item">
+            <span class="bottom-nav-icon">⎋</span>
+            <span class="bottom-nav-label">Logout</span>
         </a>
     <?php else: ?>
         <a href="/login" class="bottom-nav-item <?= ($parts[0] === 'login') ? 'active' : '' ?>">
