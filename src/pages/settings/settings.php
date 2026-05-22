@@ -196,6 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php endif; ?>
 
                 <a href="/logout">Logout</a>
+                <a href="/settings/discord" class="btn btn-secondary">Link Discord account</a>
             </div>
 
             <?php include $includesDir . '/footer.php'; ?>

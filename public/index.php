@@ -7,7 +7,7 @@ require_once __DIR__ . '/../src/php/utils.php';
 require_once __DIR__ . '/../src/php/discord.php';
 
 $sessionSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-    || (!empty($_SERVER['SERVER_PORT']) && (int)$_SERVER['SERVER_PORT'] === 443);
+    || (!empty($_SERVER['SERVER_PORT']) && (int) $_SERVER['SERVER_PORT'] === 443);
 
 session_set_cookie_params([
     'lifetime' => 0,
@@ -46,18 +46,19 @@ $active->ping($_SESSION['user_id'] ?? null);
 if (($_ENV['DISCORD_WEBHOOK_LOGGING'] ?? 'false') === 'true') {
     $discord = new DiscordWebhook($_ENV['DISCORD_WEBHOOK_URL']);
 
-    set_exception_handler(function(Throwable $e) use ($discord) {
+    set_exception_handler(function (Throwable $e) use ($discord) {
         $discord->log('error', $e->getMessage(), [
             ['name' => 'File', 'value' => basename($e->getFile()), 'inline' => true], // no full paths in prod
-            ['name' => 'Line', 'value' => (string)$e->getLine(), 'inline' => true],
+            ['name' => 'Line', 'value' => (string) $e->getLine(), 'inline' => true],
         ]);
     });
 
-    set_error_handler(function(int $errno, string $errstr, string $errfile, int $errline) use ($discord) {
-        if (in_array($errno, [E_NOTICE, E_DEPRECATED, E_USER_DEPRECATED])) return false;
+    set_error_handler(function (int $errno, string $errstr, string $errfile, int $errline) use ($discord) {
+        if (in_array($errno, [E_NOTICE, E_DEPRECATED, E_USER_DEPRECATED]))
+            return false;
         $discord->log('error', $errstr, [
             ['name' => 'File', 'value' => basename($errfile), 'inline' => true],
-            ['name' => 'Line', 'value' => (string)$errline, 'inline' => true],
+            ['name' => 'Line', 'value' => (string) $errline, 'inline' => true],
         ]);
         return false;
     });
@@ -74,8 +75,8 @@ if (!is_dir($pagesDir)) {
     die("Pages directory not found: $pagesDir");
 }
 
-$uri    = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
-$parts  = explode('/', $uri);
+$uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+$parts = explode('/', $uri);
 
 // CSRF token generation and verification
 Csrf::generate();
@@ -146,74 +147,78 @@ foreach ($parts as $index => $part) {
 
 match ($parts[0]) {
     // Public
-    ''  => header('Location: /home'), // Redirect root to home
-    'home'  => require $pagesDir . '/home.php',
+    '' => header('Location: /home'), // Redirect root to home
+    'home' => require $pagesDir . '/home.php',
     // Changelog
     'changelog' => require $pagesDir . '/changelog.php',
     // About
     'about' => require $pagesDir . '/about.php',
     // Privacy Policy and ToS
     'legal' => match (true) {
-        isset($parts[1]) && $parts[1] === 'privacy' => require $pagesDir . '/legal/privacy.php', // /legal/privacy
-        isset($parts[1]) && $parts[1] === 'tos' => require $pagesDir . '/legal/terms.php', // /legal/terms
-        default                                     => header('Location: /home'), // Redirect /legal to home for now
-    },
+            isset($parts[1]) && $parts[1] === 'privacy' => require $pagesDir . '/legal/privacy.php', // /legal/privacy
+            isset($parts[1]) && $parts[1] === 'tos' => require $pagesDir . '/legal/terms.php', // /legal/terms
+            default => header('Location: /home'), // Redirect /legal to home for now
+        },
     // Auth
-    'login'     => match (true) {
-        isset($parts[1]) && $parts[1] === 'totp' => require $pagesDir . '/auth/login-totp.php', // /login/totp
-        default                                     => require $pagesDir . '/auth/login.php',      // /login
-    },
+    'login' => match (true) {
+            isset($parts[1]) && $parts[1] === 'totp' => require $pagesDir . '/auth/login-totp.php', // /login/totp
+            default => require $pagesDir . '/auth/login.php',      // /login
+        },
     // register
-    'register'  => match (true) {
-        isset($parts[1]) && $parts[1] === 'totp' => require $pagesDir . '/auth/setup-totp.php',          // /register/totp
-        isset($parts[1]) && $parts[1] === 'backup-codes' => require $pagesDir . '/auth/backup-codes.php', // /register/backup-codes
-        default                                     => require $pagesDir . '/auth/register.php',      // /register
-    },
+    'register' => match (true) {
+            isset($parts[1]) && $parts[1] === 'totp' => require $pagesDir . '/auth/setup-totp.php',          // /register/totp
+            isset($parts[1]) && $parts[1] === 'backup-codes' => require $pagesDir . '/auth/backup-codes.php', // /register/backup-codes
+            default => require $pagesDir . '/auth/register.php',      // /register
+        },
     'confirm-email' => require $pagesDir . '/auth/confirm-email.php',
-    'logout'    => require $pagesDir . '/auth/logout.php',
+    'logout' => require $pagesDir . '/auth/logout.php',
 
     // Public system/member viewing
     'systems' => header('Location: /system'), // Redirect /systems to /system for now
     'system' => match (true) {
-        isset($parts[1]) && isset($parts[2]) => header('Location: /s/' . $parts[1] . '/' . $parts[2]),   // /system/{handle}/{member_handle}
-        isset($parts[1])                     => header('Location: /s/' . $parts[1]), // /system/{handle}
-        default                              => require $pagesDir . '/system/systems.php',       // /system alone makes no sense but we use it to list all systems in dev
-    },
+            isset($parts[1]) && isset($parts[2]) => header('Location: /s/' . $parts[1] . '/' . $parts[2]),   // /system/{handle}/{member_handle}
+            isset($parts[1]) => header('Location: /s/' . $parts[1]), // /system/{handle}
+            default => require $pagesDir . '/system/systems.php',       // /system alone makes no sense but we use it to list all systems in dev
+        },
     's' => match (true) {
-        isset($parts[1]) && isset($parts[2]) => require $pagesDir . '/system/member.php', // /s/{handle}/@{member_handle}
-        isset($parts[1])                     => require $pagesDir . '/system/system.php', // /s/{handle}
-        default                              => header('Location: /home'), // Redirect /s to home for now
-    },
+            isset($parts[1]) && isset($parts[2]) => require $pagesDir . '/system/member.php', // /s/{handle}/@{member_handle}
+            isset($parts[1]) => require $pagesDir . '/system/system.php', // /s/{handle}
+            default => header('Location: /home'), // Redirect /s to home for now
+        },
 
     // Managed (authenticated) system/member editing
     'manage' => match (true) {
-        isset($parts[1], $parts[2], $parts[3]) && $parts[1] === 's' && str_starts_with($parts[3], '@')
-        => require $pagesDir . '/manage/member-edit.php',   // /manage/s/{handle}/@{member_handle}
-        isset($parts[1], $parts[2], $parts[3]) && $parts[1] === 's' && $parts[3] === 'new'
-        => require $pagesDir . '/manage/member-new.php',    // /manage/s/{handle}/new
-        isset($parts[1], $parts[2]) && $parts[1] === 's'
-        => require $pagesDir . '/manage/system-edit.php',   // /manage/s/{handle}
-        isset($parts[1], $parts[2]) && $parts[1] === 'system' && $parts[2] === 'new'
-        => require $pagesDir . '/manage/system-new.php',    // /manage/system/new
-        default                           => require $pagesDir . '/manage/systems.php',       // /manage or /manage/systems
-    },
+            isset($parts[1], $parts[2], $parts[3]) && $parts[1] === 's' && str_starts_with($parts[3], '@')
+            => require $pagesDir . '/manage/member-edit.php',   // /manage/s/{handle}/@{member_handle}
+            isset($parts[1], $parts[2], $parts[3]) && $parts[1] === 's' && $parts[3] === 'new'
+            => require $pagesDir . '/manage/member-new.php',    // /manage/s/{handle}/new
+            isset($parts[1], $parts[2]) && $parts[1] === 's'
+            => require $pagesDir . '/manage/system-edit.php',   // /manage/s/{handle}
+            isset($parts[1], $parts[2]) && $parts[1] === 'system' && $parts[2] === 'new'
+            => require $pagesDir . '/manage/system-new.php',    // /manage/system/new
+            default => require $pagesDir . '/manage/systems.php',       // /manage or /manage/systems
+        },
 
     // Authenticated
     'dashboard' => require $pagesDir . '/dashboard/dashboard.php',
-    'fronting'  => require $pagesDir . '/dashboard/fronting.php',
-    'history'   => require $pagesDir . '/dashboard/history.php',
+    'fronting' => require $pagesDir . '/dashboard/fronting.php',
+    'history' => require $pagesDir . '/dashboard/history.php',
     // 'settings'  => require $pagesDir . '/settings/settings.php',
-    'settings'  => match (true) {
-        isset($parts[1]) && $parts[1] === 'email' => require $pagesDir . '/settings/setup-email.php',          // /settings/setup-email
-        isset($parts[1]) && $parts[1] === 'totp' => require $pagesDir . '/settings/setup-totp.php',          // /settings/setup-totp
-        isset($parts[1]) && $parts[1] === 'backup-codes' => require $pagesDir . '/settings/backup-codes.php', // /settings/backup-codes
-        default                                     => require $pagesDir . '/settings/settings.php',      // /settings
-    },
+    'settings' => match (true) {
+            isset($parts[1]) && $parts[1] === 'discord' && isset($parts[2]) && $parts[2] === 'callback'
+            => require $pagesDir . '/settings/discord-callback.php',
+            isset($parts[1]) && $parts[1] === 'discord'
+            => require $pagesDir . '/settings/discord-redirect.php',
+            isset($parts[1]) && $parts[1] === 'email' => require $pagesDir . '/settings/setup-email.php',          // /settings/setup-email
+            isset($parts[1]) && $parts[1] === 'totp' => require $pagesDir . '/settings/setup-totp.php',          // /settings/setup-totp
+            isset($parts[1]) && $parts[1] === 'backup-codes' => require $pagesDir . '/settings/backup-codes.php', // /settings/backup-codes
+            default => require $pagesDir . '/settings/settings.php',      // /settings
+        },
 
     'friends' => match (true) {
-        isset($parts[1]) && $parts[1] === 'invite' => require $pagesDir . '/friends/invite.php',  // /friends/invite
-        default                                     => require $pagesDir . '/friends/friends.php', // /friends
-    },
+            isset($parts[1]) && $parts[1] === 'invite' => require $pagesDir . '/friends/invite.php',  // /friends/invite
+            default => require $pagesDir . '/friends/friends.php', // /friends
+        },
     'friend' => require $pagesDir . '/friends/friend-view.php', // /friend/{token}  
 
     // fallback to 404
