@@ -6,10 +6,47 @@
  * @var string $cssDir
  * @var string $jsDir
  */
-$auth = new Auth($pdo);
 Guards::requireLogin();
-$auth->logout();
 
-Alert::success("You have been logged out.");
-header('Location: /login');
-exit;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	$auth->logout();
+    Alert::success("You have been logged out.");
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Logout | Innerspace</title>
+	<link rel="stylesheet" href="<?= $cssDir ?>">
+	<link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
+	<script src="<?= $jsDir ?>" defer></script>
+</head>
+
+<body>
+	<div class="page">
+		<div class="pixel-scanlines"></div>
+		<div class="content">
+			<?php include $includesDir . '/navbar.php'; ?>
+			<div class="alerts-wrapper">
+				<?php include $includesDir . '/alerts.php'; ?>
+			</div>
+			<div class="main">
+				<div class="login-container">
+					<h1 class="login-title">Log out</h1>
+					<form action="/logout" method="post" class="login-form">
+						<input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
+						<input type="submit" value="Log out">
+					</form>
+					<p class="login-subtext"><a href="/settings">Cancel</a></p>
+				</div>
+			</div>
+
+			<?php include $includesDir . '/footer.php'; ?>
+		</div>
+	</div>
+</body>
+
+</html>

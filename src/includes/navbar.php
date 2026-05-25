@@ -19,7 +19,10 @@
             <a href="/dashboard" class="<?= ($parts[0] === 'dashboard') ? 'active' : ''; ?>">Dashboard</a>
             <a href="/manage" class="<?= ($parts[0] === 'manage') ? 'active' : ''; ?>">Manage</a>
             <a href="/settings" class="<?= ($parts[0] === 'settings') ? 'active' : ''; ?>">Settings</a>
-            <a href="/logout">Logout (<?= htmlspecialchars($current_user['username']) ?>)</a>
+            <form action="/logout" method="POST" class="nav-link-form">
+                <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
+                <button type="submit" class="nav-link-button">Logout (<?= htmlspecialchars($current_user['username']) ?>)</button>
+            </form>
         <?php else: ?>
             <a href="/login" class="<?= ($parts[0] === 'login') ? 'active' : '' ?>">Login</a>
             <a href="/register" class="nav-register <?= ($parts[0] === 'register') ? 'active' : '' ?>">Register</a>
@@ -60,10 +63,13 @@
             <span class="bottom-nav-icon">◎</span>
             <span class="bottom-nav-label">Settings</span>
         </a>
-        <a href="/logout" class="bottom-nav-item">
-            <span class="bottom-nav-icon">⎋</span>
-            <span class="bottom-nav-label">Logout</span>
-        </a>
+        <form action="/logout" method="POST" class="bottom-nav-form">
+            <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
+            <button type="submit" class="bottom-nav-item">
+                <span class="bottom-nav-icon">⎋</span>
+                <span class="bottom-nav-label">Logout</span>
+            </button>
+        </form>
     <?php else: ?>
         <a href="/login" class="bottom-nav-item <?= ($parts[0] === 'login') ? 'active' : '' ?>">
             <span class="bottom-nav-icon">⎆</span>

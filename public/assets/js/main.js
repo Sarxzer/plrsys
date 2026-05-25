@@ -64,3 +64,37 @@ document.querySelectorAll('.inline-edit').forEach(wrapper => {
         }
     });
 });
+
+// Cookie consent banner
+const cookieBanner = document.querySelector('[data-cookie-banner]');
+if (cookieBanner) {
+    const acceptButton = cookieBanner.querySelector('[data-cookie-accept]');
+    const rejectButton = cookieBanner.querySelector('[data-cookie-reject]');
+
+    const setConsent = value => {
+        try {
+            localStorage.setItem('cookie_consent', value);
+        } catch (error) {
+            // Ignore storage errors (private mode, disabled storage)
+        }
+        cookieBanner.classList.remove('is-visible');
+    };
+
+    let storedConsent = null;
+    try {
+        storedConsent = localStorage.getItem('cookie_consent');
+    } catch (error) {
+        storedConsent = null;
+    }
+
+    if (!storedConsent) {
+        cookieBanner.classList.add('is-visible');
+    }
+
+    if (acceptButton) {
+        acceptButton.addEventListener('click', () => setConsent('accepted'));
+    }
+    if (rejectButton) {
+        rejectButton.addEventListener('click', () => setConsent('rejected'));
+    }
+}

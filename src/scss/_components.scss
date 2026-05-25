@@ -495,3 +495,74 @@
         background-color: color.adjust($color-light-blue, $lightness: 10%);
     }
 }
+
+/* ── Cookie banner ─────────────────────────────────────── */
+
+.cookie-banner {
+    position: fixed;
+    left: 50%;
+    bottom: 1rem;
+    transform: translateX(-50%);
+    width: min(720px, calc(100% - 2rem));
+    background: $color-bg-card;
+    border: $border-pixel rgba($color-light-blue, 0.3);
+    box-shadow: 4px 4px 0 $shadow-dark;
+    padding: 1rem 1.25rem;
+    z-index: 150;
+    display: none;
+}
+
+.cookie-banner.is-visible {
+    display: block;
+}
+
+.cookie-banner__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.cookie-banner__text {
+    font-family: $font-retro;
+    font-size: 18px;
+    color: $color-text-main;
+    margin: 0;
+}
+
+.cookie-banner__text a {
+    color: $color-light-blue;
+    text-decoration: underline;
+}
+
+.cookie-banner__actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.cookie-btn {
+    background: $color-light-blue;
+    border: none;
+    color: $color-text-inverted;
+    padding: 0.5rem 1rem;
+    font-family: $font-retro;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.cookie-btn:hover {
+    background: color.adjust($color-light-blue, $lightness: 10%);
+}
+
+.cookie-btn.cookie-reject {
+    background: rgba($color-light-blue, 0.15);
+    border: 1px solid rgba($color-light-blue, 0.4);
+    color: $color-text-main;
+}
+
+.cookie-btn.cookie-reject:hover {
+    background: rgba($color-light-blue, 0.25);
+}

@@ -13,3 +13,16 @@
         <a href="/legal/tos">Terms</a>
     </nav>
 </footer>
+
+<div class="cookie-banner" data-cookie-banner role="dialog" aria-live="polite" aria-label="Cookie consent">
+    <div class="cookie-banner__content">
+        <p class="cookie-banner__text">
+            We use essential cookies for login. Accept optional cookies or keep only essential cookies.
+            <a href="/legal/privacy">Privacy Policy</a>
+        </p>
+        <div class="cookie-banner__actions">
+            <button type="button" class="cookie-btn" data-cookie-accept>Accept</button>
+            <button type="button" class="cookie-btn cookie-reject" data-cookie-reject>Reject</button>
+        </div>
+    </div>
+</div>

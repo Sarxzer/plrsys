@@ -48,8 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['login_cooldown'] = time() + 15; // 15 second cooldown after failed attempt
         $_SESSION['login_attempts'] = ($_SESSION['login_attempts'] ?? 0) + 1;
         $_SESSION['last_failed_username'] = $username;
-        header('Location: /login');
-        exit;
     }
 
     if ($_SESSION['login_attempts'] >= 5) {

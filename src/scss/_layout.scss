@@ -79,7 +79,12 @@
     flex: 1;
 }
 
-.top-nav a {
+.nav-link-form {
+    margin: 0;
+}
+
+.top-nav a,
+.top-nav .nav-link-button {
     font-family: $font-retro;
     font-size: 20px;
     color: $color-text-muted;
@@ -101,6 +106,13 @@
         color: $color-light-blue;
         border-bottom-color: $color-light-blue;
     }
+}
+
+.top-nav .nav-link-button {
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
 }
 
 .nav-register {

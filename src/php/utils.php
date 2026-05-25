@@ -27,7 +27,13 @@ class Csrf
             http_response_code(403);
             Alert::error('Invalid CSRF token. Please try again.');
             Alert::dev('CSRF token verification failed. Expected: ' . ($_SESSION['csrf_token'] ?? 'null') . ', Received: ' . ($_POST['csrf_token'] ?? 'null'));
-            header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/'));
+            // header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/'));
+            $url = $_SERVER['HTTP_REFERER'] ?? '/';
+            // Basic sanitization to prevent open redirect
+            if (strpos($url, '/') !== 0) {
+                $url = '/';
+            }
+            header('Location: ' . $url);
             exit;
         }
     }

@@ -221,7 +221,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 <?php endif; ?>
 
-                <a href="/logout">Logout</a>
+                <form action="/logout" method="POST">
+                    <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
+                    <button type="submit">Logout</button>
+                </form>
             </div>
 
             <?php include $includesDir . '/footer.php'; ?>
