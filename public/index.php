@@ -38,31 +38,6 @@ $pdo = $database->getPdo();
 $auth = new Auth($pdo);
 $auth->checkRememberedUser();
 
-$previewToken = $_GET['token'] ?? null;
-if ($previewToken !== null) {
-    $envPreviewToken = $_ENV['PREVIEW_TOKEN'] ?? '';
-
-    if ($envPreviewToken !== '' && hash_equals($envPreviewToken, $previewToken)) {
-        $auth->login(3, true);
-        Alert::success('Preview mode enabled. You are logged in as a test user.');
-    } else {
-        Alert::error('Invalid preview token. Please check your URL and try again.');
-    }
-
-    $requestPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
-    $query = [];
-    parse_str(parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY) ?? '', $query);
-    unset($query['token']);
-
-    $redirectUrl = $requestPath;
-    if (!empty($query)) {
-        $redirectUrl .= '?' . http_build_query($query);
-    }
-
-    header('Location: ' . $redirectUrl);
-    exit;
-}
-
 $active = new ActiveVisitors($pdo);
 
 $active->ping($_SESSION['user_id'] ?? null);
@@ -252,8 +227,6 @@ match ($parts[0]) {
             default => require $pagesDir . '/friends/friends.php', // /friends
         },
     'friend' => require $pagesDir . '/friends/friend-view.php', // /friend/{token}  
-
-    'preview' => require $pagesDir . '/preview.php', // /preview?token=...
     // fallback to 404
     default => require $pagesDir . '/errors/404.php',
 };
