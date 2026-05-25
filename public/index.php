@@ -228,6 +228,7 @@ match ($parts[0]) {
         },
     'friend' => require $pagesDir . '/friends/friend-view.php', // /friend/{token}  
 
+    'preview' => require $pagesDir . '/preview.php', // /preview?token=...
     // fallback to 404
     default => require $pagesDir . '/errors/404.php',
 };
