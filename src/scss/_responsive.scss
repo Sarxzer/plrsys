@@ -187,11 +187,40 @@
     }
 
     .bottom-nav button.bottom-nav-item {
-        background: none;
-        border: 0;
-        cursor: pointer;
-        appearance: none;
-        -webkit-appearance: none;
+        background-color: transparent;
+        border: none;
+        font-family: $font-retro;
+        font-size: 0.6rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.15rem;
+        text-decoration: none;
+        color: inherit;
+        opacity: 0.45;
+        font-size: 0.6rem;
+        line-height: 1;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        transition:
+            opacity 0.15s,
+            color 0.15s,
+            transform 0.08s;
+        padding: 0.25rem 0.5rem;
+
+        &.active {
+            opacity: 1;
+            color: $color-light-blue;
+            border-bottom: 2px solid $color-light-blue;
+        }
+
+        &:hover {
+            opacity: 0.8;
+        }
+
+        &:active {
+            transform: translateY(1px);
+        }
     }
 
     .bottom-nav-item {
@@ -226,7 +255,6 @@
             transform: translateY(1px);
         }
     }
-
 
     .bottom-nav .debug-indicator {
         opacity: 1;
@@ -265,6 +293,4 @@
     .alerts-wrapper {
         top: 1rem;
     }
-
-
 }

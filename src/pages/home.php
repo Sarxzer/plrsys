@@ -41,6 +41,15 @@
                             <a href="/login" class="btn btn-secondary">Log In</a>
                         <?php endif; ?>
                     </div>
+                    <nav class="home-menu" aria-label="Home menu">
+                        <a href="/about">About</a>
+                        <span class="home-menu-sep">&middot;</span>
+                        <a href="/changelog">Changelog</a>
+                        <span class="home-menu-sep">&middot;</span>
+                        <a href="/legal/privacy">Privacy</a>
+                        <span class="home-menu-sep">&middot;</span>
+                        <a href="/legal/tos">Terms</a>
+                    </nav>
                 </div>
 
                 <div class="home-features">
