@@ -36,11 +36,16 @@
             color: $color-text-main;
             transition:
                 background 0.1s,
-                border-color 0.1s;
+                border-color 0.1s,
+                transform 0.08s;
 
             &:hover {
                 background: rgba($color-light-blue, 0.15);
                 border-color: rgba($color-light-blue, 0.4);
+            }
+
+            &:active {
+                transform: translate(1px, 1px);
             }
 
             &.btn-primary {

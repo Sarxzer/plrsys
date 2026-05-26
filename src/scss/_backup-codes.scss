@@ -143,13 +143,18 @@
     transition:
         border-color 0.1s,
         color 0.1s,
-        background 0.1s;
+        background 0.1s,
+        transform 0.08s;
     letter-spacing: 1px;
 
     &:hover {
         border-color: $color-light-blue;
         color: $color-light-blue;
         background: rgba($color-light-blue, 0.05);
+    }
+
+    &:active {
+        transform: translate(1px, 1px);
     }
 
     &.copied {

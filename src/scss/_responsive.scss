@@ -190,7 +190,8 @@
         background: none;
         border: 0;
         cursor: pointer;
-        font: inherit;
+        appearance: none;
+        -webkit-appearance: none;
     }
 
     .bottom-nav-item {
@@ -202,11 +203,13 @@
         color: inherit;
         opacity: 0.45;
         font-size: 0.6rem;
+        line-height: 1;
         letter-spacing: 0.06em;
         text-transform: uppercase;
         transition:
             opacity 0.15s,
-            color 0.15s;
+            color 0.15s,
+            transform 0.08s;
         padding: 0.25rem 0.5rem;
 
         &.active {
@@ -218,7 +221,12 @@
         &:hover {
             opacity: 0.8;
         }
+
+        &:active {
+            transform: translateY(1px);
+        }
     }
+
 
     .bottom-nav .debug-indicator {
         opacity: 1;

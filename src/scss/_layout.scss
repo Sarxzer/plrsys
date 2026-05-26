@@ -81,6 +81,8 @@
 
 .nav-link-form {
     margin: 0;
+    display: flex;
+    align-items: center;
 }
 
 .top-nav a,
@@ -88,6 +90,7 @@
     font-family: $font-retro;
     font-size: 20px;
     color: $color-text-muted;
+    line-height: 1.5;
     padding: 0.75rem 1rem;
     display: inline-block;
     border-bottom: 3px solid transparent;
@@ -95,11 +98,16 @@
     letter-spacing: 1px;
     transition:
         color 0.1s,
-        border-color 0.1s;
+        border-color 0.1s,
+        transform 0.08s;
 
     &:hover {
         color: $color-text-main;
         border-bottom-color: $color-light-purple;
+    }
+
+    &:active {
+        transform: translateY(1px);
     }
 
     &.active {
@@ -113,6 +121,8 @@
     border: none;
     border-bottom: 3px solid transparent;
     cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 .nav-register {

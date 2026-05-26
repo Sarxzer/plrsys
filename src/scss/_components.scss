@@ -137,11 +137,16 @@
         color: $color-text-main;
         transition:
             background 0.1s,
-            border-color 0.1s;
+            border-color 0.1s,
+            transform 0.08s;
 
         &:hover {
             background: rgba($color-light-blue, 0.15);
             border-color: rgba($color-light-blue, 0.4);
+        }
+
+        &:active {
+            transform: translate(1px, 1px);
         }
     }
 }
@@ -489,10 +494,16 @@
     font-family: $font-retro;
     font-size: 18px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition:
+        background-color 0.2s,
+        transform 0.08s;
 
     &:hover {
         background-color: color.adjust($color-light-blue, $lightness: 10%);
+    }
+
+    &:active {
+        transform: translate(1px, 1px);
     }
 }
 
@@ -550,11 +561,17 @@
     font-family: $font-retro;
     font-size: 16px;
     cursor: pointer;
-    transition: background 0.1s;
+    transition:
+        background 0.1s,
+        transform 0.08s;
 }
 
 .cookie-btn:hover {
     background: color.adjust($color-light-blue, $lightness: 10%);
+}
+
+.cookie-btn:active {
+    transform: translate(1px, 1px);
 }
 
 .cookie-btn.cookie-reject {

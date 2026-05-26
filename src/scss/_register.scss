@@ -71,10 +71,16 @@
         font-family: $font-retro;
         font-size: 28px;
         cursor: pointer;
-        transition: background-color 0.2s;
+        transition:
+            background-color 0.2s,
+            transform 0.08s;
 
         &:hover {
             background-color: color.adjust($color-light-blue, $lightness: 10%);
+        }
+
+        &:active {
+            transform: translate(1px, 1px);
         }
     }
 }

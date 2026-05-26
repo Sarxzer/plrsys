@@ -389,6 +389,10 @@
             transform: translate(-1px, -1px);
         }
 
+        &:active {
+            transform: translate(1px, 1px);
+        }
+
         &.active {
             background: $color-light-blue;
             border-color: $color-light-blue;
