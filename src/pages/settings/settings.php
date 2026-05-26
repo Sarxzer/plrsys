@@ -404,7 +404,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div class="settings-info-desc">Permanently delete your account and all associated
                                         data. This cannot be undone.</div>
                                 </div>
-                                <button class="settings-submit danger" disabled title="Coming soon">Delete →</button>
+                                <a href="/settings/delete" class="settings-link-btn danger">Delete Account</a>
                             </div>
                         </div>
                     </div>

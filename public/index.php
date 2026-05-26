@@ -205,6 +205,8 @@ match ($parts[0]) {
     'history' => require $pagesDir . '/dashboard/history.php',
     // 'settings'  => require $pagesDir . '/settings/settings.php',
     'settings' => match (true) {
+            isset($parts[1]) && $parts[1] === 'delete'
+            => require $pagesDir . '/settings/delete-account.php',
             isset($parts[1]) && $parts[1] === 'discord' && isset($parts[2]) && $parts[2] === 'unlink'
             => require $pagesDir . '/settings/discord-unlink.php',
             isset($parts[1]) && $parts[1] === 'discord' && isset($parts[2]) && $parts[2] === 'callback'

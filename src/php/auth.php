@@ -383,6 +383,19 @@ class Auth
     }
 
 
+    /**
+     * Delete a user account and all associated data
+     * @param int $userId
+     * @return void
+     */
+    public function deleteUser(int $userId): void
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM users WHERE id = ?");
+        $stmt->execute([$userId]);
+        // Related data (sessions, backup codes) will be automatically deleted via foreign key constraints
+    }
+
+
     // -------------------------------------------------------------------------
     // Remember me (persistent cookie)
     // -------------------------------------------------------------------------
