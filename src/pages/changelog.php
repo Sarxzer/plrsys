@@ -57,3 +57,5 @@ try {
             <?php include $includesDir . '/footer.php'; ?>
         </div>
     </div>
+</body>
+</html>
