@@ -1,0 +1,326 @@
+// =====================
+// _dashboard.scss
+// plrsys – Dashboard page
+// =====================
+
+@use "variables" as *;
+@use "sass:color";
+
+// ── Page header ────────────────────────────────────────
+
+.dash-header {
+    margin-bottom: 1.5rem;
+
+    h1 {
+        font-family: $font-pixel;
+        font-size: 13px;
+        letter-spacing: 1px;
+        color: $color-text-main;
+    }
+}
+
+// ── Stats grid ─────────────────────────────────────────
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card {
+    background: $color-bg-card;
+    border: $border-pixel rgba($color-light-blue, 0.3);
+    box-shadow: $pixel-shadow;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    transition: transform 0.08s, box-shadow 0.08s;
+
+    &:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: $pixel-shadow-hover;
+    }
+
+    .stat-value {
+        font-family: $font-pixel;
+        font-size: 22px;
+        color: $color-light-blue;
+        line-height: 1;
+    }
+
+    .stat-label {
+        font-family: $font-pixel;
+        font-size: 8px;
+        letter-spacing: 1px;
+        color: $color-text-muted;
+        text-transform: uppercase;
+    }
+}
+
+// ── Widget base ────────────────────────────────────────
+
+.widget {
+    background: $color-bg-card;
+    border: $border-pixel rgba($color-light-blue, 0.25);
+    box-shadow: $pixel-shadow;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+
+    h2 {
+        font-family: $font-pixel;
+        font-size: 10px;
+        letter-spacing: 1px;
+        color: $color-light-purple;
+        margin-bottom: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+}
+
+// ── Active session widget ──────────────────────────────
+
+.active-session-widget {
+    border-color: $color-success;
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        right: 5px;
+        bottom: 5px;
+        border: 1px solid rgba($color-success, 0.1);
+        pointer-events: none;
+    }
+
+    h2 {
+        color: $color-success;
+    }
+}
+
+.widget-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: $color-success;
+    box-shadow: 0 0 0 2px $shadow-dark, 0 0 5px 1px $color-success;
+    flex-shrink: 0;
+    animation: blink 1.4s step-end infinite;
+}
+
+.session-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba($color-light-blue, 0.12);
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    background: rgba($color-bg-panel, 0.4);
+    border: 1px solid rgba($color-light-blue, 0.08);
+}
+
+.info-key {
+    font-family: $font-pixel;
+    font-size: 8px;
+    letter-spacing: 1px;
+    color: $color-text-muted;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+.info-val {
+    font-family: $font-retro;
+    font-size: 20px;
+    color: $color-text-main;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &--green  { color: $color-success; }
+    &--blue   { color: $color-light-blue; }
+    &--yellow { color: $color-warning; }
+}
+
+// ── Recent sessions ────────────────────────────────────
+
+.recent-sessions-widget {
+    .sessions-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+}
+
+.session-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.75rem;
+    background: rgba($color-bg-panel, 0.5);
+    border: 1px solid rgba($color-light-blue, 0.12);
+    transition: background 0.1s, border-color 0.1s;
+
+    &:hover {
+        background: rgba($color-light-blue, 0.06);
+        border-color: rgba($color-light-blue, 0.3);
+    }
+
+    &__left {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        min-width: 0; // allow text-overflow to work
+    }
+
+    &__members {
+        font-family: $font-retro;
+        font-size: 20px;
+        color: $color-light-blue;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__date {
+        font-family: $font-retro;
+        font-size: 16px;
+        color: $color-text-muted;
+    }
+
+    &__right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.2rem;
+        flex-shrink: 0;
+    }
+
+    &__badge {
+        font-family: $font-pixel;
+        font-size: 7px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: $color-text-inverted;
+        background: $color-info;
+        padding: 2px 6px;
+    }
+
+    &__duration {
+        font-family: $font-retro;
+        font-size: 18px;
+        color: $color-success;
+    }
+}
+
+// ── Quick actions ──────────────────────────────────────
+
+.quick-actions {
+    margin-bottom: 1.5rem;
+
+    h2 {
+        font-family: $font-pixel;
+        font-size: 10px;
+        letter-spacing: 1px;
+        color: $color-light-purple;
+        margin-bottom: 1rem;
+    }
+}
+
+.button-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+
+    .btn {
+        text-align: center;
+        padding: 0.75rem 0.5rem;
+        font-size: 9px;
+    }
+}
+
+// ── Button variants ────────────────────────────────────
+
+.btn-full {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.btn-outline {
+    display: inline-block;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    color: $color-text-muted;
+    border: 1px solid rgba($color-light-blue, 0.25);
+    font-family: $font-pixel;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.1s, color 0.1s, border-color 0.1s, transform 0.08s;
+    box-shadow: $pixel-shadow;
+
+    &:hover {
+        background: rgba($color-light-blue, 0.08);
+        color: $color-text-main;
+        border-color: rgba($color-light-blue, 0.5);
+        box-shadow: $pixel-shadow-hover;
+        transform: translate(-1px, -1px);
+    }
+
+    &:active {
+        box-shadow: 2px 2px 0 $shadow-dark;
+        transform: translate(2px, 2px);
+    }
+}
+
+// ── Desktop tweaks ─────────────────────────────────────
+
+@media (min-width: 769px) {
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr); // more room on desktop? add more stats later
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        padding: 1.5rem;
+
+        .stat-value { font-size: 28px; }
+        .stat-label { font-size: 9px; }
+    }
+
+    .widget {
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .button-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.75rem;
+
+        .btn { font-size: 10px; }
+    }
+
+    .session-item {
+        &__members { font-size: 22px; }
+        &__date    { font-size: 18px; }
+    }
+}

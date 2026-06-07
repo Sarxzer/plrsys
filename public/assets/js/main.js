@@ -98,3 +98,34 @@ if (cookieBanner) {
         rejectButton.addEventListener('click', () => setConsent('rejected'));
     }
 }
+
+// Real-time duration updater for fronting sessions
+function formatDurationSeconds(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    
+    const parts = [];
+    if (hours > 0) parts.push(hours + 'h');
+    if (minutes > 0) parts.push(minutes + 'm');
+    parts.push(secs + 's');
+    return parts.join(' ');
+}
+
+const durationDisplays = document.querySelectorAll('.duration-display[data-started]');
+if (durationDisplays.length > 0) {
+    const updateDurations = () => {
+        durationDisplays.forEach(el => {
+            const started = new Date(el.dataset.started);
+            const now = new Date();
+            const seconds = Math.floor((now - started) / 1000);
+            el.textContent = formatDurationSeconds(seconds);
+        });
+    };
+    
+    // Initial update
+    updateDurations();
+    
+    // Update every second
+    setInterval(updateDurations, 1000);
+}

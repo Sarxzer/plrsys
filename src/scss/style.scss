@@ -1,3 +1,4 @@
+@use '_dashboard';
 // =====================
 // main.scss
 // Innerspace – entry point
@@ -28,6 +29,8 @@
 @use '_manage-members';
 @use '_manage-system';
 @use '_settings';
+@use '_fronting';
+@use '_history';
 
 // Page structure & layout
 @use '_layout';

@@ -1,0 +1,526 @@
+// =====================
+// _fronting.scss
+// plrsys - Fronting page
+// =====================
+
+@use "variables" as *;
+@use "sass:color";
+
+// ── System selector ────────────────────────────────────
+
+.system-selector {
+    margin-bottom: 2rem;
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-family: $font-pixel;
+        font-size: 10px;
+        letter-spacing: 1px;
+        color: $color-text-muted;
+        text-transform: uppercase;
+    }
+
+    select {
+        width: 100%;
+        padding: 0.6rem 0.75rem;
+        background: $color-bg-panel;
+        color: $color-text-main;
+        border: $border-pixel rgba($color-light-blue, 0.4);
+        font-family: $font-retro;
+        font-size: 20px;
+        cursor: pointer;
+        appearance: none;
+        transition: border-color 0.15s;
+
+        &:hover { border-color: $color-light-blue; }
+
+        &:focus {
+            outline: none;
+            border-color: $color-light-purple;
+            box-shadow: 0 0 0 2px rgba($color-light-purple, 0.15);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+    }
+}
+
+// ── Active session card ────────────────────────────────
+
+.active-session {
+    background: $color-bg-card;
+    border: $border-pixel $color-success;
+    box-shadow: $pixel-shadow;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        right: 5px;
+        bottom: 5px;
+        border: 1px solid rgba($color-success, 0.12);
+        pointer-events: none;
+    }
+
+    h2 {
+        font-family: $font-pixel;
+        font-size: 11px;
+        color: $color-success;
+        letter-spacing: 1px;
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+
+        &::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: $color-success;
+            box-shadow: 0 0 0 2px $shadow-dark, 0 0 6px 1px $color-success;
+            animation: blink 1.4s step-end infinite;
+            flex-shrink: 0;
+        }
+    }
+}
+
+// ── Session info tiles ─────────────────────────────────
+
+.session-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+}
+
+.info-item {
+    background: rgba($color-bg-panel, 0.5);
+    border: 1px solid rgba($color-light-blue, 0.15);
+    padding: 0.6rem 0.75rem;
+
+    strong {
+        display: block;
+        font-family: $font-pixel;
+        font-size: 8px;
+        letter-spacing: 1px;
+        color: $color-text-muted;
+        margin-bottom: 0.35rem;
+        text-transform: uppercase;
+    }
+
+    span {
+        font-family: $font-retro;
+        font-size: 22px;
+        color: $color-text-main;
+        line-height: 1;
+    }
+
+    &.info-members span { color: $color-success; }
+    &.info-time span    { color: $color-light-blue; }
+    &.info-duration span { color: $color-warning; }
+}
+
+// ── Session subforms (adjust members, edit note) ───────
+
+.session-subform {
+    background: rgba($color-bg-panel, 0.3);
+    border: 1px solid rgba($color-light-blue, 0.12);
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.subform-label {
+    font-family: $font-pixel;
+    font-size: 8px;
+    letter-spacing: 1px;
+    color: $color-text-muted;
+    text-transform: uppercase;
+    margin-bottom: 0.85rem;
+}
+
+// ── Member tiles (active session adjuster) ─────────────
+
+.member-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 0.85rem;
+}
+
+.member-tile {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.85rem 1rem;
+    background: rgba($color-bg-panel, 0.5);
+    border: 1px solid rgba($color-light-blue, 0.15);
+    cursor: pointer;
+    transition: background 0.1s, border-color 0.1s;
+    user-select: none;
+    position: relative;
+
+    input[type="checkbox"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+        pointer-events: none;
+    }
+
+    &:hover {
+        background: rgba($color-light-blue, 0.07);
+        border-color: rgba($color-light-blue, 0.35);
+    }
+
+    &:has(input:checked) {
+        background: rgba($color-light-blue, 0.1);
+        border-color: $color-light-blue;
+
+        .member-tile__name  { color: $color-text-main; }
+        .member-tile__check { opacity: 1; }
+    }
+
+    &__dot {
+        width: 22px;
+        height: 22px;
+        flex-shrink: 0;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 0 6px currentColor;
+    }
+
+    &__name {
+        font-family: $font-retro;
+        font-size: 24px;
+        color: $color-text-muted;
+        flex: 1;
+        line-height: 1;
+        transition: color 0.1s;
+    }
+
+    &__check {
+        font-family: $font-pixel;
+        font-size: 10px;
+        color: $color-light-blue;
+        opacity: 0;
+        transition: opacity 0.1s;
+        flex-shrink: 0;
+    }
+}
+
+// ── Member checkboxes (start session form) ─────────────
+
+.member-checkboxes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 0.85rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.85rem 1rem;
+    background: rgba($color-bg-panel, 0.5);
+    border: 1px solid rgba($color-light-blue, 0.15);
+    cursor: pointer;
+    transition: background 0.1s, border-color 0.1s;
+    user-select: none;
+
+    &:hover {
+        background: rgba($color-light-blue, 0.07);
+        border-color: rgba($color-light-blue, 0.35);
+    }
+
+    &:has(input:checked) {
+        background: rgba($color-light-blue, 0.1);
+        border-color: $color-light-blue;
+
+        .member-name { color: $color-text-main; }
+    }
+
+    input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        cursor: pointer;
+        accent-color: $color-light-blue;
+    }
+
+    .member-color {
+        width: 22px;
+        height: 22px;
+        flex-shrink: 0;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 0 6px currentColor;
+    }
+
+    .member-name {
+        font-family: $font-retro;
+        font-size: 24px;
+        color: $color-text-muted;
+        line-height: 1;
+        transition: color 0.1s;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+// ── Note field ─────────────────────────────────────────
+
+.note-field {
+    width: 100%;
+    min-height: 80px;
+    padding: 0.65rem 0.75rem;
+    background: $color-bg-panel;
+    color: $color-text-main;
+    border: 1px solid rgba($color-light-blue, 0.3);
+    font-family: $font-retro;
+    font-size: 20px;
+    resize: vertical;
+    margin-bottom: 0.75rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    &::placeholder { color: rgba($color-text-muted, 0.45); }
+
+    &:focus {
+        outline: none;
+        border-color: $color-light-purple;
+        box-shadow: 0 0 0 2px rgba($color-light-purple, 0.15);
+    }
+}
+
+// ── Generic textarea (start session form) ──────────────
+
+textarea:not(.note-field) {
+    width: 100%;
+    min-height: 90px;
+    padding: 0.65rem 0.75rem;
+    background: $color-bg-panel;
+    color: $color-text-main;
+    border: 1px solid rgba($color-light-blue, 0.3);
+    font-family: $font-retro;
+    font-size: 20px;
+    resize: vertical;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    &::placeholder { color: rgba($color-text-muted, 0.5); }
+
+    &:focus {
+        outline: none;
+        border-color: $color-light-purple;
+        box-shadow: 0 0 0 2px rgba($color-light-purple, 0.15);
+    }
+}
+
+// ── No active session ──────────────────────────────────
+
+.no-active-session {
+    background: $color-bg-card;
+    border: $border-pixel rgba($color-text-muted, 0.3);
+    box-shadow: $pixel-shadow;
+    padding: 2rem 1.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+
+    h2 {
+        font-family: $font-pixel;
+        font-size: 11px;
+        color: $color-text-muted;
+        letter-spacing: 1px;
+        margin-bottom: 0.5rem;
+    }
+
+    p {
+        font-family: $font-retro;
+        font-size: 20px;
+        color: rgba($color-text-muted, 0.6);
+    }
+}
+
+// ── Start session form ─────────────────────────────────
+
+.session-form {
+    background: $color-bg-card;
+    border: $border-pixel rgba($color-light-purple, 0.5);
+    box-shadow: $pixel-shadow;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        right: 5px;
+        bottom: 5px;
+        border: 1px solid rgba($color-light-purple, 0.1);
+        pointer-events: none;
+    }
+
+    h2 {
+        font-family: $font-pixel;
+        font-size: 11px;
+        color: $color-light-purple;
+        letter-spacing: 1px;
+        margin-bottom: 1.5rem;
+    }
+}
+
+// ── Form groups ────────────────────────────────────────
+
+.form-group {
+    margin-bottom: 1.5rem;
+
+    & > label {
+        display: block;
+        margin-bottom: 0.6rem;
+        font-family: $font-pixel;
+        font-size: 9px;
+        letter-spacing: 1px;
+        color: $color-text-muted;
+        text-transform: uppercase;
+    }
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+// ── Buttons ────────────────────────────────────────────
+
+.btn-primary {
+    background: $color-light-blue;
+    color: $color-text-inverted;
+    box-shadow: $pixel-shadow;
+
+    &:hover {
+        background: color.adjust($color-light-blue, $lightness: 8%);
+        box-shadow: $pixel-shadow-hover;
+        transform: translate(-1px, -1px);
+    }
+
+    &:active {
+        box-shadow: 2px 2px 0 $shadow-dark;
+        transform: translate(2px, 2px);
+    }
+}
+
+.btn-danger {
+    background: $color-error;
+    color: #fff;
+    box-shadow: $pixel-shadow;
+
+    &:hover {
+        background: color.adjust($color-error, $lightness: 8%);
+        box-shadow: $pixel-shadow-hover;
+        transform: translate(-1px, -1px);
+    }
+
+    &:active {
+        box-shadow: 2px 2px 0 $shadow-dark;
+        transform: translate(2px, 2px);
+    }
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 9px;
+}
+
+.btn-full {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 0.85rem;
+}
+
+.btn-secondary-link {
+    display: inline-block;
+    padding: 0.6rem 1.25rem;
+    background: rgba($color-text-muted, 0.15);
+    color: $color-text-muted;
+    border: 1px solid rgba($color-text-muted, 0.3);
+    font-family: $font-pixel;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    margin-top: 1.25rem;
+    margin-right: 0.5rem;
+    transition: background 0.1s, color 0.1s, border-color 0.1s, transform 0.08s;
+    box-shadow: $pixel-shadow;
+
+    &:hover {
+        background: rgba($color-text-muted, 0.25);
+        color: $color-text-main;
+        border-color: $color-text-muted;
+        box-shadow: $pixel-shadow-hover;
+        transform: translate(-1px, -1px);
+    }
+
+    &:active {
+        box-shadow: 2px 2px 0 $shadow-dark;
+        transform: translate(2px, 2px);
+    }
+}
+
+.end-session-form {
+    margin-top: 0.75rem;
+}
+
+// ── Inline alert boxes ─────────────────────────────────
+
+.alert-box {
+    background: $color-bg-card;
+    border: $border-pixel $color-info;
+    box-shadow: $pixel-shadow;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+
+    &.alert-error { border-color: $color-error;   p { color: $color-error; } }
+    &.alert-info  { border-color: $color-info;    p { color: $color-info; } }
+
+    p {
+        font-family: $font-retro;
+        font-size: 20px;
+        margin: 0;
+    }
+
+    a {
+        color: $color-light-blue;
+        text-decoration: underline;
+        &:hover { color: $color-light-purple; }
+    }
+}
+
+// ── Mobile ─────────────────────────────────────────────
+
+@media (max-width: 768px) {
+    .session-info {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        .btn { width: 100%; text-align: center; }
+    }
+
+    .end-session-form .btn-danger,
+    .end-session-form .btn-full {
+        width: 100%;
+    }
+}
