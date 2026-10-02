@@ -5,3 +5,5 @@ RUN apt-get update && apt-get install -y git unzip libzip-dev \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+RUN useradd -m -u 1000 -s /bin/bash vscode

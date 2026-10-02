@@ -2,7 +2,7 @@
   "name": "plrsys",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
-  "workspaceFolder": "/var/www/innerspace",
+  "workspaceFolder": "/var/www/plrsys",
   "features": {
     "ghcr.io/devcontainers/features/node:1": {}
   },
@@ -17,5 +17,7 @@
       ]
     }
   },
-  "postCreateCommand": "composer install"
+  "postCreateCommand": "composer install",
+  "remoteUser": "vscode",
+  "updateRemoteUserUID": true
 }
