@@ -2,6 +2,7 @@
   "name": "plrsys",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
+  "runServices": ["app", "web", "db"],
   "workspaceFolder": "/var/www/plrsys",
   "mounts": [
     "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind"
