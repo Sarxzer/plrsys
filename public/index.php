@@ -32,6 +32,14 @@ if ($_ENV['APP_DEBUG'] === 'true') {
     ini_set('display_errors', '0');
 }
 
+// Get version from VERSION file
+$versionFile = __DIR__ . '/../VERSION';
+if (file_exists($versionFile)) {
+    $version = trim(file_get_contents($versionFile));
+} else {
+    $version = 'unknown';
+}
+
 $database = new Database();
 $pdo = $database->getPdo();
 

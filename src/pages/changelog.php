@@ -7,26 +7,39 @@
 
  */
 
-// Fetch latest version info from GitHub API
-$latestVersion = null;
-try {
-    $response = file_get_contents('https://api.github.com/repos/sarxzer/plrsys/commits/main ', false, stream_context_create([
-        'http' => [
-            'header' => 'User-Agent: plrsys/1.0'
-        ]
-    ]));
-    $data = json_decode($response, true);
-    if (isset($data['commit']['message'])) {
-        // Assuming the commit message contains the version like "Release v1.2.3"
-        if (preg_match('/Release\s+v?([\d\.]+)/i', $data['commit']['message'], $matches)) {
-            $latestVersion = $matches[1];
-        } else {
-            $latestVersion = substr($data['sha'], 0, 7); // Fallback to short commit hash if no version found in message
-        }
-    }
-} catch (Exception $e) {
-    Alert::error("Failed to fetch latest version info.");
+// // Fetch latest version info from GitHub API
+// $latestVersion = null;
+// try {
+//     $response = file_get_contents('https://api.github.com/repos/sarxzer/plrsys/commits/main ', false, stream_context_create([
+//         'http' => [
+//             'header' => 'User-Agent: plrsys/1.0'
+//         ]
+//     ]));
+//     $data = json_decode($response, true);
+//     if (isset($data['commit']['message'])) {
+//         // Assuming the commit message contains the version like "Release v1.2.3"
+//         if (preg_match('/Release\s+v?([\d\.]+)/i', $data['commit']['message'], $matches)) {
+//             $latestVersion = $matches[1];
+//         } else {
+//             $latestVersion = substr($data['sha'], 0, 7); // Fallback to short commit hash if no version found in message
+//         }
+//     }
+// } catch (Exception $e) {
+//     Alert::error("Failed to fetch latest version info.");
+// }
+
+// Get changelog from CHANGELOG.md
+$markdownFile = __DIR__ . '/changelog.md';
+if (!file_exists($markdownFile)) {
+    Alert::error('Changelog Not Found');
+    header('Location: /home');
+    exit;
 }
+
+$Parsedown = new ParsedownExtra();
+$markdownContent = file_get_contents($markdownFile);
+$htmlContent = $Parsedown->text($markdownContent);
+?>
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -49,9 +62,10 @@ try {
 
             <div class="main">
                 <h1>Changelog</h1>
-                <p>Latest version: <?= htmlspecialchars($latestVersion ?? 'Unknown') ?></p>
-                
-                <p><?= $data['commit']['message'] ?? 'No commit message available.' ?></p>
+                <p>Latest version: <?= $version ?? 'Unknown' ?></p>
+                <div class="changelog-content">
+                    <?= $htmlContent ?>
+                </div>
             </div>
 
             <?php include $includesDir . '/footer.php'; ?>
