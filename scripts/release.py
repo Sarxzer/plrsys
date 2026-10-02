@@ -42,6 +42,10 @@ CHECKLIST = [
 
 # Patterns that should never appear in tracked files (checked automatically).
 SECRET_PATTERN = r"discord(app)?\.com/api/webhooks/[0-9]+|BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY"
+VERSION_PATTERN = re.compile(
+    r"^v?(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)"
+    r"(?:-(?P<phase>alpha|beta)(?:\.(?P<prerelease>\d+))?)?$"
+)
 
 
 # ------------------------------------------------------------------------------------------
@@ -99,19 +103,44 @@ class ReleaseManager:
 
     def _read_version(self):
         if self.version_file.exists():
-            v = self.version_file.read_text().strip()
-            if re.match(r"^\d+\.\d+\.\d+$", v):
-                return v
+            version = self.version_file.read_text().strip()
+            match = VERSION_PATTERN.fullmatch(version)
+            if match:
+                return self._format_version(match)
         return "0.1.0"
 
     def _write_version(self, version):
         self.version_file.write_text(version + "\n")
 
+    def _version_parts(self, version=None):
+        match = VERSION_PATTERN.fullmatch(version or self.current)
+        if not match:
+            raise ValueError(f"Invalid version: {version or self.current}")
+        return match
+
+    def _format_version(self, match, phase=None, prerelease=None):
+        version = f"{match.group('major')}.{match.group('minor')}.{match.group('patch')}"
+        phase = phase if phase is not None else match.group("phase")
+        prerelease = prerelease if prerelease is not None else match.group("prerelease")
+        if phase:
+            version += f"-{phase}"
+            if prerelease:
+                version += f".{prerelease}"
+        return version
+
     def _bump(self, part):
-        major, minor, patch = map(int, self.current.split("."))
+        match = self._version_parts()
+        major = int(match.group("major"))
+        minor = int(match.group("minor"))
+        patch = int(match.group("patch"))
         if part == "major": return f"{major + 1}.0.0"
         if part == "minor": return f"{major}.{minor + 1}.0"
         if part == "patch": return f"{major}.{minor}.{patch + 1}"
+        if part == "stable": return f"{major}.{minor}.{patch}"
+        if part in ("alpha", "beta"):
+            current_prerelease = int(match.group("prerelease") or 0)
+            next_prerelease = current_prerelease + 1 if match.group("phase") == part else 1
+            return self._format_version(match, phase=part, prerelease=str(next_prerelease))
 
     def ask_version(self):
         print(f"\n  Current version: {c(BOLD, self.current)}")
@@ -119,20 +148,27 @@ class ReleaseManager:
         print(f"  {c(CYAN, '1')}  Patch  -> {self._bump('patch')}   (bug fixes)")
         print(f"  {c(CYAN, '2')}  Minor  -> {self._bump('minor')}   (new features, backwards compat)")
         print(f"  {c(CYAN, '3')}  Major  -> {self._bump('major')}   (breaking changes)")
-        print(f"  {c(CYAN, '4')}  Custom")
+        print(f"  {c(CYAN, '4')}  Alpha  -> {self._bump('alpha')}   (unstable prerelease)")
+        print(f"  {c(CYAN, '5')}  Beta   -> {self._bump('beta')}    (feature-complete prerelease)")
+        print(f"  {c(CYAN, '6')}  Stable -> {self._bump('stable')}  (remove prerelease label)")
+        print(f"  {c(CYAN, '7')}  Custom")
         div()
         while True:
-            choice = input("  Pick [1-4]: ").strip()
+            choice = input("  Pick [1-7]: ").strip()
             if choice == "1": return self._bump("patch")
             if choice == "2": return self._bump("minor")
             if choice == "3": return self._bump("major")
-            if choice == "4":
+            if choice == "4": return self._bump("alpha")
+            if choice == "5": return self._bump("beta")
+            if choice == "6": return self._bump("stable")
+            if choice == "7":
                 while True:
-                    v = input("  Enter version (X.Y.Z): ").strip()
-                    if re.match(r"^\d+\.\d+\.\d+$", v):
-                        return v
-                    err("Must be X.Y.Z format")
-            err("Pick 1-4")
+                    version = input("  Enter version (X.Y.Z[-alpha[.N]|-beta[.N]]): ").strip()
+                    match = VERSION_PATTERN.fullmatch(version)
+                    if match:
+                        return self._format_version(match)
+                    err("Must be X.Y.Z, optionally followed by -alpha, -beta, or a numbered prerelease")
+            err("Pick 1-7")
 
     # ---- Git ----------------------------------------------------------------
 

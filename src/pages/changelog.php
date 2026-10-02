@@ -29,7 +29,7 @@
 // }
 
 // Get changelog from CHANGELOG.md
-$markdownFile = __DIR__ . '/changelog.md';
+$markdownFile = __DIR__ . '/../../CHANGELOG.md';
 if (!file_exists($markdownFile)) {
     Alert::error('Changelog Not Found');
     header('Location: /home');
