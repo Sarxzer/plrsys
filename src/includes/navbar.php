@@ -8,7 +8,7 @@
 ?>
 <nav class="top-nav">
     <div class="nav-inner">
-        <div class="nav-logo">✦ INNER<br>SPACE</div>
+        <div class="nav-logo">plrsys<span class="blinking">_</span></div>
         <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
             <span></span><span></span><span></span>
         </button>
@@ -39,7 +39,7 @@
     <?php endforeach; ?>
 </div>
 <marquee class="site-announcement" behavior="scroll" direction="left" scrollamount="5">
-    Welcome to Innerspace! The website is still under construction. <a href="/changelog">Learn more</a>.
+    Welcome to plrsys! The website is still under construction. <a href="/changelog">Learn more</a>.
 </marquee>
 <nav class="bottom-nav">
     <a href="/home" class="bottom-nav-item <?= ($parts[0] === 'home' || $parts[0] === '') ? 'active' : '' ?>">

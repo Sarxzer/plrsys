@@ -1,12 +1,12 @@
 // =====================
 // _settings.scss
-// Innerspace - Settings page
+// plrsys - Settings page
 // =====================
 
 @use "variables" as *;
 @use "sass:color";
 
-// -- Settings layout --------------------------------------------------
+// -- Settings layout ----------------------------------
 
 .settings-wrapper {
     max-width: 640px;
@@ -61,7 +61,7 @@
     color: $color-text-muted;
 }
 
-// -- Section cards ----------------------------------------------------
+// -- Section cards -----------------------------------
 
 .settings-section {
     background: $color-bg-card;
@@ -103,7 +103,7 @@
     gap: 1rem;
 }
 
-// -- Field rows -------------------------------------------------------
+// -- Field rows -------------------------------------
 
 .settings-field {
     display: flex;
@@ -152,7 +152,7 @@
     }
 }
 
-// -- Current value display -------------------------------------------
+// -- Current value display -----------------------------
 
 .settings-current {
     display: inline-flex;
@@ -177,7 +177,7 @@
     color: $color-warning;
 }
 
-// -- Submit button ----------------------------------------------------
+// -- Submit button -----------------------------------
 
 .settings-submit {
     background: $color-light-blue;
@@ -220,7 +220,7 @@
     }
 }
 
-// -- Divider inside section ------------------------------------------
+// -- Divider inside section ----------------------------
 
 .settings-divider {
     height: 1px;
@@ -228,7 +228,7 @@
     margin: 0.25rem 0;
 }
 
-// -- Status chip ------------------------------------------------------
+// -- Status chip ------------------------------------
 
 .settings-status {
     display: inline-flex;
@@ -279,7 +279,7 @@
     flex-shrink: 0;
 }
 
-// -- Info row (label + value side by side) ---------------------------
+// -- Info row (label + value side by side) ------------------
 
 .settings-info-row {
     display: flex;
@@ -309,7 +309,7 @@
     line-height: 1.4;
 }
 
-// -- Danger zone ------------------------------------------------------
+// -- Danger zone ------------------------------------
 
 .settings-section.danger-zone {
     border-color: rgba($color-error, 0.2);
@@ -324,7 +324,7 @@
     }
 }
 
-// -- Link button ------------------------------------------------------
+// -- Link button ------------------------------------
 
 .settings-link-btn {
     display: inline-flex;
@@ -365,7 +365,7 @@
     }
 }
 
-// -- Collapsible form -------------------------------------------------
+// -- Collapsible form ---------------------------------
 
 .settings-collapsible {
     display: none;
@@ -414,7 +414,7 @@
     margin: 0;
 }
 
-// -- Password requirements -------------------------------------------
+// -- Password requirements -----------------------------
 
 .password-requirements.settings-password-requirements {
     position: static;
@@ -426,7 +426,7 @@
     margin: 0.75rem 0 0;
 }
 
-// -- Logout row -------------------------------------------------------
+// -- Logout row -------------------------------------
 
 .settings-logout-row {
     display: flex;

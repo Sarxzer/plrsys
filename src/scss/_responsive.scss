@@ -1,6 +1,6 @@
 // =====================
 // _responsive.scss
-// Innerspace – Responsive styles
+// plrsys – Responsive styles
 // =====================
 
 @use "variables" as *;
@@ -130,7 +130,7 @@
 //     }
 // }
 
-// ── Bottom Nav (mobile only) ──────────────────────────────
+// ---- Bottom Nav (mobile only) ------------------------------------------------------------
 
 @media (max-width: 768px) {
     .top-nav {
@@ -288,7 +288,7 @@
         padding-bottom: 80px;
     }
 
-    /* ── Alert messages ── */
+    /* ---- Alert messages ---- */
 
     .alerts-wrapper {
         top: 1rem;

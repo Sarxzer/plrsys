@@ -1,21 +1,21 @@
-# Innerspace — TODO
+# plrsys - TODO
 
 > Last updated: 2026-05-24
 
 ---
 
-## Priority — Do These Now
+## Priority - Do These Now
 
 > Curated short-list of what to tackle next, roughly in order.
 
-- [x] [HIGH] Fix login rate limiting dead code — the 5-attempt lockout check runs after an `exit`, so it never fires. One-liner fix in `src/pages/auth/login.php`.
-- [x] [HIGH] Make logout a POST request — anyone can log a user out with a crafted link. Needs a form + CSRF token.
-- [x] [HIGH] Add nginx security headers — HSTS, CSP, X-Content-Type-Options, Referrer-Policy, frame-ancestors. Quick win in `nginx.conf`.
-- [x] [MEDIUM] Sanitize `HTTP_REFERER` redirect in CSRF fail handler — currently an open redirect in `src/php/utils.php`.
-- [ ] [MEDIUM] Build out the dashboard — currently just 3 links. Show current fronting status at minimum.
-- [ ] [MEDIUM] Implement fronting history page — route exists, page body is empty.
-- [ ] [HIGH] Build account deletion/anonymization flow — button exists but is disabled. This is a GDPR obligation stated in the Privacy Policy.
-- [x] [HIGH] Add cookie consent banner — cookies are being set without disclosure, required under GDPR/CNIL.
+- [x] [HIGH] Fix login rate limiting dead code - the 5-attempt lockout check runs after an `exit`, so it never fires. One-liner fix in `src/pages/auth/login.php`.
+- [x] [HIGH] Make logout a POST request - anyone can log a user out with a crafted link. Needs a form + CSRF token.
+- [x] [HIGH] Add nginx security headers - HSTS, CSP, X-Content-Type-Options, Referrer-Policy, frame-ancestors. Quick win in `nginx.conf`.
+- [x] [MEDIUM] Sanitize `HTTP_REFERER` redirect in CSRF fail handler - currently an open redirect in `src/php/utils.php`.
+- [ ] [MEDIUM] Build out the dashboard - currently just 3 links. Show current fronting status at minimum.
+- [ ] [MEDIUM] Implement fronting history page - route exists, page body is empty.
+- [ ] [HIGH] Build account deletion/anonymization flow - button exists but is disabled. This is a GDPR obligation stated in the Privacy Policy.
+- [x] [HIGH] Add cookie consent banner - cookies are being set without disclosure, required under GDPR/CNIL.
 
 ---
 
@@ -23,7 +23,7 @@
 
 - [ ] [HIGH] Make logout a POST request with CSRF token to prevent cross-site logout attacks
 - [ ] [HIGH] Add security headers in nginx: HSTS, CSP, X-Content-Type-Options, Referrer-Policy, frame-ancestors
-- [ ] [HIGH] Fix login rate limiting — the 5-attempt lockout check is dead code (comes after an `exit`)
+- [ ] [HIGH] Fix login rate limiting - the 5-attempt lockout check is dead code (comes after an `exit`)
 - [ ] [MEDIUM] Strengthen login throttling beyond session-only (per IP or shared store, not just session)
 - [ ] [MEDIUM] Sanitize `HTTP_REFERER` redirect in CSRF fail handler (currently unsanitized open redirect)
 - [x] [LOW] Don't log CSRF tokens in debug alerts
@@ -33,7 +33,7 @@
 ## Bugs
 
 - [x] [HIGH] Gate `/tests` route behind `APP_DEBUG` check (currently publicly accessible in prod)
-- [x] [HIGH] Fix `mailer.php` — `require_once` path points to `src/php/vendor/` which doesn't exist
+- [x] [HIGH] Fix `mailer.php` - `require_once` path points to `src/php/vendor/` which doesn't exist
 - [x] [HIGH] `admin-test.php` is publicly accessible via `?user_id=N` and dumps full system data
 - [ ] [HIGH] `password_reset_tokens` table missing from `database.sql` schema
 - [ ] [MEDIUM] Fix potential undefined variable `$member_name` in breadcrumb generation (outside the if block)
@@ -42,7 +42,7 @@
 
 ## UX & Polish
 
-- [ ] [MEDIUM] Build out the dashboard — currently just a list of 3 links
+- [ ] [MEDIUM] Build out the dashboard - currently just a list of 3 links
 - [ ] [MEDIUM] Show current fronting status on dashboard
 - [ ] [MEDIUM] Add delete system functionality (button exists but is disabled with "Coming soon")
 - [ ] [LOW] Sync footer version (hardcoded `v0.0.0`) with changelog page's dynamic GitHub commit fetch
@@ -53,7 +53,7 @@
 
 - [ ] [MEDIUM] Complete the friends system (invite flow exists, friends page is incomplete)
 - [ ] [MEDIUM] Implement fronting history page (route exists, page is empty)
-- [ ] [MEDIUM] Add member visibility controls (public/friends/private — in DB schema, not in UI)
+- [ ] [MEDIUM] Add member visibility controls (public/friends/private - in DB schema, not in UI)
 - [ ] [MEDIUM] Password reset via email (`sendPasswordResetEmail` method exists, no route for it)
 - [ ] [MEDIUM] Recovery codes at registration (for password loss without email)
 - [ ] [LOW] Add member description field to member edit form (in DB, not in form)
@@ -65,8 +65,8 @@
 
 ## Legal / GDPR (required before public launch)
 
-- [ ] [HIGH] Account deletion/anonymization flow — stated in Privacy Policy, button is disabled
-- [ ] [HIGH] Cookie consent banner — cookies set without disclosure (GDPR/CNIL requirement)
+- [ ] [HIGH] Account deletion/anonymization flow - stated in Privacy Policy, button is disabled
+- [ ] [HIGH] Cookie consent banner - cookies set without disclosure (GDPR/CNIL requirement)
 - [ ] [MEDIUM] Write internal RoPA (Record of Processing Activities) document
 - [x] [DONE] Privacy Policy written
 - [x] [DONE] Terms of Service written

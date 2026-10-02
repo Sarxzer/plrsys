@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Log the user in
     if ($totpEnabled) {
-        $data = totp_generate_secret($username, 'Innerspace');
+        $data = totp_generate_secret($username, "plrsys");
 
         $_SESSION['pending_totp_user_id'] = $userId;
         $_SESSION['pending_totp_secret'] = $data['secret'];
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register | Innerspace</title>
+    <title>Register | plrsys</title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <!-- Passphrase option -->
                         <div class="group">
-                            <div class="label">option A — passphrase</div>
+                            <div class="label">option A - passphrase</div>
                             <ul class="list">
                                 <li class="item" data-rule="passphrase">
                                     <span class="pip"></span>
@@ -131,11 +131,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </li>
                             </ul>
                         </div>
-                        <div class="or">— or —</div>
+                        <div class="or">- or -</div>
 
                         <!-- Standard option -->
                         <div class="group">
-                            <div class="label">option B — classic password</div>
+                            <div class="label">option B - classic password</div>
                             <ul class="list">
                                 <li class="item" data-rule="length">
                                     <span class="pip"></span>

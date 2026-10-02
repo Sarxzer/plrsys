@@ -80,7 +80,7 @@ $pendingExpiresAt = $user['pending_email_expires_at'] ?? null;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Set up Email | Innerspace</title>
+    <title>Set up Email | plrsys</title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>

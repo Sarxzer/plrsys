@@ -42,7 +42,7 @@ $active = new ActiveVisitors($pdo);
 
 $active->ping($_SESSION['user_id'] ?? null);
 
-// Discord logging — runs in production too
+// Discord logging - runs in production too
 if (($_ENV['DISCORD_WEBHOOK_LOGGING'] ?? 'false') === 'true') {
     $discord = new DiscordWebhook($_ENV['DISCORD_WEBHOOK_URL']);
 

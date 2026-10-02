@@ -10,9 +10,9 @@
 // Fetch latest version info from GitHub API
 $latestVersion = null;
 try {
-    $response = file_get_contents('https://api.github.com/repos/sarxzer/innerspace/commits/main ', false, stream_context_create([
+    $response = file_get_contents('https://api.github.com/repos/sarxzer/plrsys/commits/main ', false, stream_context_create([
         'http' => [
-            'header' => 'User-Agent: Innerspace/1.0'
+            'header' => 'User-Agent: plrsys/1.0'
         ]
     ]));
     $data = json_decode($response, true);
@@ -33,7 +33,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Changelog | Innerspace</title>
+    <title>Changelog | plrsys</title>
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="/assets/js/main.js?v=<?= filemtime(__DIR__ . '/../../public/assets/js/main.js') ?>" defer></script>

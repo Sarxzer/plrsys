@@ -116,7 +116,7 @@ $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage <?= htmlspecialchars($system['name']) ?> | Innerspace</title>
+    <title>Manage <?= htmlspecialchars($system['name']) ?> | plrsys</title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
@@ -215,7 +215,7 @@ $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <?php if (empty($members)): ?>
                                 <div class="empty-state">
                                     <span class="icon">◻</span>
-                                    <div class="text">no members yet — add the first one</div>
+                                    <div class="text">no members yet - add the first one</div>
                                 </div>
                             <?php else: ?>
                                 <?php foreach ($members as $member): ?>

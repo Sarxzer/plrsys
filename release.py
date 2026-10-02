@@ -1,43 +1,52 @@
 #!/usr/bin/env python3
 """
-Interactive Release/Update Script for plrsys
+Interactive release script for plrsys.
 Manages versioning, changelog, commits, tagging, and deployment to Skynet.
 """
 
 import os
 import re
-import sys
+import shlex
+import shutil
 import subprocess
+import sys
 from datetime import datetime
 from pathlib import Path
 
 
-# ─────────────────────────────────────────────
-#  Config — edit these to match your setup
-# ─────────────────────────────────────────────
+# ------------------------------------------------------------------------------------------
+#  Config - edit these to match your setup
+# ------------------------------------------------------------------------------------------
 
-SKYNET_USER   = "ori"                          # SSH user on Skynet
-SKYNET_HOST   = "skynet"                       # SSH host or alias (~/.ssh/config)
-REMOTE_PATH   = "/var/www/plrsys"              # plrsys root on Skynet
-GIT_BRANCH    = "main"
+SKYNET_USER     = "ori"                        # SSH user on Skynet
+SKYNET_HOST     = "skynet"                     # SSH host or alias (~/.ssh/config)
+REMOTE_PATH     = "/var/www/plrsys"            # plrsys root on Skynet
+GIT_BRANCH      = "main"
+PHP_FPM_SERVICE = "php8.4-fpm"
+
+# Folders (relative to REMOTE_PATH) the web server must be able to write to.
+WRITABLE_DIRS   = ["uploads/pfps"]
 
 # Pre-release checklist items shown before every release.
-# Check off each one manually — the script won't proceed until all are confirmed.
+# Confirm each one manually - the script won't proceed past skipped items without asking.
 CHECKLIST = [
-    "Privacy Policy is up to date",
+    "Privacy Policy is up to date and matches what the database actually stores",
     "Terms of Service is up to date",
     "Account deletion flow works correctly",
     "Cookie disclosure is present",
     "CHANGELOG reflects all user-facing changes",
-    "No debug flags left on (APP_DEBUG=false in .env)",
+    "Schema changes were applied on Skynet (database.sql is in sync)",
     "CSRF tokens present on all POST forms",
     "No hardcoded secrets or API keys in code",
 ]
 
+# Patterns that should never appear in tracked files (checked automatically).
+SECRET_PATTERN = r"discord(app)?\.com/api/webhooks/[0-9]+|BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY"
 
-# ─────────────────────────────────────────────
+
+# ------------------------------------------------------------------------------------------
 #  Helpers
-# ─────────────────────────────────────────────
+# ------------------------------------------------------------------------------------------
 
 RESET  = "\033[0m"
 BOLD   = "\033[1m"
@@ -53,7 +62,7 @@ def ok(msg):   print(c(GREEN,  f"  + {msg}"))
 def err(msg):  print(c(RED,    f"  x {msg}"))
 def info(msg): print(c(CYAN,   f"  > {msg}"))
 def warn(msg): print(c(YELLOW, f"  ! {msg}"))
-def div():     print(c(DIM, "  " + "─" * 56))
+def div():     print(c(DIM, "  " + "-" * 56))
 
 def confirm(prompt, default="y"):
     hint = "[Y/n]" if default == "y" else "[y/N]"
@@ -62,23 +71,20 @@ def confirm(prompt, default="y"):
         return default == "y"
     return answer == "y"
 
-def run(cmd, check=True, silent=False):
-    result = subprocess.run(
-        cmd, shell=True, capture_output=True, text=True, check=False
-    )
+def run(cmd, check=True):
+    """Run a shell command and return stripped stdout. Exits on failure if check=True."""
+    result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     if check and result.returncode != 0:
         err(f"Command failed: {cmd}")
         if result.stderr:
             print(c(RED, f"    {result.stderr.strip()}"))
         sys.exit(1)
-    if not silent and result.stdout.strip():
-        return result.stdout.strip()
     return result.stdout.strip()
 
 
-# ─────────────────────────────────────────────
+# ------------------------------------------------------------------------------------------
 #  ReleaseManager
-# ─────────────────────────────────────────────
+# ------------------------------------------------------------------------------------------
 
 class ReleaseManager:
 
@@ -89,7 +95,7 @@ class ReleaseManager:
         self.current       = self._read_version()
         self.new_version   = None
 
-    # ── Version ──────────────────────────────
+    # ---- Version ------------------------------------------------------------
 
     def _read_version(self):
         if self.version_file.exists():
@@ -110,9 +116,9 @@ class ReleaseManager:
     def ask_version(self):
         print(f"\n  Current version: {c(BOLD, self.current)}")
         div()
-        print(f"  {c(CYAN, '1')}  Patch  → {self._bump('patch')}   (bug fixes)")
-        print(f"  {c(CYAN, '2')}  Minor  → {self._bump('minor')}   (new features, backwards compat)")
-        print(f"  {c(CYAN, '3')}  Major  → {self._bump('major')}   (breaking changes)")
+        print(f"  {c(CYAN, '1')}  Patch  -> {self._bump('patch')}   (bug fixes)")
+        print(f"  {c(CYAN, '2')}  Minor  -> {self._bump('minor')}   (new features, backwards compat)")
+        print(f"  {c(CYAN, '3')}  Major  -> {self._bump('major')}   (breaking changes)")
         print(f"  {c(CYAN, '4')}  Custom")
         div()
         while True:
@@ -126,14 +132,14 @@ class ReleaseManager:
                     if re.match(r"^\d+\.\d+\.\d+$", v):
                         return v
                     err("Must be X.Y.Z format")
-            err("Pick 1–4")
+            err("Pick 1-4")
 
-    # ── Git ──────────────────────────────────
+    # ---- Git ----------------------------------------------------------------
 
     def show_status(self):
         print(f"\n  {c(BOLD, 'Git status')}")
         div()
-        status = run("git status --short", silent=True)
+        status = run("git status --short")
         if status:
             for line in status.splitlines():
                 print(f"    {line}")
@@ -142,19 +148,52 @@ class ReleaseManager:
 
         print(f"\n  {c(BOLD, 'Recent commits')}")
         div()
-        commits = run("git log --oneline -8", silent=True)
+        commits = run("git log --oneline -8", check=False)
         if commits:
             for line in commits.splitlines():
                 print(f"    {c(DIM, line)}")
 
-    def get_commits_since_last_tag(self):
-        try:
-            tag = run("git describe --tags --abbrev=0", check=True, silent=True)
-            return run(f"git log {tag}..HEAD --pretty=format:'%h %s'", silent=True)
-        except SystemExit:
-            return run("git log --pretty=format:'%h %s' -20", silent=True)
+    def preflight(self):
+        """Refuse to release from the wrong branch, and warn about unreleased work or secrets."""
+        print(f"\n  {c(BOLD, 'Preflight checks')}")
+        div()
 
-    # ── Checklist ────────────────────────────
+        branch = run("git rev-parse --abbrev-ref HEAD")
+        if branch != GIT_BRANCH:
+            err(f"You are on '{branch}', but releases must come from '{GIT_BRANCH}'")
+            sys.exit(1)
+        ok(f"On branch {GIT_BRANCH}")
+
+        if run("git status --porcelain"):
+            warn("You have uncommitted changes. They will NOT be part of this release.")
+            if not confirm("Continue anyway?", default="n"):
+                err("Release cancelled")
+                sys.exit(1)
+        else:
+            ok("Working tree clean")
+
+        # Secret scan over tracked files (git grep only looks at tracked files).
+        hits = run(f"git grep -nIE {shlex.quote(SECRET_PATTERN)}", check=False)
+        if hits:
+            err("Possible secrets found in tracked files:")
+            for line in hits.splitlines()[:10]:
+                print(c(RED, f"    {line}"))
+            if not confirm("Continue despite possible secrets?", default="n"):
+                err("Release cancelled")
+                sys.exit(1)
+        else:
+            ok("No obvious secrets in tracked files")
+
+    def get_commits_since_last_tag(self):
+        tag = run("git describe --tags --abbrev=0", check=False)
+        if tag:
+            return run(f"git log {shlex.quote(tag)}..HEAD --pretty=format:'%h %s'", check=False)
+        return run("git log --pretty=format:'%h %s' -20", check=False)
+
+    def tag_exists(self, version):
+        return bool(run(f"git tag --list {shlex.quote('v' + version)}", check=False))
+
+    # ---- Checklist ----------------------------------------------------------
 
     def run_checklist(self):
         print(f"\n  {c(BOLD + YELLOW, 'Pre-release checklist')}")
@@ -182,7 +221,7 @@ class ReleaseManager:
         else:
             ok("All checklist items confirmed")
 
-    # ── Changelog ────────────────────────────
+    # ---- Changelog ----------------------------------------------------------
 
     def build_changelog_entry(self):
         print(f"\n  {c(BOLD, 'Changelog entry')}")
@@ -217,43 +256,78 @@ class ReleaseManager:
         header = f"## [v{version}] - {date}\n\n"
         body   = (entry + "\n\n") if entry else "- No changes documented.\n\n"
 
+        default_top = "# Changelog\n\nAll notable changes to plrsys are documented here.\n\n"
+
         if self.changelog.exists():
             existing = self.changelog.read_text()
+            idx = existing.find("\n## ")
+            if idx == -1:
+                # Title/intro only, no releases yet
+                top, rest = existing.rstrip() + "\n\n", ""
+            else:
+                # Keep the title and intro on top, newest release goes right after
+                top, rest = existing[: idx + 1], existing[idx + 1:]
         else:
-            existing = "# Changelog\n\nAll notable changes to plrsys are documented here.\n\n"
+            top, rest = default_top, ""
 
-        self.changelog.write_text(header + body + existing)
-        ok(f"Wrote CHANGELOG.md")
+        self.changelog.write_text(top + header + body + rest)
+        ok("Wrote CHANGELOG.md")
 
-    # ── Commit + tag ─────────────────────────
+    # ---- Commit + tag -------------------------------------------------------
 
     def commit_and_tag(self, message, version):
         print(f"\n  {c(BOLD, 'Committing')}")
         div()
 
-        run("git add VERSION CHANGELOG.md")
-        ok("Staged VERSION and CHANGELOG.md")
+        files = [f for f in ("VERSION", "CHANGELOG.md") if (self.root / f).exists()]
+        run("git add " + " ".join(files))
+        ok("Staged " + " and ".join(files))
 
-        run(f'git commit -m "{message}"')
+        run(f"git commit -m {shlex.quote(message)}")
         ok(f"Committed: {message}")
 
         tag = f"v{version}"
-        run(f'git tag -a {tag} -m "Release {tag}"')
+        run(f"git tag -a {shlex.quote(tag)} -m {shlex.quote('Release ' + tag)}")
         ok(f"Tagged {tag}")
 
-    def push(self):
+    def push(self, version):
         print(f"\n  {c(BOLD, 'Push to remote')}")
         div()
-        if not confirm("Push commits and tags to origin?"):
+        if not confirm("Push the commit and the new tag to origin?"):
             warn("Skipped push")
             return False
-        run(f"git push origin {GIT_BRANCH}")
+        run(f"git push origin {shlex.quote(GIT_BRANCH)}")
         ok(f"Pushed {GIT_BRANCH}")
-        run("git push origin --tags")
-        ok("Pushed tags")
+        run(f"git push origin {shlex.quote('v' + version)}")
+        ok(f"Pushed tag v{version}")
         return True
 
-    # ── Deploy ───────────────────────────────
+    def github_release(self, version, entry):
+        """Optional: publish a GitHub Release using the GitHub CLI, if installed."""
+        if not shutil.which("gh"):
+            return
+        if not confirm("Create a GitHub release from this changelog entry?", default="n"):
+            return
+        notes = entry or "No changes documented."
+        result = subprocess.run(
+            ["gh", "release", "create", f"v{version}",
+             "--title", f"v{version}", "--notes", notes],
+            capture_output=True, text=True,
+        )
+        if result.returncode == 0:
+            ok("GitHub release created")
+        else:
+            warn("GitHub release failed (the tag and push are fine)")
+            if result.stderr.strip():
+                print(c(DIM, f"    {result.stderr.strip()}"))
+
+    # ---- Deploy -------------------------------------------------------------
+
+    def _ssh(self, remote_cmd):
+        return subprocess.run(
+            ["ssh", f"{SKYNET_USER}@{SKYNET_HOST}", remote_cmd],
+            capture_output=True, text=True,
+        )
 
     def deploy(self):
         print(f"\n  {c(BOLD, 'Deploy to Skynet')}")
@@ -264,21 +338,37 @@ class ReleaseManager:
             warn("Skipped deployment")
             return
 
-        ssh = f"ssh {SKYNET_USER}@{SKYNET_HOST}"
+        # Safety check: debug mode must be off on production.
+        env_check = self._ssh(f"grep -E '^APP_DEBUG=' {shlex.quote(REMOTE_PATH)}/.env")
+        debug_line = env_check.stdout.strip()
+        if "true" in debug_line.lower():
+            err(f"Remote .env has {debug_line} - turn debug off before deploying")
+            sys.exit(1)
+        elif debug_line:
+            ok(f"Remote {debug_line}")
+        else:
+            warn("Could not read APP_DEBUG from the remote .env")
+            if not confirm("Continue anyway?", default="n"):
+                err("Deployment aborted")
+                sys.exit(1)
+
+        rp = shlex.quote(REMOTE_PATH)
         steps = [
-            ("git pull",            f"cd {REMOTE_PATH} && git pull origin {GIT_BRANCH}"),
-            ("composer install",    f"cd {REMOTE_PATH} && composer install --no-dev --optimize-autoloader"),
-            ("fix permissions",     f"chown -R www-data:www-data {REMOTE_PATH}/storage {REMOTE_PATH}/cache 2>/dev/null || true"),
-            ("reload php-fpm",      "sudo systemctl reload php8.4-fpm"),
-            ("reload nginx",        "sudo systemctl reload nginx"),
+            ("git pull",         f"cd {rp} && git pull --ff-only origin {shlex.quote(GIT_BRANCH)}"),
+            ("composer install", f"cd {rp} && composer install --no-dev --optimize-autoloader"),
+        ]
+        for d in WRITABLE_DIRS:
+            path = shlex.quote(f"{REMOTE_PATH}/{d}")
+            steps.append((f"writable: {d}",
+                          f"mkdir -p {path} && sudo -n chown -R www-data:www-data {path}"))
+        steps += [
+            ("reload php-fpm", f"sudo -n systemctl reload {PHP_FPM_SERVICE}"),
+            ("reload nginx",   "sudo -n systemctl reload nginx"),
         ]
 
         for label, remote_cmd in steps:
             info(f"Running: {label}")
-            result = subprocess.run(
-                f'{ssh} "{remote_cmd}"',
-                shell=True, capture_output=True, text=True
-            )
+            result = self._ssh(remote_cmd)
             if result.returncode == 0:
                 ok(label)
             else:
@@ -291,15 +381,16 @@ class ReleaseManager:
 
         ok("Deployment complete")
 
-    # ── Main flow ────────────────────────────
+    # ---- Main flow ----------------------------------------------------------
 
     def run(self):
         print()
-        print(c(BOLD + WHITE, "  ╔══════════════════════════════════════╗"))
-        print(c(BOLD + WHITE, "  ║       plrsys  RELEASE  MANAGER       ║"))
-        print(c(BOLD + WHITE, "  ╚══════════════════════════════════════╝"))
+        print(c(BOLD + WHITE, "  +--------------------------------------+"))
+        print(c(BOLD + WHITE, "  |       plrsys  RELEASE  MANAGER       |"))
+        print(c(BOLD + WHITE, "  +--------------------------------------+"))
 
-        # 1. Git status
+        # 1. Preflight + git status
+        self.preflight()
         self.show_status()
 
         # 2. Checklist
@@ -309,6 +400,9 @@ class ReleaseManager:
         print(f"\n  {c(BOLD, 'Version bump')}")
         div()
         self.new_version = self.ask_version()
+        if self.tag_exists(self.new_version):
+            err(f"Tag v{self.new_version} already exists")
+            sys.exit(1)
 
         # 4. Changelog
         entry = self.build_changelog_entry()
@@ -327,10 +421,10 @@ class ReleaseManager:
         # 6. Preview
         print(f"\n  {c(BOLD, 'Release preview')}")
         div()
-        print(f"  Version  : {c(YELLOW, self.current)} → {c(GREEN, self.new_version)}")
+        print(f"  Version  : {c(YELLOW, self.current)} -> {c(GREEN, self.new_version)}")
         print(f"  Commit   : {commit_msg}")
         if entry:
-            print(f"  Changelog:")
+            print("  Changelog:")
             for line in entry.splitlines():
                 print(f"    {c(DIM, line)}")
         div()
@@ -339,9 +433,9 @@ class ReleaseManager:
             err("Release cancelled")
             sys.exit(1)
 
-        # 7. Apply
+        # 7. Apply (nothing has been modified before this point)
         self._write_version(self.new_version)
-        ok(f"VERSION → {self.new_version}")
+        ok(f"VERSION -> {self.new_version}")
 
         if entry:
             self.write_changelog(self.new_version, entry)
@@ -349,21 +443,29 @@ class ReleaseManager:
         self.commit_and_tag(commit_msg, self.new_version)
 
         # 8. Push
-        pushed = self.push()
+        pushed = self.push(self.new_version)
 
-        # 9. Deploy (only if pushed, or override)
+        # 9. GitHub release + deploy (only if pushed)
         if not pushed:
-            warn("Skipped deploy (nothing was pushed)")
+            warn("Skipped GitHub release and deploy (nothing was pushed)")
         else:
+            self.github_release(self.new_version, entry)
             self.deploy()
 
         # Done
         print()
-        print(c(GREEN + BOLD, "  ══════════════════════════════════════"))
+        print(c(GREEN + BOLD, "  " + "=" * 38))
         print(c(GREEN + BOLD, f"   plrsys v{self.new_version} shipped. nice work."))
-        print(c(GREEN + BOLD, "  ══════════════════════════════════════"))
+        print(c(GREEN + BOLD, "  " + "=" * 38))
         print()
 
 
 if __name__ == "__main__":
-    ReleaseManager().run()
+    # Always run from the repo root, wherever the script is launched from
+    os.chdir(Path(__file__).resolve().parent)
+    try:
+        ReleaseManager().run()
+    except (KeyboardInterrupt, EOFError):
+        print()
+        err("Release cancelled")
+        sys.exit(130)

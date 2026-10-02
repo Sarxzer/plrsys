@@ -13,17 +13,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About | Innerspace</title>
+    <title>About | plrsys</title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Innerspace">
-    <meta property="og:title" content="About Innerspace">
-    <meta property="og:description" content="A cozy space for plural systems to track, share, and understand themselves. Learn what Innerspace is, who it's for, and why it exists.">
-    <meta property="og:url" content="https://innerspace.sarxzer.xyz/about">
+    <meta property="og:site_name" content="plrsys">
+    <meta property="og:title" content="About plrsys">
+    <meta property="og:description" content="A cozy space for plural systems to track, share, and understand themselves. Learn what plrsys is, who it's for, and why it exists.">
+    <meta property="og:url" content="https://plrsys.xyz/about">
 
 </head>
 
@@ -42,9 +42,9 @@
                     <!-- Hero -->
                     <div class="about-hero">
                         <span class="about-hero-icon">✦</span>
-                        <div class="about-hero-title">About Innerspace</div>
+                        <div class="about-hero-title">About plrsys</div>
                         <div class="about-hero-sub">
-                            A cozy, safe space for plural systems to track, share, and understand themselves — built with care, not as a product.
+                            A cozy, safe space for plural systems to track, share, and understand themselves - built with care, not as a product.
                         </div>
                     </div>
 
@@ -60,21 +60,21 @@
                             and
                             <span class="about-highlight">OSDD</span>,
                             but many people experience plurality outside of a clinical context too.
-                            It's not a monolith — every system is different, and that's okay.
+                            It's not a monolith - every system is different, and that's okay.
                         </p>
                         <p>
-                            One key part of plural life is <em>fronting</em> — the experience of a specific member being "in control" or most present at a given time. Keeping track of this, and sharing it with trusted people, can be really meaningful.
+                            One key part of plural life is <em>fronting</em> - the experience of a specific member being "in control" or most present at a given time. Keeping track of this, and sharing it with trusted people, can be really meaningful.
                         </p>
                     </div>
 
-                    <!-- Why Innerspace -->
+                    <!-- Why plrsys -->
                     <div class="about-card">
-                        <div class="about-card-label">// Why Innerspace?</div>
+                        <div class="about-card-label">// Why plrsys?</div>
                         <p>
-                            There are existing tools for plural systems — but many of them are tied to large platforms, lack privacy controls, or just don't feel like <em>home</em>. Innerspace was built to be something smaller, more personal, and more intentional.
+                            There are existing tools for plural systems - but many of them are tied to large platforms, lack privacy controls, or just don't feel like <em>home</em>. plrsys was built to be something smaller, more personal, and more intentional.
                         </p>
                         <p>
-                            The goal is simple: give systems a place to manage their members, track fronting sessions, and share selectively with friends — on their own terms, with controls that actually make sense.
+                            The goal is simple: give systems a place to manage their members, track fronting sessions, and share selectively with friends - on their own terms, with controls that actually make sense.
                         </p>
                         <p>
                             No ads. No algorithmic feed. No pressure. Just a tool that respects you.
@@ -85,9 +85,9 @@
                     <div class="about-skye">
                         <span class="about-skye-heart">♥</span>
                         <p>
-                            Innerspace was originally built for
+                            plrsys was originally built for
                             <span class="name">Skye</span>
-                            — the person I love — who needed exactly this kind of space. What started as a personal project became something that felt worth sharing with anyone who might need it too.
+                            - the person I love - who needed exactly this kind of space. What started as a personal project became something that felt worth sharing with anyone who might need it too.
                         </p>
                     </div>
 
@@ -97,13 +97,13 @@
                         <div class="about-oss-content">
                             <div class="about-card-label">// Open source</div>
                             <p>
-                                Innerspace is free and open source, licensed under the
+                                plrsys is free and open source, licensed under the
                                 <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener">AGPL-3.0 license</a>.
                                 That means you can read the code, audit it, self-host it, or contribute to it.
                             </p>
                             <p>
-                                Transparency matters — especially for an app that handles personal and sensitive information. You shouldn't have to just trust a black box.
-                                The full source is available on <a href="https://github.com/sarxzer/innerspace" target="_blank" rel="noopener">GitHub</a>.
+                                Transparency matters - especially for an app that handles personal and sensitive information. You shouldn't have to just trust a black box.
+                                The full source is available on <a href="https://github.com/sarxzer/plrsys" target="_blank" rel="noopener">GitHub</a>.
                             </p>
                         </div>
                     </div>

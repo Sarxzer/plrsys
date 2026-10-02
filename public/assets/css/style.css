@@ -628,7 +628,7 @@ h2,
   margin-top: 4px;
 }
 
-/* ── Form elements ─────────────────────────────────────── */
+/* ---- Form elements ------------------------------------------------------------------------------ */
 .input-wrapper {
   display: flex;
   align-items: flex-start;
@@ -658,7 +658,7 @@ h2,
   margin-top: 1px;
 }
 
-/* ── Alert messages ─────────────────────────────────────── */
+/* ---- Alert messages ------------------------------------------------------------------------------ */
 .alerts-wrapper {
   position: fixed;
   top: 10rem;
@@ -760,7 +760,7 @@ h2,
   text-shadow: 0 0 4px rgba(196, 120, 232, 0.5);
 }
 
-/* ── Random small components ─────────────────────────────────────── */
+/* ---- Random small components ------------------------------------------------------------------------------ */
 .blinking {
   animation: blink 1.4s step-end infinite;
 }
@@ -847,7 +847,7 @@ h2,
   transform: translate(1px, 1px);
 }
 
-/* ── Cookie banner ─────────────────────────────────────── */
+/* ---- Cookie banner ------------------------------------------------------------------------------ */
 .cookie-banner {
   position: fixed;
   left: 50%;
@@ -4216,7 +4216,7 @@ img {
   .content {
     padding-bottom: 80px;
   }
-  /* ── Alert messages ── */
+  /* ---- Alert messages ---- */
   .alerts-wrapper {
     top: 1rem;
   }

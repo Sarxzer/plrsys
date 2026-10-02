@@ -12,7 +12,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content, viewport-fit=cover">
-    <title>Innerspace</title>
+    <title>plrsys</title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
@@ -31,7 +31,7 @@
 
             <div class="main">
                 <div class="home-hero">
-                    <h1 class="home-title">Innerspace</h1>
+                    <h1 class="home-title">plrsys<span class="blinking">_</span></h1>
                     <p class="home-subtitle">A cozy space for plural systems to track, share, and understand themselves.</p>
                     <div class="home-actions">
                         <?php if (isset($current_user)): ?>
@@ -66,7 +66,7 @@
                     <div class="home-feature">
                         <span class="home-feature-icon yellow glow-sm">⊕</span>
                         <h3>Share with friends</h3>
-                        <p>Invite trusted friends to view your system — on your terms, with granular sharing controls.</p>
+                        <p>Invite trusted friends to view your system - on your terms, with granular sharing controls.</p>
                     </div>
                 </div>
             </div>

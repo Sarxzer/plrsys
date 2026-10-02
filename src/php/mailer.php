@@ -35,7 +35,7 @@ class Mailer
     {
         try {
             // Set email parameters
-            $this->mail->setFrom($_ENV['SMTP_USERNAME'], 'Innerspace');
+            $this->mail->setFrom($_ENV['SMTP_USERNAME'], 'plrsys');
             $this->mail->addAddress($to);
             $this->mail->isHTML($isHTML);
             $this->mail->Subject = $subject;
@@ -52,16 +52,16 @@ class Mailer
     public function sendPasswordResetEmail(string $to, string $token): bool
     {
         $resetLink = ($_ENV['APP_URL'] ?? ('https://' . ($_SERVER['HTTP_HOST'] ?? 'localhost'))) . "/reset-password/confirm?token=$token";
-        $subject = 'Innerspace Password Reset Request';
-        $body = "Hello,<br><br>We received a request to reset your password. Click the link below to reset it:<br><a href='$resetLink'>$resetLink</a><br><br>If you didn't request this, please ignore this email.<br><br>Best,<br>Innerspace Team";
+        $subject = 'plrsys Password Reset Request';
+        $body = "Hello,<br><br>We received a request to reset your password. Click the link below to reset it:<br><a href='$resetLink'>$resetLink</a><br><br>If you didn't request this, please ignore this email.<br><br>Best,<br>plrsys Team";
 
         return $this->sendEmail($to, $subject, $body, true);
     }
 
     public function send2FACodeEmail(string $to, string $code): bool
     {
-        $subject = 'Your Innerspace 2FA Code';
-        $body = "Hello,<br><br>Your Two-Factor Authentication code is: <strong>$code</strong><br><br>This code will expire in 5 minutes.<br><br>Best,<br>Innerspace Team";
+        $subject = 'Your plrsys 2FA Code';
+        $body = "Hello,<br><br>Your Two-Factor Authentication code is: <strong>$code</strong><br><br>This code will expire in 5 minutes.<br><br>Best,<br>plrsys Team";
 
         return $this->sendEmail($to, $subject, $body, true);
     }
@@ -70,8 +70,8 @@ class Mailer
     {
         $baseUrl = $_ENV['APP_URL'] ?? ('https://' . ($_SERVER['HTTP_HOST'] ?? 'localhost'));
         $confirmationUrl = rtrim($baseUrl, '/') . '/confirm-email?user=' . urlencode((string) $userId) . '&token=' . urlencode($token);
-        $subject = 'Confirm your Innerspace email address';
-        $body = "Hello,<br><br>We received a request to update your Innerspace email address. Confirm it by clicking the link below:<br><a href='$confirmationUrl'>$confirmationUrl</a><br><br>If you did not request this change, you can ignore this email and your current address will remain unchanged.<br><br>Best,<br>Innerspace Team";
+        $subject = 'Confirm your plrsys email address';
+        $body = "Hello,<br><br>We received a request to update your plrsys email address. Confirm it by clicking the link below:<br><a href='$confirmationUrl'>$confirmationUrl</a><br><br>If you did not request this change, you can ignore this email and your current address will remain unchanged.<br><br>Best,<br>plrsys Team";
 
         return $this->sendEmail($to, $subject, $body, true);
     }

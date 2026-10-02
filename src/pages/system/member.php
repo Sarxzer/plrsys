@@ -45,8 +45,8 @@ $pronouns = !empty($member['pronouns']) ? htmlspecialchars($member['pronouns']) 
 
 // Build a actually useful description
 $description = $pronouns
-    ? "{$memberName} ({$pronouns}) is a member of the {$systemName} system on Innerspace."
-    : "{$memberName} is a member of the {$systemName} system on Innerspace.";
+    ? "{$memberName} ({$pronouns}) is a member of the {$systemName} system on plrsys."
+    : "{$memberName} is a member of the {$systemName} system on plrsys.";
 
 $canonicalUrl = htmlspecialchars('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
 
@@ -58,19 +58,19 @@ $canonicalUrl = htmlspecialchars('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($member['name']) ?> | Innerspace</title>
+    <title><?= htmlspecialchars($member['name']) ?> | plrsys</title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
 
     <!-- Open Graph -->
     <meta property="og:type" content="profile">
-    <meta property="og:site_name" content="Innerspace">
+    <meta property="og:site_name" content="plrsys">
     <meta property="og:title" content="<?= $memberName ?> · <?= $systemName ?>">
     <meta property="og:description" content="<?= $description ?>">
     <meta property="og:url" content="<?= $canonicalUrl ?>">
     <meta property="og:image" content="/assets/icons/icon-512.png">
-    <meta property="og:image:alt" content="<?= $memberName ?> on Innerspace">
+    <meta property="og:image:alt" content="<?= $memberName ?> on plrsys">
 
     <!-- Twitter / X Card -->
     <meta name="twitter:card" content="summary">

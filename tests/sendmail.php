@@ -5,8 +5,8 @@ require_once __DIR__ . '/../src/php/mailer.php';
 
 $mailer = new Mailer();
 $to = $_ENV['TEST_EMAIL'];
-$subject = 'Test Email from Innerspace';
-$body = 'This is a test email sent from the Innerspace mailer class. If you received this email, the mailer is working correctly.';
+$subject = 'Test Email from plrsys Mailer';
+$body = 'This is a test email sent from the plrsys mailer class. If you received this email, the mailer is working correctly.';
 if ($mailer->sendEmail($to, $subject, $body)) {
     echo "Test email sent successfully to $to";
 } else {

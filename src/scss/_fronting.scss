@@ -6,7 +6,7 @@
 @use "variables" as *;
 @use "sass:color";
 
-// ── System selector ────────────────────────────────────
+// ---- System selector ------------------------------------------------------------------------
 
 .system-selector {
     margin-bottom: 2rem;
@@ -48,7 +48,7 @@
     }
 }
 
-// ── Active session card ────────────────────────────────
+// ---- Active session card ----------------------------------------------------------------
 
 .active-session {
     background: $color-bg-card;
@@ -92,7 +92,7 @@
     }
 }
 
-// ── Session info tiles ─────────────────────────────────
+// ---- Session info tiles ------------------------------------------------------------------
 
 .session-info {
     display: grid;
@@ -128,7 +128,7 @@
     &.info-duration span { color: $color-warning; }
 }
 
-// ── Session subforms (adjust members, edit note) ───────
+// ---- Session subforms (adjust members, edit note) --------------
 
 .session-subform {
     background: rgba($color-bg-panel, 0.3);
@@ -146,7 +146,7 @@
     margin-bottom: 0.85rem;
 }
 
-// ── Member tiles (active session adjuster) ─────────────
+// ---- Member tiles (active session adjuster) --------------------------
 
 .member-selector {
     display: flex;
@@ -215,7 +215,7 @@
     }
 }
 
-// ── Member checkboxes (start session form) ─────────────
+// ---- Member checkboxes (start session form) --------------------------
 
 .member-checkboxes {
     display: flex;
@@ -275,7 +275,7 @@
     }
 }
 
-// ── Note field ─────────────────────────────────────────
+// ---- Note field ----------------------------------------------------------------------------------
 
 .note-field {
     width: 100%;
@@ -299,7 +299,7 @@
     }
 }
 
-// ── Generic textarea (start session form) ──────────────
+// ---- Generic textarea (start session form) ----------------------------
 
 textarea:not(.note-field) {
     width: 100%;
@@ -322,7 +322,7 @@ textarea:not(.note-field) {
     }
 }
 
-// ── No active session ──────────────────────────────────
+// ---- No active session --------------------------------------------------------------------
 
 .no-active-session {
     background: $color-bg-card;
@@ -347,7 +347,7 @@ textarea:not(.note-field) {
     }
 }
 
-// ── Start session form ─────────────────────────────────
+// ---- Start session form ------------------------------------------------------------------
 
 .session-form {
     background: $color-bg-card;
@@ -377,7 +377,7 @@ textarea:not(.note-field) {
     }
 }
 
-// ── Form groups ────────────────────────────────────────
+// ---- Form groups --------------------------------------------------------------------------------
 
 .form-group {
     margin-bottom: 1.5rem;
@@ -399,7 +399,7 @@ textarea:not(.note-field) {
     flex-wrap: wrap;
 }
 
-// ── Buttons ────────────────────────────────────────────
+// ---- Buttons ----------------------------------------------------------------------------------------
 
 .btn-primary {
     background: $color-light-blue;
@@ -482,7 +482,7 @@ textarea:not(.note-field) {
     margin-top: 0.75rem;
 }
 
-// ── Inline alert boxes ─────────────────────────────────
+// ---- Inline alert boxes ------------------------------------------------------------------
 
 .alert-box {
     background: $color-bg-card;
@@ -507,7 +507,7 @@ textarea:not(.note-field) {
     }
 }
 
-// ── Mobile ─────────────────────────────────────────────
+// ---- Mobile ------------------------------------------------------------------------------------------
 
 @media (max-width: 768px) {
     .session-info {

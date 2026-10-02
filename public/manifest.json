@@ -1,6 +1,6 @@
 {
-    "name": "Innerspace",
-    "short_name": "Innerspace",
+    "name": "plrsys",
+    "short_name": "plrsys",
     "description": "System tracking for plurals",
     "start_url": "/",
     "display": "standalone",

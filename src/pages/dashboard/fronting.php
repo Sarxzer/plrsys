@@ -170,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-    // PRG pattern — redirect to avoid form resubmission on refresh
+    // PRG pattern - redirect to avoid form resubmission on refresh
     header("Location: /fronting?system=" . $system_id);
     exit;
 }

@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (isset($_POST['password']) && !$auth->hasTotpEnabled($userId)) {
         $password = $_POST['password'];
         if (password_verify($password, $user['password_hash'])) {
-            $data = totp_generate_secret($user['username'], 'Innerspace');
+            $data = totp_generate_secret($user['username'], 'plrsys');
             $_SESSION['pending_totp_user_id'] = $userId;
             $_SESSION['pending_totp_secret'] = $data['secret'];
             $_SESSION['pending_totp_qr'] = $data['qr_base64'];
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings | Innerspace</title>
+    <title>Settings | plrsys</title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="settings-header-sub">Manage your account, security, and connections.</div>
                     </div>
 
-                    <!-- ── Profile ── -->
+                    <!-- ---- Profile ---- -->
                     <div class="settings-section">
                         <div class="settings-section-header">
                             <span class="settings-section-icon">◈</span>
@@ -160,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <?php if (empty($user['email'])): ?>
                                             <span class="settings-status disabled">
                                                 <span class="status-dot"></span>
-                                                not set — needed for account recovery
+                                                not set - needed for account recovery
                                             </span>
                                         <?php else: ?>
                                             <span class="settings-current">
@@ -183,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
 
-                    <!-- ── Security ── -->
+                    <!-- ---- Security ---- -->
                     <div class="settings-section">
                         <div class="settings-section-header">
                             <span class="settings-section-icon">⊕</span>
@@ -226,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <h2 class="title" id="settings-password-requirements-title">Password Requirements</h2>
 
                                     <div class="group">
-                                        <div class="label">option A — passphrase</div>
+                                        <div class="label">option A - passphrase</div>
                                         <ul class="list">
                                             <li class="item" data-rule="passphrase">
                                                 <span class="pip"></span>
@@ -234,10 +234,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             </li>
                                         </ul>
                                     </div>
-                                    <div class="or">— or —</div>
+                                    <div class="or">- or -</div>
 
                                     <div class="group">
-                                        <div class="label">option B — classic password</div>
+                                        <div class="label">option B - classic password</div>
                                         <ul class="list">
                                             <li class="item" data-rule="length">
                                                 <span class="pip"></span>
@@ -274,12 +274,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <?php if ($auth->hasTotpEnabled($userId)): ?>
                                             <span class="settings-status enabled">
                                                 <span class="status-dot"></span>
-                                                enabled — authenticator app
+                                                enabled - authenticator app
                                             </span>
                                         <?php else: ?>
                                             <span class="settings-status disabled">
                                                 <span class="status-dot"></span>
-                                                disabled — your account is less secure
+                                                disabled - your account is less secure
                                             </span>
                                         <?php endif; ?>
                                     </div>
@@ -330,7 +330,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
 
-                    <!-- ── Connections ── -->
+                    <!-- ---- Connections ---- -->
                     <div class="settings-section">
                         <div class="settings-section-header">
                             <span class="settings-section-icon">⇄</span>
@@ -371,7 +371,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
 
-                    <!-- ── Session ── -->
+                    <!-- ---- Session ---- -->
                     <div class="settings-section">
                         <div class="settings-section-header">
                             <span class="settings-section-icon">◉</span>
@@ -391,7 +391,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
 
-                    <!-- ── Danger zone ── -->
+                    <!-- ---- Danger zone ---- -->
                     <div class="settings-section danger-zone">
                         <div class="settings-section-header">
                             <span class="settings-section-icon is-danger">⚠</span>

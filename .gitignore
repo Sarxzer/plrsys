@@ -1,10 +1,9 @@
 .env
 vendor/
 uploads/pfps/
-.devcontainer/
 .idea/
 .vscode/
-.devcontainer-internal.json
 diff.txt
 .gitignore
 nogit/
+dev.session.sql

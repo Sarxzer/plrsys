@@ -1,9 +1,9 @@
 // =====================
 // _animations.scss
-// Innerspace – keyframes & transitions
+// plrsys – keyframes & transitions
 // =====================
 
-// ── Blinking effect for status indicators ───────────────────────────────
+// ---- Blinking effect for status indicators --------------------------------------------------------------
 @keyframes blink {
     0%,
     100% {
@@ -15,7 +15,7 @@
 }
 
 
-// ── Slide in from the top for mobile menu ───────────────────────────────────────────────
+// ---- Slide in from the top for mobile menu ----------------------------------------------------------------------------------------------
 @keyframes slideInFromTop {
     0% {
         transform: translateY(-100%);
@@ -28,7 +28,7 @@
 }
 
 
-// ── Fade out and slide up for alerts ───────────────────────────────────────────────
+// ---- Fade out and slide up for alerts ----------------------------------------------------------------------------------------------
 @keyframes fadeOut {
     from {
         opacity: 1;

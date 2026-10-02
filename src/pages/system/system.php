@@ -73,25 +73,25 @@ $canonicalUrl = htmlspecialchars('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($system['name']) ?> | Innerspace</title>
+    <title><?= htmlspecialchars($system['name']) ?> | plrsys</title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir?>" defer></script>
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Innerspace">
+    <meta property="og:site_name" content="plrsys">
     <meta property="og:title" content="<?= $systemName ?>">
     <meta property="og:description" content="<?= $systemDescription ?>">
     <meta property="og:url" content="<?= $canonicalUrl ?>">
-    <meta property="og:image" content="https://innerspace.space/assets/icons/icon-512.png"> 
-    <meta property="og:image:alt" content="<?= $systemName ?> system on Innerspace">
+    <meta property="og:image" content="https://plrsys.xyz/assets/icons/icon-512.png"> 
+    <meta property="og:image:alt" content="<?= $systemName ?> system on plrsys">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="<?= $systemName ?>">
     <meta name="twitter:description" content="<?= $systemDescription ?>">
-    <meta name="twitter:image" content="https://innerspace.space/assets/icons/icon-512.png">
+    <meta name="twitter:image" content="https://plrsys.xyz/assets/icons/icon-512.png">
 </head>
 
 <body>

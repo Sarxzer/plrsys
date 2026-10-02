@@ -98,7 +98,7 @@ class DiscordWebhook
                 'color' => $meta[1],
                 'timestamp' => date('c'),
                 'fields' => $fields,
-                'footer' => ['text' => 'Innerspace'],
+                'footer' => ['text' => 'plrsys Logger', 'icon_url' => 'https://plrsys.xyz/assets/icons/icon-512.png'],
             ]);
         } else {
             $response = $this->sendMessage("$emoji [$level] $message");

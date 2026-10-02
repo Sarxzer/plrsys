@@ -1,6 +1,6 @@
 # 🚀 Release Manager
 
-Interactive release workflow for Innerspace. This script automates versioning, changelog management, commits, and git tagging.
+Interactive release workflow for plrsys. This script automates versioning, changelog management, commits, and git tagging.
 
 ## Quick Start
 
@@ -35,7 +35,7 @@ The release script walks you through a complete release workflow:
 $ ./release.py
 
 ============================================================
-🚀 INNERSPACE RELEASE MANAGER
+🚀 plrsys RELEASE MANAGER
 ============================================================
 
 📊 Git Status:

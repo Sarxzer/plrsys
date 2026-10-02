@@ -1,7 +1,11 @@
 <?php
-
-require_once __DIR__ . '/../../../vendor/autoload.php';
-require_once __DIR__ . '/../../php/mailer.php';
+/**
+ * @var array $parts
+ * @var PDO $pdo
+ * @var string $includesDir
+ * @var string $cssDir
+ * @var string $jsDir
+ */
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
@@ -16,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // always show success even if email not found — prevents user enumeration
+    // always show success even if email not found - prevents user enumeration
     if ($user) {
         $token = bin2hex(random_bytes(32));
         $tokenHash = hash('sha256', $token);
@@ -48,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password | Innerspace</title>
+    <title>Reset Password | plrsys</title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>

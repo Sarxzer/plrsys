@@ -1,0 +1,21 @@
+{
+  "name": "plrsys",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/var/www/innerspace",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {}
+  },
+  "forwardPorts": [8000, 3306],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bmewburn.vscode-intelephense-client",
+        "xdebug.php-debug",
+        "mtxr.sqltools",
+        "mtxr.sqltools-driver-mysql"
+      ]
+    }
+  },
+  "postCreateCommand": "composer install"
+}
