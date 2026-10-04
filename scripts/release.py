@@ -13,16 +13,42 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+def load_env_file(path):
+    """Load simple KEY=VALUE entries without requiring a third-party package."""
+    if not path.exists():
+        return
+
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+
+        match = re.match(r"(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)", line)
+        if not match:
+            continue
+
+        key, value = match.groups()
+        value = value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "'\"":
+            value = value[1:-1]
+        else:
+            value = value.split(" #", 1)[0].rstrip()
+        os.environ.setdefault(key, value)
 
 # ------------------------------------------------------------------------------------------
 #  Config - edit these to match your setup
 # ------------------------------------------------------------------------------------------
 
-SKYNET_USER     = "ori"                        # SSH user on Skynet
-SKYNET_HOST     = "skynet"                     # SSH host or alias (~/.ssh/config)
-REMOTE_PATH     = "/var/www/plrsys"            # plrsys root on Skynet
-GIT_BRANCH      = "main"
-PHP_FPM_SERVICE = "php8.4-fpm"
+ROOT_DIR       = Path(__file__).resolve().parent.parent  # Repo root (where VERSION and CHANGELOG live)
+ENV_FILE       = ROOT_DIR / ".env"
+
+load_env_file(ENV_FILE)
+
+SKYNET_USER     = os.getenv("RELEASE_SERVER_USER")        # SSH user on Skynet
+SKYNET_HOST     = os.getenv("RELEASE_SERVER_HOST")        # SSH host or alias (~/.ssh/config)
+REMOTE_PATH     = os.getenv("RELEASE_SERVER_PATH")        # plrsys root on Skynet
+GIT_BRANCH      = os.getenv("RELEASE_GIT_BRANCH")         # Git branch to release from
+PHP_FPM_SERVICE = os.getenv("RELEASE_PHP_FPM_SERVICE")    # PHP FPM service name
 
 # Folders (relative to REMOTE_PATH) the web server must be able to write to.
 WRITABLE_DIRS   = ["uploads/pfps"]
@@ -498,7 +524,7 @@ class ReleaseManager:
 
 if __name__ == "__main__":
     # Always run from the repo root, wherever the script is launched from
-    os.chdir(Path(__file__).resolve().parent)
+    os.chdir(ROOT_DIR)
     try:
         ReleaseManager().run()
     except (KeyboardInterrupt, EOFError):

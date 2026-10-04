@@ -40,7 +40,6 @@ $Parsedown = new ParsedownExtra();
 $markdownContent = file_get_contents($markdownFile);
 $htmlContent = $Parsedown->text($markdownContent);
 ?>
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
