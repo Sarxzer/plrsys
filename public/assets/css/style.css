@@ -1,5 +1,8 @@
 @charset "UTF-8";
-@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap");
+@font-face {
+  font-family: "Press Start 2P";
+  src: url(/assets/fonts/PressStart2P.ttf);
+}
 .dash-header {
   margin-bottom: 1.5rem;
 }
@@ -1157,7 +1160,7 @@ h2,
   margin-bottom: 2rem;
 }
 .home-hero .home-actions {
-  display: flex;
+  /* display: flex; */
   gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
@@ -1304,7 +1307,11 @@ h2,
 }
 .login-container {
   max-width: 400px;
-  margin: 3rem auto;
+  margin: 5.6rem auto; /* bon, c'est un peu près centré... */
+}
+
+.login-box {
+  max-width: 400px;
   padding: 2rem;
   background: #16213e;
   border: 2px solid rgba(163, 196, 243, 0.25);
@@ -3886,7 +3893,7 @@ textarea:not(.note-field):focus {
 }
 
 .main {
-  padding: 2rem 1.5rem;
+  padding: 1.5rem;
   flex: 1;
 }
 
@@ -4039,7 +4046,7 @@ textarea:not(.note-field):focus {
   border-top: 3px solid #a3c4f3;
   box-shadow: 0 -4px 0 #0a0a1a;
   padding: 0.75rem 1.5rem;
-  display: flex;
+  /* display: flex; */
   align-items: center;
   gap: 0.75rem;
   font-family: "VT323", monospace;
@@ -4047,6 +4054,11 @@ textarea:not(.note-field):focus {
   color: #9d9ab5;
   margin-top: auto;
 }
+
+.site-footer .footer-texts {
+  display: inline-flex;
+}
+
 .site-footer .footer-version {
   color: #a3c4f3;
   letter-spacing: 1px;

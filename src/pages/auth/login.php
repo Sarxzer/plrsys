@@ -81,28 +81,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="main">
                 <div class="login-container">
                     <h1 class="login-title">Login</h1>
+                    <div class="login-box">
+                        <form action="login" method="post" class="login-form">
+                            <label for="username">Username:</label>
+                            <input type="text" id="username" name="username"
+                                value="<?= htmlspecialchars($_SESSION['last_failed_username'] ?? '') ?>" required>
 
-                    <form action="login" method="post" class="login-form">
-                        <label for="username">Username:</label><br>
-                        <input type="text" id="username" name="username"
-                            value="<?= htmlspecialchars($_SESSION['last_failed_username'] ?? '') ?>" required><br><br>
+                            <label for="password">Password:</label>
+                            <input type="password" id="password" name="password" required><br>
 
-                        <label for="password">Password:</label><br>
-                        <input type="password" id="password" name="password" required><br><br>
+                            <label for="remember" class="checkbox-label">
+                                <input type="checkbox" id="remember" name="remember"> Remember me
+                            </label>
 
-                        <label for="remember" class="checkbox-label">
-                            <input type="checkbox" id="remember" name="remember"> Remember me
-                        </label>
-                        <br><br>
-
-                        <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
-                        <input type="submit" value="Login">
-                    </form>
-                    <p class="login-subtext"><a href="/register">Don't have an account? Register here.</a></p>
-                    <p class="login-subtext"><a href="/reset-password">Forgot your password?</a></p>
+                            <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
+                            <input type="submit" value="Login">
+                        </form>
+                        <p class="login-subtext"><a href="/register">Don't have an account? Register here.</a></p>
+                        <p class="login-subtext"><a href="/reset-password">Forgot your password?</a></p>
+                    </div>
                 </div>
             </div>
-
             <?php include $includesDir . '/footer.php'; ?>
         </div>
     </div>
