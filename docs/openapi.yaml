@@ -1,0 +1,1721 @@
+openapi: 3.1.0
+
+info:
+  title: plrsys API
+  version: 1.0.0
+  summary: REST API for plrsys, a web app for plural systems.
+  description: |
+    The plrsys API (plrapi) is served from `https://api.plrsys.xyz/` with the version in the
+    path (`/v1`, or the rolling `/vX`). Every endpoint, including the OAuth ones, lives there.
+
+    ## Who can call it
+
+    | Tier | Who | How they authenticate |
+    |---|---|---|
+    | First-party | plrsys web/PWA, plrtel (Minitel) | Rotating access + refresh tokens |
+    | Service | plrbot, cron jobs, internal tools | Service credential (`botAuth`) |
+    | Third-party | Apps made by other developers | OAuth 2.0 authorization code + PKCE, or personal API keys, always scoped |
+
+    Admin / full-access endpoints are intentionally **not documented here**. They are
+    owner-only, audit-logged, and only reachable from the local machine and a restricted
+    Tailscale ACL, never from the public internet.
+
+    ## Sensitive scopes
+
+    Scopes ending in `_private` expose data the user marked private. They are never bundled
+    into a default, must be granted separately on the consent screen, require the user to have
+    verified mail and TOTP, and require the app to register an **IP allowlist** (validated
+    CIDRs, never `0.0.0.0/0`). Wrong-IP or wrong-user access is logged, triggers alerts to the
+    app owner, and repeated violations auto-suspend the app. "Sensitive" never includes
+    credentials; those are never exposed at all.
+
+    ## Hard rules
+
+    * Third parties only ever see **public data plus what the user explicitly allowed** via scopes.
+    * Passwords, password hashes, TOTP secrets, backup codes, tokens, emails and IP addresses are
+      **never** returned by any endpoint to any app. Responses are built from allowlists.
+    * Account deletion, password/email changes and 2FA changes are **first-party only** and
+      always require step-up authentication (password or fresh TOTP).
+    * Privacy settings are enforced server-side on every read, including friend and public views.
+
+    ## Conventions
+
+    * JSON in, JSON out, UTF-8.
+    * Lists return `{ "data": [...], "next_cursor": "..." }` (cursor pagination).
+    * Errors always look like `{ "error": { "code": "...", "message": "..." } }`.
+    * `PATCH` is a partial update: only the fields you send change.
+    * Rate limits are per app and per user, reported in `X-RateLimit-Limit`,
+      `X-RateLimit-Remaining` and `Retry-After` (on `429`).
+    * Test tokens are prefixed `plr_test_` and only work on the sandbox; live tokens are
+      prefixed `plr_live_` and only work on production.
+  license:
+    name: AGPL-3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.html
+
+servers:
+  - url: https://api.plrsys.xyz/v1
+    description: Production
+  - url: https://api-sandbox.plrsys.xyz/v1
+    description: Sandbox (fake data, reset nightly, no real side effects)
+  - url: https://api.plrsys.xyz/vX
+    description: |
+      Rolling channel: `/v1` plus queued v2 changes, live. Used by plrsys' own first-party
+      apps. **May change without notice. Do not build third-party products on it.**
+
+tags:
+  - name: Auth
+    description: Login, 2FA, token rotation. First-party only.
+  - name: System
+    description: The user's own system and public system pages.
+  - name: Members
+    description: Members of a system, including proxy tags.
+  - name: Fronting
+    description: Who is fronting now, switches, co-fronting and history.
+  - name: Friends
+    description: Friend requests and shared front visibility.
+  - name: Data
+    description: Export, import (Simply Plural) and account deletion.
+  - name: Bot
+    description: Platform linking and message proxying for plrbot and other bots.
+  - name: OAuth
+    description: Authorization code flow with PKCE for third-party apps.
+  - name: Developer
+    description: Register and manage your own third-party apps.
+  - name: Connected apps
+    description: Apps a user has authorized, with revoke and access history.
+  - name: Transparency
+    description: Public client registry and abuse reports.
+  - name: Webhooks
+    description: "**Planned, not shipped yet.** Subscriptions for third-party apps."
+
+security:
+  - bearerAuth: []
+
+paths:
+  # ------------------------------------------------------------------ AUTH
+  /auth/login:
+    post:
+      tags: [Auth]
+      operationId: login
+      summary: Log in with email and password
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string, format: password, maxLength: 128 }
+      responses:
+        "200":
+          description: Tokens, or a 2FA challenge if the account has TOTP enabled.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/TokenPair"
+                  - $ref: "#/components/schemas/TwoFactorChallenge"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+
+  /auth/2fa/verify:
+    post:
+      tags: [Auth]
+      operationId: verifyTwoFactor
+      summary: Complete login with a TOTP or backup code
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [temp_token, code]
+              properties:
+                temp_token: { type: string }
+                code:
+                  type: string
+                  description: 6-digit TOTP code or a single-use backup code.
+      responses:
+        "200":
+          description: Tokens.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TokenPair" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      operationId: refreshToken
+      summary: Rotate tokens
+      description: |
+        Exchanges a refresh token for a **new** access token and a **new** refresh token.
+        The old refresh token is invalidated immediately. Reusing an old one revokes the whole
+        token family.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refresh_token]
+              properties:
+                refresh_token: { type: string }
+      responses:
+        "200":
+          description: New token pair.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TokenPair" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      operationId: logout
+      summary: Revoke a refresh token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refresh_token]
+              properties:
+                refresh_token: { type: string }
+      responses:
+        "204": { description: Logged out. }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /auth/minitel-token:
+    post:
+      tags: [Auth]
+      operationId: createMinitelToken
+      summary: Create a single-use login code for plrtel (Minitel)
+      description: Short-lived, single-use, meant to be typed on a Minitel keyboard.
+      responses:
+        "201":
+          description: Login code.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: { type: string, example: "7KQ4-M2XP" }
+                  expires_at: { type: string, format: date-time }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  # ---------------------------------------------------------------- SYSTEM
+  /system:
+    get:
+      tags: [System]
+      operationId: getMySystem
+      summary: Get your own system
+      security:
+        - bearerAuth: []
+        - oauth2: [system:read]
+      responses:
+        "200":
+          description: Your system.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/System" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+    patch:
+      tags: [System]
+      operationId: updateMySystem
+      summary: Update your system
+      security:
+        - bearerAuth: []
+        - oauth2: [system:write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SystemUpdate" }
+      responses:
+        "200":
+          description: Updated system.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/System" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+  /systems/{slug}:
+    get:
+      tags: [System]
+      operationId: getPublicSystem
+      summary: Get a public system page
+      description: Only fields and members the owner made public are returned.
+      security: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string, example: sarxzer }
+      responses:
+        "200":
+          description: Public view of the system.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PublicSystem" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  # --------------------------------------------------------------- MEMBERS
+  /members:
+    get:
+      tags: [Members]
+      operationId: listMembers
+      summary: List members
+      security:
+        - bearerAuth: []
+        - oauth2: [members:read]
+      parameters:
+        - name: q
+          in: query
+          description: Case-insensitive search on name.
+          schema: { type: string }
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Fields"
+      responses:
+        "200":
+          description: A page of members.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Member" }
+                  next_cursor: { type: [string, "null"] }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+    post:
+      tags: [Members]
+      operationId: createMember
+      summary: Create a member
+      security:
+        - bearerAuth: []
+        - oauth2: [members:write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/MemberCreate" }
+      responses:
+        "201":
+          description: The new member.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Member" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+  /members/{id}:
+    parameters:
+      - $ref: "#/components/parameters/MemberId"
+    get:
+      tags: [Members]
+      operationId: getMember
+      summary: Get one member
+      security:
+        - bearerAuth: []
+        - oauth2: [members:read]
+      responses:
+        "200":
+          description: The member.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Member" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    patch:
+      tags: [Members]
+      operationId: updateMember
+      summary: Update a member (partial)
+      security:
+        - bearerAuth: []
+        - oauth2: [members:write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/MemberUpdate" }
+      responses:
+        "200":
+          description: Updated member.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Member" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+    delete:
+      tags: [Members]
+      operationId: deleteMember
+      summary: Delete a member
+      security:
+        - bearerAuth: []
+        - oauth2: [members:write]
+      parameters:
+        - name: keep_history
+          in: query
+          description: |
+            If `true`, fronting history is kept and shows a "deleted member" placeholder.
+            If `false`, the member's history entries are deleted too.
+          schema: { type: boolean, default: true }
+      responses:
+        "204": { description: Deleted. }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  # -------------------------------------------------------------- FRONTING
+  /front:
+    get:
+      tags: [Fronting]
+      operationId: getFront
+      summary: Who is fronting right now
+      security:
+        - bearerAuth: []
+        - oauth2: [front:read]
+      responses:
+        "200":
+          description: Current front.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Front" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+    post:
+      tags: [Fronting]
+      operationId: setFront
+      summary: Switch (set the whole front)
+      description: |
+        Replaces the entire current front with `member_ids`. An empty array means nobody is
+        fronting. Send an `Idempotency-Key` header so retries don't create duplicate switches.
+      security:
+        - bearerAuth: []
+        - oauth2: [front:write]
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          schema: { type: string, maxLength: 64 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [member_ids]
+              properties:
+                member_ids:
+                  type: array
+                  items: { type: integer }
+                note:
+                  type: [string, "null"]
+                  maxLength: 500
+      responses:
+        "200":
+          description: The new front.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Front" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+  /front/{member_id}:
+    patch:
+      tags: [Fronting]
+      operationId: updateCoFront
+      summary: Add or remove one co-fronter
+      security:
+        - bearerAuth: []
+        - oauth2: [front:write]
+      parameters:
+        - name: member_id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [action]
+              properties:
+                action:
+                  type: string
+                  enum: [add, remove]
+      responses:
+        "200":
+          description: The new front.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Front" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /front/history:
+    get:
+      tags: [Fronting]
+      operationId: getFrontHistory
+      summary: Fronting history
+      security:
+        - bearerAuth: []
+        - oauth2: [front:read]
+      parameters:
+        - name: from
+          in: query
+          schema: { type: string, format: date-time }
+        - name: to
+          in: query
+          schema: { type: string, format: date-time }
+        - name: member_id
+          in: query
+          schema: { type: integer }
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Cursor"
+      responses:
+        "200":
+          description: A page of front sessions, newest first.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/FrontSession" }
+                  next_cursor: { type: [string, "null"] }
+
+  # --------------------------------------------------------------- FRIENDS
+  /friends:
+    get:
+      tags: [Friends]
+      operationId: listFriends
+      summary: List friends
+      security:
+        - bearerAuth: []
+        - oauth2: [friends:read]
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [accepted, pending]
+            default: accepted
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Cursor"
+      responses:
+        "200":
+          description: A page of friends.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Friend" }
+                  next_cursor: { type: [string, "null"] }
+
+  /friends/requests:
+    post:
+      tags: [Friends]
+      operationId: sendFriendRequest
+      summary: Send a friend request
+      security:
+        - bearerAuth: []
+        - oauth2: [friends:write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [slug]
+              properties:
+                slug:
+                  type: string
+                  description: Slug of the system to befriend.
+      responses:
+        "201":
+          description: Request created.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Friend" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409":
+          description: Already friends or request already pending.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+
+  /friends/requests/{id}:
+    patch:
+      tags: [Friends]
+      operationId: answerFriendRequest
+      summary: Accept or decline a request
+      description: Accepting creates the mutual link in both directions.
+      security:
+        - bearerAuth: []
+        - oauth2: [friends:write]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [action]
+              properties:
+                action:
+                  type: string
+                  enum: [accept, decline]
+      responses:
+        "200":
+          description: Updated request.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Friend" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /friends/{id}:
+    delete:
+      tags: [Friends]
+      operationId: removeFriend
+      summary: Remove a friend (both directions)
+      security:
+        - bearerAuth: []
+        - oauth2: [friends:write]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204": { description: Removed. }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /friends/{id}/front:
+    get:
+      tags: [Friends]
+      operationId: getFriendFront
+      summary: A friend's current front (only what they share with you)
+      security:
+        - bearerAuth: []
+        - oauth2: [friends:read, front:read]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: The shared view of their front.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Front" }
+        "403":
+          description: They don't share their front with you.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  # ------------------------------------------------------------------ DATA
+  /export:
+    get:
+      tags: [Data]
+      operationId: exportData
+      summary: Export all your data (GDPR-style)
+      description: First-party only. Credentials and secrets are never included.
+      parameters:
+        - name: format
+          in: query
+          schema: { type: string, enum: [json], default: json }
+      responses:
+        "200":
+          description: Full export of the user's data.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /import/simplyplural:
+    post:
+      tags: [Data]
+      operationId: importSimplyPlural
+      summary: Import a Simply Plural export
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: dry_run
+          in: query
+          description: Parse and report what would be imported, without saving anything.
+          schema: { type: boolean, default: false }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Import (or preview) report.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dry_run: { type: boolean }
+                  members_found: { type: integer }
+                  members_imported: { type: integer }
+                  history_entries_imported: { type: integer }
+                  warnings:
+                    type: array
+                    items: { type: string }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+  /account:
+    delete:
+      tags: [Data]
+      operationId: deleteAccount
+      summary: Delete your account and all data
+      description: First-party only. Requires step-up authentication.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password, confirm]
+              properties:
+                password: { type: string, format: password }
+                totp_code:
+                  type: string
+                  description: Required if 2FA is enabled.
+                confirm:
+                  type: boolean
+                  const: true
+      responses:
+        "204": { description: Account deleted. }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+  # ------------------------------------------------------------------- BOT
+  /bot/link/start:
+    post:
+      tags: [Bot]
+      operationId: botLinkStart
+      summary: Start linking a platform account
+      description: |
+        Called by the bot when a user runs `/link`. Returns a short-lived, single-use code the
+        user then enters on plrsys.xyz while logged in.
+      security:
+        - botAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [platform, platform_user_id]
+              properties:
+                platform: { $ref: "#/components/schemas/Platform" }
+                platform_user_id: { type: string }
+      responses:
+        "201":
+          description: Link code.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: { type: string, example: "H4RT-92KD" }
+                  expires_at: { type: string, format: date-time }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /bot/link/complete:
+    post:
+      tags: [Bot]
+      operationId: botLinkComplete
+      summary: Complete linking (called from the plrsys website)
+      description: Requires the user's own logged-in session, not the bot credential.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              properties:
+                code: { type: string }
+      responses:
+        "200":
+          description: Linked.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PlatformLink" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "410":
+          description: Code expired or already used.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+
+  /bot/link/{platform}/{platform_user_id}:
+    parameters:
+      - name: platform
+        in: path
+        required: true
+        schema: { $ref: "#/components/schemas/Platform" }
+      - name: platform_user_id
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Bot]
+      operationId: botLinkLookup
+      summary: Is this platform user linked, and to whom?
+      security:
+        - botAuth: []
+      responses:
+        "200":
+          description: Link info (no personal data beyond the system slug).
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PlatformLink" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    delete:
+      tags: [Bot]
+      operationId: botLinkDelete
+      summary: Unlink a platform account
+      security:
+        - botAuth: []
+        - bearerAuth: []
+      responses:
+        "204": { description: Unlinked. }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /bot/proxy/match:
+    post:
+      tags: [Bot]
+      operationId: botProxyMatch
+      summary: Match a message against the user's proxy tags
+      description: |
+        The bot sends the raw message; plrsys finds the matching member (longest tag wins),
+        strips the tag and returns who to impersonate. Message content is **not stored or
+        logged** by this endpoint.
+
+        Bots should keep a cached set of linked platform user IDs and skip this call for
+        everyone else.
+      security:
+        - botAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [platform, platform_user_id, content]
+              properties:
+                platform: { $ref: "#/components/schemas/Platform" }
+                platform_user_id: { type: string }
+                content: { type: string, maxLength: 4000 }
+      responses:
+        "200":
+          description: Match result.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required: [match, member, content]
+                    properties:
+                      match: { type: boolean, const: true }
+                      member: { $ref: "#/components/schemas/ProxyMember" }
+                      content:
+                        type: string
+                        description: Message text with the proxy tag removed.
+                  - type: object
+                    required: [match]
+                    properties:
+                      match: { type: boolean, const: false }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+
+  /bot/proxy-tags:
+    get:
+      tags: [Bot]
+      operationId: botProxyTags
+      summary: Bulk read of a user's members and proxy tags (for bot-side caching)
+      security:
+        - botAuth: []
+      parameters:
+        - name: platform
+          in: query
+          required: true
+          schema: { $ref: "#/components/schemas/Platform" }
+        - name: platform_user_id
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Members with their proxy tags.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        member: { $ref: "#/components/schemas/ProxyMember" }
+                        proxy_tags:
+                          type: array
+                          items: { $ref: "#/components/schemas/ProxyTag" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  # ----------------------------------------------------------------- OAUTH
+  /oauth/authorize:
+    get:
+      tags: [OAuth]
+      operationId: oauthAuthorize
+      summary: Start the authorization (opens the consent screen in a browser)
+      description: |
+        The user logs in and sees exactly which scopes the app asks for. Sensitive scopes are
+        shown separately and are opt-in. On approval, the user is redirected to
+        `redirect_uri` with a one-time `code`.
+      security: []
+      parameters:
+        - name: response_type
+          in: query
+          required: true
+          schema: { type: string, const: code }
+        - name: client_id
+          in: query
+          required: true
+          schema: { type: string }
+        - name: redirect_uri
+          in: query
+          required: true
+          description: Must exactly match one of the URIs registered for the app.
+          schema: { type: string, format: uri }
+        - name: scope
+          in: query
+          required: true
+          description: Space-separated scopes.
+          schema: { type: string, example: "front:read members:read" }
+        - name: state
+          in: query
+          required: true
+          schema: { type: string }
+        - name: code_challenge
+          in: query
+          required: true
+          description: PKCE challenge (S256).
+          schema: { type: string }
+        - name: code_challenge_method
+          in: query
+          required: true
+          schema: { type: string, const: S256 }
+      responses:
+        "302":
+          description: Redirect to `redirect_uri` with `code` and `state` (or `error`).
+        "400": { $ref: "#/components/responses/ValidationError" }
+
+  /oauth/token:
+    post:
+      tags: [OAuth]
+      operationId: oauthToken
+      summary: Exchange a code or refresh token for tokens
+      description: |
+        Access tokens are short-lived. Refresh tokens rotate on every use; reusing an old one
+        revokes the whole family and flags possible theft. Confidential clients also send their
+        `client_secret`.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [grant_type, client_id]
+              properties:
+                grant_type:
+                  type: string
+                  enum: [authorization_code, refresh_token]
+                client_id: { type: string }
+                client_secret: { type: string }
+                code: { type: string }
+                redirect_uri: { type: string, format: uri }
+                code_verifier: { type: string }
+                refresh_token: { type: string }
+      responses:
+        "200":
+          description: Tokens.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OAuthTokenResponse" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+
+  /oauth/revoke:
+    post:
+      tags: [OAuth]
+      operationId: oauthRevoke
+      summary: Revoke an access or refresh token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [token, client_id]
+              properties:
+                token: { type: string }
+                client_id: { type: string }
+                client_secret: { type: string }
+      responses:
+        "200": { description: Revoked (also returned if the token was already invalid). }
+
+  # ------------------------------------------------------------- DEVELOPER
+  /developer/apps:
+    get:
+      tags: [Developer]
+      operationId: listMyApps
+      summary: List apps you registered
+      responses:
+        "200":
+          description: Your apps.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/DeveloperApp" }
+    post:
+      tags: [Developer]
+      operationId: createApp
+      summary: Register a new app
+      description: |
+        Starts in `sandbox` status (fake data only). Moves to `live` after review.
+        The `client_secret` is returned **once**, on creation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/DeveloperAppCreate" }
+      responses:
+        "201":
+          description: The app, including its one-time secret.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/DeveloperApp"
+                  - type: object
+                    properties:
+                      client_secret: { type: string }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+  /developer/apps/{app_id}:
+    parameters:
+      - $ref: "#/components/parameters/AppId"
+    get:
+      tags: [Developer]
+      operationId: getApp
+      summary: Get one of your apps
+      responses:
+        "200":
+          description: The app.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DeveloperApp" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    patch:
+      tags: [Developer]
+      operationId: updateApp
+      summary: Update an app (name, description, redirect URIs, contact)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/DeveloperAppUpdate" }
+      responses:
+        "200":
+          description: Updated app.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DeveloperApp" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+    delete:
+      tags: [Developer]
+      operationId: deleteApp
+      summary: Delete an app and revoke every token it holds
+      responses:
+        "204": { description: Deleted. }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /developer/apps/{app_id}/rotate-secret:
+    post:
+      tags: [Developer]
+      operationId: rotateAppSecret
+      summary: Generate a new client secret (the old one stops working)
+      parameters:
+        - $ref: "#/components/parameters/AppId"
+      responses:
+        "200":
+          description: New secret, shown once.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  client_secret: { type: string }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /developer/apps/{app_id}/ip-allowlist:
+    parameters:
+      - $ref: "#/components/parameters/AppId"
+    get:
+      tags: [Developer]
+      operationId: getIpAllowlist
+      summary: Get the app's IP allowlist
+      responses:
+        "200":
+          description: Allowed CIDRs.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/IpAllowlist" }
+    put:
+      tags: [Developer]
+      operationId: setIpAllowlist
+      summary: Replace the app's IP allowlist
+      description: |
+        Required before any `_private` scope can be used. CIDRs are validated; `0.0.0.0/0`
+        and `::/0` are rejected.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/IpAllowlist" }
+      responses:
+        "200":
+          description: Saved.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/IpAllowlist" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+  # --------------------------------------------------------- CONNECTED APPS
+  /connected-apps:
+    get:
+      tags: [Connected apps]
+      operationId: listConnectedApps
+      summary: Apps you have authorized
+      description: First-party only.
+      responses:
+        "200":
+          description: Connected apps and the scopes granted to each.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/ConnectedApp" }
+
+  /connected-apps/{grant_id}:
+    delete:
+      tags: [Connected apps]
+      operationId: revokeConnectedApp
+      summary: Revoke an app (deletes its tokens and any webhook subscriptions)
+      parameters:
+        - name: grant_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204": { description: Revoked. }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /connected-apps/{grant_id}/history:
+    get:
+      tags: [Connected apps]
+      operationId: getAppAccessHistory
+      summary: What this app accessed on your account
+      parameters:
+        - name: grant_id
+          in: path
+          required: true
+          schema: { type: integer }
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Cursor"
+      responses:
+        "200":
+          description: Access log, newest first.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/AccessLogEntry" }
+                  next_cursor: { type: [string, "null"] }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  # ---------------------------------------------------------- TRANSPARENCY
+  /clients:
+    get:
+      tags: [Transparency]
+      operationId: listPublicClients
+      summary: Public registry of third-party apps
+      description: Name, owner, requested scopes and status. Never any key or secret.
+      security: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [sandbox, live, suspended, revoked]
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Cursor"
+      responses:
+        "200":
+          description: A page of public client entries.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/PublicClient" }
+                  next_cursor: { type: [string, "null"] }
+
+  /reports:
+    post:
+      tags: [Transparency]
+      operationId: createReport
+      summary: Report an app or content
+      description: Goes to the human review queue.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [target_type, reason]
+              properties:
+                target_type:
+                  type: string
+                  enum: [app, system, member, other]
+                target_id: { type: string }
+                reason:
+                  type: string
+                  enum: [scraping, unauthorized_edits, data_resale, harassment, illegal_content, spam, other]
+                details: { type: string, maxLength: 2000 }
+      responses:
+        "201":
+          description: Report received.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: { type: integer }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+  # -------------------------------------------------------------- WEBHOOKS
+  /webhooks:
+    get:
+      tags: [Webhooks]
+      operationId: listWebhooks
+      summary: "List your app's webhook subscriptions (PLANNED)"
+      x-status: planned
+      security:
+        - oauth2: [webhooks:manage]
+      responses:
+        "200":
+          description: Subscriptions.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Webhook" }
+    post:
+      tags: [Webhooks]
+      operationId: createWebhook
+      summary: "Subscribe to events (PLANNED)"
+      description: |
+        **Planned feature.** Only events covered by scopes the user granted to the app are
+        delivered. The URL must be `https`, must resolve to a public IP (no loopback, private
+        or link-local ranges) and redirects are not followed. The signing secret is returned
+        **once**, on creation.
+
+        Deliveries are signed: `X-Plrsys-Signature: sha256=HMAC(secret, timestamp + "." + body)`
+        with the timestamp in `X-Plrsys-Timestamp`.
+      x-status: planned
+      security:
+        - oauth2: [webhooks:manage]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url, events]
+              properties:
+                url: { type: string, format: uri, pattern: "^https://" }
+                events:
+                  type: array
+                  items: { $ref: "#/components/schemas/WebhookEvent" }
+      responses:
+        "201":
+          description: Subscription, including the one-time secret.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Webhook"
+                  - type: object
+                    properties:
+                      secret: { type: string }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+  /webhooks/{id}:
+    delete:
+      tags: [Webhooks]
+      operationId: deleteWebhook
+      summary: "Remove a subscription (PLANNED)"
+      x-status: planned
+      security:
+        - oauth2: [webhooks:manage]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204": { description: Removed. }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+# ===================================================================
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Access token (first-party session) or personal API key.
+    oauth2:
+      type: oauth2
+      description: OAuth 2.0 authorization code flow with PKCE, for third-party apps.
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.plrsys.xyz/v1/oauth/authorize
+          tokenUrl: https://api.plrsys.xyz/v1/oauth/token
+          refreshUrl: https://api.plrsys.xyz/v1/oauth/token
+          scopes:
+            system:read: Read your system's public and allowed profile fields
+            system:write: Edit your system profile
+            members:read: Read members you allow
+            members:write: Create, edit and delete members
+            front:read: Read who is fronting and fronting history
+            front:write: Switch and co-front
+            friends:read: Read your friends list and shared fronts
+            friends:write: Send, answer and remove friend requests
+            members:read_private: "SENSITIVE: read members marked private (needs IP allowlist)"
+            front:read_private: "SENSITIVE: read private fronting history (needs IP allowlist)"
+            webhooks:manage: "Receive change notifications (planned)"
+    botAuth:
+      type: http
+      scheme: bearer
+      description: |
+        Service credential for plrbot and other bots (`bot:act-as`). Kept in server env vars,
+        never in client code. When acting for a linked user, the bot is limited to that user's
+        platform link.
+
+  parameters:
+    Limit:
+      name: limit
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 25 }
+    Cursor:
+      name: cursor
+      in: query
+      description: Opaque cursor from a previous `next_cursor`.
+      schema: { type: string }
+    Fields:
+      name: fields
+      in: query
+      description: Comma-separated list of fields to return (compact mode, useful for plrtel).
+      schema: { type: string, example: "id,name,color" }
+    MemberId:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer }
+    AppId:
+      name: app_id
+      in: path
+      required: true
+      schema: { type: integer }
+
+  responses:
+    Unauthorized:
+      description: Missing, invalid or expired credentials.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    NotFound:
+      description: Not found, or not visible to you.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    ValidationError:
+      description: The request body or parameters are invalid.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    RateLimited:
+      description: Too many requests.
+      headers:
+        Retry-After:
+          schema: { type: integer }
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code: { type: string, example: not_found }
+            message: { type: string, example: No such member }
+            details:
+              type: object
+              additionalProperties: true
+
+    Platform:
+      type: string
+      enum: [discord, telegram, matrix, minitel]
+
+    Privacy:
+      type: string
+      enum: [public, friends, private]
+      default: private
+
+    TokenPair:
+      type: object
+      properties:
+        access_token: { type: string }
+        refresh_token: { type: string }
+        token_type: { type: string, const: Bearer }
+        expires_in: { type: integer, description: Seconds. }
+
+    TwoFactorChallenge:
+      type: object
+      properties:
+        two_factor_required: { type: boolean, const: true }
+        temp_token: { type: string }
+
+    System:
+      type: object
+      properties:
+        id: { type: integer }
+        slug: { type: string }
+        name: { type: string }
+        description: { type: [string, "null"] }
+        avatar_url: { type: [string, "null"], format: uri }
+        color: { type: [string, "null"], pattern: "^#[0-9a-fA-F]{6}$" }
+        privacy: { $ref: "#/components/schemas/Privacy" }
+        created_at: { type: string, format: date-time }
+
+    SystemUpdate:
+      type: object
+      properties:
+        name: { type: string, maxLength: 100 }
+        description: { type: [string, "null"], maxLength: 2000 }
+        avatar_url: { type: [string, "null"], format: uri }
+        color: { type: [string, "null"], pattern: "^#[0-9a-fA-F]{6}$" }
+        privacy: { $ref: "#/components/schemas/Privacy" }
+
+    PublicSystem:
+      type: object
+      description: Only what the owner made public.
+      properties:
+        slug: { type: string }
+        name: { type: string }
+        description: { type: [string, "null"] }
+        avatar_url: { type: [string, "null"], format: uri }
+        color: { type: [string, "null"] }
+        members:
+          type: array
+          items: { $ref: "#/components/schemas/PublicMember" }
+
+    Member:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        pronouns: { type: [string, "null"] }
+        description: { type: [string, "null"] }
+        color: { type: [string, "null"], pattern: "^#[0-9a-fA-F]{6}$" }
+        avatar_url: { type: [string, "null"], format: uri }
+        privacy: { $ref: "#/components/schemas/Privacy" }
+        proxy_tags:
+          type: array
+          items: { $ref: "#/components/schemas/ProxyTag" }
+        created_at: { type: string, format: date-time }
+
+    MemberCreate:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 80 }
+        pronouns: { type: [string, "null"], maxLength: 100 }
+        description: { type: [string, "null"], maxLength: 2000 }
+        color: { type: [string, "null"], pattern: "^#[0-9a-fA-F]{6}$" }
+        avatar_url: { type: [string, "null"], format: uri }
+        privacy: { $ref: "#/components/schemas/Privacy" }
+        proxy_tags:
+          type: array
+          items: { $ref: "#/components/schemas/ProxyTag" }
+
+    MemberUpdate:
+      type: object
+      description: Any subset of the create fields.
+      properties:
+        name: { type: string, minLength: 1, maxLength: 80 }
+        pronouns: { type: [string, "null"], maxLength: 100 }
+        description: { type: [string, "null"], maxLength: 2000 }
+        color: { type: [string, "null"], pattern: "^#[0-9a-fA-F]{6}$" }
+        avatar_url: { type: [string, "null"], format: uri }
+        privacy: { $ref: "#/components/schemas/Privacy" }
+        proxy_tags:
+          type: array
+          items: { $ref: "#/components/schemas/ProxyTag" }
+
+    PublicMember:
+      type: object
+      properties:
+        name: { type: string }
+        pronouns: { type: [string, "null"] }
+        description: { type: [string, "null"] }
+        color: { type: [string, "null"] }
+        avatar_url: { type: [string, "null"], format: uri }
+
+    ProxyTag:
+      type: object
+      description: At least one of prefix or suffix must be set.
+      properties:
+        prefix: { type: [string, "null"], maxLength: 50, example: "a:" }
+        suffix: { type: [string, "null"], maxLength: 50, example: null }
+        case_sensitive: { type: boolean, default: false }
+
+    ProxyMember:
+      type: object
+      description: Just what a bot needs to impersonate a member.
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        avatar_url: { type: [string, "null"], format: uri }
+        color: { type: [string, "null"] }
+
+    Front:
+      type: object
+      properties:
+        members:
+          type: array
+          items: { $ref: "#/components/schemas/Member" }
+        since: { type: [string, "null"], format: date-time }
+        note: { type: [string, "null"] }
+
+    FrontSession:
+      type: object
+      properties:
+        id: { type: integer }
+        member_ids:
+          type: array
+          items: { type: integer }
+        started_at: { type: string, format: date-time }
+        ended_at: { type: [string, "null"], format: date-time }
+        note: { type: [string, "null"] }
+
+    Friend:
+      type: object
+      properties:
+        id: { type: integer }
+        system:
+          $ref: "#/components/schemas/PublicSystem"
+        status: { type: string, enum: [pending, accepted] }
+        direction:
+          type: string
+          enum: [incoming, outgoing]
+          description: Only meaningful while pending.
+        created_at: { type: string, format: date-time }
+
+    PlatformLink:
+      type: object
+      properties:
+        platform: { $ref: "#/components/schemas/Platform" }
+        platform_user_id: { type: string }
+        system_slug: { type: string }
+        linked_at: { type: string, format: date-time }
+
+    OAuthTokenResponse:
+      type: object
+      properties:
+        access_token: { type: string, example: plr_live_xxxxxxxx }
+        refresh_token: { type: string }
+        token_type: { type: string, const: Bearer }
+        expires_in: { type: integer, description: Seconds. }
+        scope: { type: string, description: Space-separated granted scopes. }
+
+    DeveloperApp:
+      type: object
+      properties:
+        id: { type: integer }
+        client_id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        homepage_url: { type: [string, "null"], format: uri }
+        contact_email: { type: string, format: email }
+        redirect_uris:
+          type: array
+          items: { type: string, format: uri }
+        requested_scopes:
+          type: array
+          items: { type: string }
+        confidential: { type: boolean, description: "False for public clients (mobile, SPA); they must use PKCE." }
+        status: { type: string, enum: [sandbox, live, suspended, revoked] }
+        created_at: { type: string, format: date-time }
+
+    DeveloperAppCreate:
+      type: object
+      required: [name, description, contact_email, redirect_uris]
+      properties:
+        name: { type: string, maxLength: 80 }
+        description: { type: string, maxLength: 1000 }
+        homepage_url: { type: [string, "null"], format: uri }
+        contact_email: { type: string, format: email }
+        redirect_uris:
+          type: array
+          minItems: 1
+          items: { type: string, format: uri }
+        requested_scopes:
+          type: array
+          items: { type: string }
+        confidential: { type: boolean, default: true }
+
+    DeveloperAppUpdate:
+      type: object
+      properties:
+        name: { type: string, maxLength: 80 }
+        description: { type: string, maxLength: 1000 }
+        homepage_url: { type: [string, "null"], format: uri }
+        contact_email: { type: string, format: email }
+        redirect_uris:
+          type: array
+          minItems: 1
+          items: { type: string, format: uri }
+        requested_scopes:
+          type: array
+          items: { type: string }
+
+    IpAllowlist:
+      type: object
+      required: [cidrs]
+      properties:
+        cidrs:
+          type: array
+          maxItems: 20
+          items: { type: string, example: "203.0.113.0/24" }
+
+    ConnectedApp:
+      type: object
+      properties:
+        grant_id: { type: integer }
+        app: { $ref: "#/components/schemas/PublicClient" }
+        scopes:
+          type: array
+          items: { type: string }
+        granted_at: { type: string, format: date-time }
+        last_used_at: { type: [string, "null"], format: date-time }
+
+    AccessLogEntry:
+      type: object
+      properties:
+        at: { type: string, format: date-time }
+        method: { type: string, example: GET }
+        path: { type: string, example: /front }
+        scope_used: { type: string }
+        status: { type: integer }
+        blocked_reason:
+          type: [string, "null"]
+          enum: [ip_not_allowed, rate_limited, scope_missing, null]
+
+    PublicClient:
+      type: object
+      description: What anyone may see about an app. Never includes keys or secrets.
+      properties:
+        client_id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        homepage_url: { type: [string, "null"], format: uri }
+        owner: { type: string, description: Developer's public handle. }
+        scopes:
+          type: array
+          items: { type: string }
+        status: { type: string, enum: [sandbox, live, suspended, revoked] }
+
+    WebhookEvent:
+      type: string
+      enum: [front.changed, member.created, member.updated, member.deleted]
+
+    Webhook:
+      type: object
+      properties:
+        id: { type: integer }
+        url: { type: string, format: uri }
+        events:
+          type: array
+          items: { $ref: "#/components/schemas/WebhookEvent" }
+        active: { type: boolean }
+        last_delivery_status: { type: [integer, "null"] }
+        created_at: { type: string, format: date-time }
