@@ -10,7 +10,7 @@
 $token = $_GET['token'] ?? null;
 
 if (!$token) {
-    Alert::error('Invalid reset link.');
+    Alert::error(__('reset.error.invalid_link'));
     header('Location: /login');
     exit;
 }
@@ -27,7 +27,7 @@ $resetToken = $stmt->fetch(PDO::FETCH_ASSOC);
 $userId = $resetToken['user_id'] ?? null;
 
 if (!$resetToken) {
-    Alert::error('Reset link is invalid or has expired.');
+    Alert::error(__('reset.error.expired_link'));
     header('Location: /login');
     exit;
 }
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $confirm  = $_POST['password_confirm'] ?? '';
 
     if ($password !== $confirm) {
-        Alert::error('Passwords do not match.');
+        Alert::error(__('reset.error.passwords_mismatch'));
         header('Location: /reset-password/confirm?token=' . $token . '&user=' . $userId);
         exit;
     }
@@ -55,27 +55,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pdo->prepare('UPDATE password_reset_tokens SET used_at = NOW() WHERE id = ?')
         ->execute([$resetToken['id']]);
 
-    Alert::success('Password reset successfully. You can now log in.');
+    Alert::success(__('reset.success'));
     header('Location: /login');
     exit;
 }
 ?>
-<!-- your usual HTML layout -->
-<!-- <form method="POST" action="/reset-password/confirm?token=<?= htmlspecialchars($token) ?>&user=<?= $userId ?>">
-    <label for="password">New password</label>
-    <input type="password" id="password" name="password" required>
-    <label for="password_confirm">Confirm new password</label>
-    <input type="password" id="password_confirm" name="password_confirm" required>
-    <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
-    <button type="submit">Reset password</button>
-</form> -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password | plrsys</title>
+    <title><?= __('reset.page_title') ?></title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
@@ -91,53 +82,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="main">
                 <div class="register-layout">
                     <div class="register-container">
-                        <h1 class="register-title">Reset Password</h1>
+                        <h1 class="register-title"><?= __('reset.title') ?></h1>
                         <form method="POST" action="/reset-password/confirm?token=<?= htmlspecialchars($token) ?>&user=<?= $userId ?>" class="register-form">
-                            <label for="password">New password</label>
+                            <label for="password"><?= __('reset.confirm.new_password') ?></label>
                             <input type="password" id="password" name="password" required>
-                            <label for="password_confirm">Confirm new password</label>
+                            <label for="password_confirm"><?= __('reset.confirm.confirm_password') ?></label>
                             <input type="password" id="password_confirm" name="password_confirm" required>
                             <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
-                            <input type="submit" value="Reset password">
+                            <input type="submit" value="<?= __('reset.confirm.submit') ?>">
                         </form>
                     </div>
 
                     <aside class="password-requirements" aria-labelledby="password-requirements-title">
-                        <h2 class="title" id="password-requirements-title">Password Requirements</h2>
+                        <h2 class="title" id="password-requirements-title"><?= __('register.password_requirements') ?></h2>
 
                         <div class="group">
-                            <div class="label">option A - passphrase</div>
+                            <div class="label"><?= __('register.passphrase_option') ?></div>
                             <ul class="list">
                                 <li class="item" data-rule="passphrase">
                                     <span class="pip"></span>
-                                    4+ words separated by spaces or hyphens, 20+ chars total
+                                    <?= __('register.passphrase_rule') ?>
                                 </li>
                             </ul>
                         </div>
-                        <div class="or">- or -</div>
+                        <div class="or"><?= __('register.or') ?></div>
 
                         <div class="group">
-                            <div class="label">option B - classic password</div>
+                            <div class="label"><?= __('register.classic_option') ?></div>
                             <ul class="list">
                                 <li class="item" data-rule="length">
                                     <span class="pip"></span>
-                                    At least 8 characters
+                                    <?= __('register.password_length') ?>
                                 </li>
                                 <li class="item" data-rule="uppercase">
                                     <span class="pip"></span>
-                                    One uppercase letter
+                                    <?= __('register.password_uppercase') ?>
                                 </li>
                                 <li class="item" data-rule="lowercase">
                                     <span class="pip"></span>
-                                    One lowercase letter
+                                    <?= __('register.password_lowercase') ?>
                                 </li>
                                 <li class="item" data-rule="number">
                                     <span class="pip"></span>
-                                    One number
+                                    <?= __('register.password_number') ?>
                                 </li>
                                 <li class="item" data-rule="special">
                                     <span class="pip"></span>
-                                    One special character (e.g. !@#$%^&*)
+                                    <?= __('register.password_special') ?>
                                 </li>
                             </ul>
                         </div>

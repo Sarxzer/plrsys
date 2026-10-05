@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="step-title">Scan the QR code</div>
                             <div class="step-body">Open your authenticator app and scan this code.</div>
                             <div class="qr-wrapper">
-                                <img src="data:image/png;base64,<?= $qr ?>" alt="TOTP QR Code">
+                                <img src="data:image/svg+xml;base64,<?= $qr ?>" alt="<?= __('totp.setup.qr_alt') ?>">
                             </div>
                             <div class="apps-list">
                                 <span class="app-tag">Aegis</span>

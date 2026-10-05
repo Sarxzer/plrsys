@@ -10,7 +10,7 @@ Guards::requireLogin();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$auth->logout();
-    Alert::success("You have been logged out.");
+	Alert::success(__('logout.success'));
 }
 ?>
 <!DOCTYPE html>
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Logout | plrsys</title>
+	<title><?= __('logout.page_title') ?></title>
 	<link rel="stylesheet" href="<?= $cssDir ?>">
 	<link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
 	<script src="<?= $jsDir ?>" defer></script>
@@ -35,12 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			</div>
 			<div class="main">
 				<div class="login-container">
-					<h1 class="login-title">Log out</h1>
+					<h1 class="login-title"><?= __('logout.title') ?></h1>
 					<form action="/logout" method="post" class="login-form">
 						<input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
-						<input type="submit" value="Log out">
+						<input type="submit" value="<?= __('logout.submit') ?>">
 					</form>
-					<p class="login-subtext"><a href="/settings">Cancel</a></p>
+					<p class="login-subtext"><a href="/settings"><?= __('logout.cancel') ?></a></p>
 				</div>
 			</div>
 

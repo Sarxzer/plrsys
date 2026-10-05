@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (($_SESSION['login_cooldown'] ?? 0) > time()) {
         $remaining = $_SESSION['login_cooldown'] - time();
-        Alert::error("Please wait $remaining seconds before trying to log in again.");
+        Alert::error(__('login.error.cooldown', $remaining));
         header('Location: /login');
         exit;
     }
@@ -40,11 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         unset($_SESSION['login_attempts']);
 
-        Alert::success("Login successful! Welcome back.");
+        Alert::success(__('login.success'));
         header('Location: /');
         exit;
     } else {
-        Alert::error("Invalid username or password.");
+        Alert::error(__('login.error.invalid_credentials'));
         $_SESSION['login_cooldown'] = time() + 15; // 15 second cooldown after failed attempt
         $_SESSION['login_attempts'] = ($_SESSION['login_attempts'] ?? 0) + 1;
         $_SESSION['last_failed_username'] = $username;
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($_SESSION['login_attempts'] >= 5) {
         unset($_SESSION['login_attempts']);
-        Alert::error("Too many failed login attempts. Please try again later.");
+        Alert::error(__('login.error.too_many_attempts'));
         header('Location: /login');
         exit;
     }
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | plrsys</title>
+    <title><?= __('login.page_title') ?></title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
@@ -80,26 +80,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="main">
                 <div class="login-container">
-                    <h1 class="login-title">Login</h1>
+                    <h1 class="login-title"><?= __('login.title') ?></h1>
 
                     <form action="login" method="post" class="login-form">
-                        <label for="username">Username:</label><br>
+                        <label for="username"><?= __('login.username') ?></label><br>
                         <input type="text" id="username" name="username"
                             value="<?= htmlspecialchars($_SESSION['last_failed_username'] ?? '') ?>" required><br><br>
 
-                        <label for="password">Password:</label><br>
+                        <label for="password"><?= __('login.password') ?></label><br>
                         <input type="password" id="password" name="password" required><br><br>
 
                         <label for="remember" class="checkbox-label">
-                            <input type="checkbox" id="remember" name="remember"> Remember me
+                            <input type="checkbox" id="remember" name="remember"> <?= __('login.remember_me') ?>
                         </label>
                         <br><br>
 
                         <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
-                        <input type="submit" value="Login">
+                        <input type="submit" value="<?= __('login.submit') ?>">
                     </form>
-                    <p class="login-subtext"><a href="/register">Don't have an account? Register here.</a></p>
-                    <p class="login-subtext"><a href="/reset-password">Forgot your password?</a></p>
+                    <p class="login-subtext"><a href="/register"><?= __('login.register_prompt') ?></a></p>
+                    <p class="login-subtext"><a href="/reset-password"><?= __('login.forgot_password') ?></a></p>
                 </div>
             </div>
 

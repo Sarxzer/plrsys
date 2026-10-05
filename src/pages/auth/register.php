@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     if (empty($username) || empty($password)) {
-        Alert::error("Username and password are required.");
+        Alert::error(__('register.error.required'));
         $_SESSION['last_failed_username'] = $username;
         $_SESSION['last_failed_totp'] = $totpEnabled;
         header("Location: /register");
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = $auth->register($username, $password);
 
     if ($userId === null) {
-        Alert::error("Username already taken.");
+        Alert::error(__('register.error.username_taken'));
         header("Location: /register");
         exit;
     }
@@ -54,15 +54,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['pending_totp_secret'] = $data['secret'];
         $_SESSION['pending_totp_qr'] = $data['qr_base64'];
 
-        Alert::info("Please scan the QR code with your authenticator app.");
+        Alert::info(__('register.info.scan_totp'));
 
         header("Location: /register/totp");
         exit;
     }
     $auth->login($userId, false);
 
-    Alert::success("Registration successful! Welcome, $username.");
-    Alert::warning("For better security, consider enabling two-factor authentication in your settings and/or setting up an email recovery option.");
+    Alert::success(__('register.success', $username));
+    Alert::warning(__('register.warning.security'));
 
     header("Location: /dashboard");
     exit;
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register | plrsys</title>
+    <title><?= __('register.page_title') ?></title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
@@ -94,68 +94,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="main">
                 <div class="register-layout">
                     <div class="register-container">
-                        <h1 class="register-title">Register</h1>
+                        <h1 class="register-title"><?= __('register.title') ?></h1>
 
                         <form action="register" method="post" class="register-form">
-                            <label for="username">Username:</label><br>
+                            <label for="username"><?= __('register.username') ?></label><br>
                             <input type="text" id="username" name="username"
                                 value="<?= htmlspecialchars($_SESSION['last_failed_username'] ?? '') ?>"
                                 required><br><br>
 
-                            <label for="password">Password:</label><br>
+                            <label for="password"><?= __('register.password') ?></label><br>
                             <input type="password" id="password" name="password" required><br><br>
 
                             <label for="totp" class="checkbox-label">
                                 <input type="checkbox" name="totp" id="totp" value="1"
                                     <?= isset($_SESSION['last_failed_totp']) && $_SESSION['last_failed_totp'] === 'checked' ? 'checked' : '' ?>>
-                                Enable Two-Factor Authentication
+                                <?= __('register.enable_totp') ?>
                             </label><br>
 
                             <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
-                            <input type="submit" value="Register">
+                            <input type="submit" value="<?= __('register.submit') ?>">
                         </form>
 
-                        <p class="register-subtext"><a href="/login">Already have an account? Login here.</a></p>
+                        <p class="register-subtext"><a href="/login"><?= __('register.login_prompt') ?></a></p>
                     </div>
 
                     <aside class="password-requirements" aria-labelledby="password-requirements-title">
-                        <h2 class="title">Password Requirements</h2>
+                        <h2 class="title"><?= __('register.password_requirements') ?></h2>
 
                         <!-- Passphrase option -->
                         <div class="group">
-                            <div class="label">option A - passphrase</div>
+                            <div class="label"><?= __('register.passphrase_option') ?></div>
                             <ul class="list">
                                 <li class="item" data-rule="passphrase">
                                     <span class="pip"></span>
-                                    4+ words separated by spaces or hyphens, 20+ chars total
+                                    <?= __('register.passphrase_rule') ?>
                                 </li>
                             </ul>
                         </div>
-                        <div class="or">- or -</div>
+                        <div class="or"><?= __('register.or') ?></div>
 
                         <!-- Standard option -->
                         <div class="group">
-                            <div class="label">option B - classic password</div>
+                            <div class="label"><?= __('register.classic_option') ?></div>
                             <ul class="list">
                                 <li class="item" data-rule="length">
                                     <span class="pip"></span>
-                                    At least 8 characters
+                                    <?= __('register.password_length') ?>
                                 </li>
                                 <li class="item" data-rule="uppercase">
                                     <span class="pip"></span>
-                                    One uppercase letter
+                                    <?= __('register.password_uppercase') ?>
                                 </li>
                                 <li class="item" data-rule="lowercase">
                                     <span class="pip"></span>
-                                    One lowercase letter
+                                    <?= __('register.password_lowercase') ?>
                                 </li>
                                 <li class="item" data-rule="number">
                                     <span class="pip"></span>
-                                    One number
+                                    <?= __('register.password_number') ?>
                                 </li>
                                 <li class="item" data-rule="special">
                                     <span class="pip"></span>
-                                    One special character (e.g. !@#$%^&*)
+                                    <?= __('register.password_special') ?>
                                 </li>
                             </ul>
                         </div>
