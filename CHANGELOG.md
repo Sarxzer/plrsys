@@ -2,7 +2,17 @@
 
 All notable changes to plrsys are documented here.
 
-## [v0.1.0-alpha] - 2026-10-02
+## [v0.1.0-alpha.2] - 2026-10-05
+
+- Added a routed API front controller with health, login, token refresh, token management, two-factor verification, ping, echo, and API error endpoints.
+- Added OpenAPI documentation for the API.
+- Added English and French localization support across the application, including authentication, dashboard, settings, management, system, legal, and public pages.
+- Added translation catalog validation with `scripts/check-lang.php`.
+- Updated TOTP QR generation to use GD-independent SVG output.
+- Expanded the database schema for API tokens and additional account and fronting functionality.
+- Improved release tooling, version handling, deployment configuration, and development environment setup.
+
+## [v0.1.0-alpha.1] - 2026-10-02
 
 - Renamed the project from Innerspace to plrsys and reorganized the application, deployment, and script files.
 - Added dashboard session history with session durations and average session time.
