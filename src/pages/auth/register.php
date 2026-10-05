@@ -92,24 +92,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="main">
-                <div class="register-layout">
                     <div class="register-container">
                         <h1 class="register-title">Register</h1>
-
+                    <div class="register-box">
                         <form action="register" method="post" class="register-form">
-                            <label for="username">Username:</label><br>
+                            <label for="username">Username:</label>
                             <input type="text" id="username" name="username"
                                 value="<?= htmlspecialchars($_SESSION['last_failed_username'] ?? '') ?>"
-                                required><br><br>
+                                required>
 
-                            <label for="password">Password:</label><br>
-                            <input type="password" id="password" name="password" required><br><br>
+                            <label for="password">Password:</label>
+                            <input type="password" id="password" name="password" required><br>
 
                             <label for="totp" class="checkbox-label">
                                 <input type="checkbox" name="totp" id="totp" value="1"
                                     <?= isset($_SESSION['last_failed_totp']) && $_SESSION['last_failed_totp'] === 'checked' ? 'checked' : '' ?>>
                                 Enable Two-Factor Authentication
-                            </label><br>
+                            </label>
 
                             <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
                             <input type="submit" value="Register">
