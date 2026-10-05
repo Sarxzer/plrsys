@@ -60,7 +60,6 @@ $htmlContent = $Parsedown->text($markdownContent);
             </div>
 
             <div class="main">
-                <h1>Changelog</h1>
                 <p>Latest version: <?= $version ?? 'Unknown' ?></p>
                 <div class="changelog-content">
                     <?= $htmlContent ?>

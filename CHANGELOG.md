@@ -3,7 +3,6 @@
 All notable changes to plrsys are documented here.
 
 ## [v0.0.1-alpha] - 2026-10-02
-
 - Renamed the project from Innerspace to plrsys and reorganized the application, deployment, and script files.
 - Added dashboard session history with session durations and average session time.
 - Added fronting session management with member selection and real-time session duration.
