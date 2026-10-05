@@ -26,12 +26,12 @@ if ($system_id) {
     $stmt->execute([$system_id, $user_id]);
     if (!$stmt->fetch()) {
         $system_id = null;
-        Alert::error("Invalid system.");
+        Alert::error(__('fronting.error.invalid_system'));
     }
 }
 
 if (!$system_id && !empty($systems)) {
-    Alert::error("No system selected.");
+    Alert::error(__('fronting.error.no_system'));
 }
 
 // Handle POST actions
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $member_ids = $_POST['members'] ?? [];
 
         if (empty($member_ids)) {
-            Alert::error("Please select at least one member.");
+            Alert::error(__('fronting.error.select_member'));
         } else {
             try {
                 $pdo->beginTransaction();
@@ -59,24 +59,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 $pdo->commit();
-                Alert::success("Fronting session started.");
+                Alert::success(__('fronting.success.started'));
             } catch (Exception $e) {
                 $pdo->rollBack();
-                Alert::error("Failed to start session.");
+                Alert::error(__('fronting.error.start_failed'));
             }
         }
     } elseif ($action === 'end_session' && $system_id) {
         $session_id = (int) ($_POST['session_id'] ?? 0);
 
         if (!$session_id) {
-            Alert::error("Invalid session.");
+            Alert::error(__('fronting.error.invalid_session'));
         } else {
             try {
                 $stmt = $pdo->prepare("UPDATE fronting_sessions SET ended_at = NOW() WHERE id = ? AND system_id = ?");
                 $stmt->execute([$session_id, $system_id]);
-                Alert::success("Fronting session ended.");
+                Alert::success(__('fronting.success.ended'));
             } catch (Exception $e) {
-                Alert::error("Failed to end session.");
+                Alert::error(__('fronting.error.end_failed'));
             }
         }
     } elseif ($action === 'update_members' && $system_id) {
@@ -85,9 +85,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $new_member_ids = array_map('intval', $new_member_ids);
 
         if (!$session_id) {
-            Alert::error("Invalid session.");
+            Alert::error(__('fronting.error.invalid_session'));
         } elseif (empty($new_member_ids)) {
-            Alert::error("Please select at least one member.");
+            Alert::error(__('fronting.error.select_member'));
         } else {
             try {
                 // Get current members
@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $removed = array_diff($current_members, $new_member_ids);
 
                 if (empty($added) && empty($removed)) {
-                    Alert::error("No changes made.");
+                    Alert::error(__('fronting.error.no_changes'));
                 } else {
                     $pdo->beginTransaction();
 
@@ -112,24 +112,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $old_note = $stmt->fetchColumn();
 
                     // Build change message
-                    $change_msg = "Member change: ";
                     $changes = [];
-
                     if (!empty($removed)) {
                         $stmt = $pdo->prepare("SELECT name FROM members WHERE id IN (" . implode(',', $removed) . ")");
                         $stmt->execute();
                         $removed_names = array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'name');
-                        $changes[] = "removed " . implode(', ', $removed_names);
+                        $changes[] = __('fronting.note.removed', implode(', ', $removed_names));
                     }
 
                     if (!empty($added)) {
                         $stmt = $pdo->prepare("SELECT name FROM members WHERE id IN (" . implode(',', $added) . ")");
                         $stmt->execute();
                         $added_names = array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'name');
-                        $changes[] = "added " . implode(', ', $added_names);
+                        $changes[] = __('fronting.note.added', implode(', ', $added_names));
                     }
 
-                    $change_msg .= implode(', ', $changes);
+                    $change_msg = __('fronting.note.member_change', implode(', ', $changes));
 
                     // End current session with change note
                     $stmt = $pdo->prepare("UPDATE fronting_sessions SET ended_at = NOW(), note = ? WHERE id = ? AND system_id = ?");
@@ -146,11 +144,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
 
                     $pdo->commit();
-                    Alert::success("Session members updated.");
+                    Alert::success(__('fronting.success.members_updated'));
                 }
             } catch (Exception $e) {
                 $pdo->rollBack();
-                Alert::error("Failed to update session.");
+                Alert::error(__('fronting.error.members_update_failed'));
             }
         }
     } elseif ($action === 'update_note' && $system_id) {
@@ -158,14 +156,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $note = trim($_POST['note'] ?? '');
 
     if (!$session_id) {
-        Alert::error("Invalid session.");
+        Alert::error(__('fronting.error.invalid_session'));
     } else {
         try {
             $stmt = $pdo->prepare("UPDATE fronting_sessions SET note = ? WHERE id = ? AND system_id = ?");
             $stmt->execute([$note, $session_id, $system_id]);
-            Alert::success("Note saved.");
+            Alert::success(__('fronting.success.note_saved'));
         } catch (Exception $e) {
-            Alert::error("Failed to save note.");
+            Alert::error(__('fronting.error.note_save_failed'));
         }
     }
 }
@@ -215,10 +213,10 @@ function formatDuration(int $seconds): string
 
     $parts = [];
     if ($hours > 0)
-        $parts[] = $hours . 'h';
+        $parts[] = __('dashboard.duration.hours', $hours);
     if ($minutes > 0)
-        $parts[] = $minutes . 'm';
-    $parts[] = $secs . 's';
+        $parts[] = __('dashboard.duration.minutes', $minutes);
+    $parts[] = __('dashboard.duration.seconds', $secs);
     return implode(' ', $parts);
 }
 
@@ -229,7 +227,7 @@ function formatDuration(int $seconds): string
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fronting | plrsys</title>
+    <title><?= __('fronting.page_title') ?></title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
@@ -245,18 +243,17 @@ function formatDuration(int $seconds): string
             </div>
 
             <div class="main">
-                <h1>Fronting Sessions</h1>
+                <h1><?= __('fronting.title') ?></h1>
 
                 <?php if (empty($systems)): ?>
                     <div class="alert-box alert-error">
-                        <p>You don't have any systems yet. <a href="/manage/systems">Create a system</a> to start tracking
-                            fronting sessions.</p>
+                        <p><?= __('fronting.no_systems') ?> <a href="/manage/systems"><?= __('fronting.create_system') ?></a> <?= __('fronting.start_tracking') ?></p>
                     </div>
                 <?php else: ?>
 
                     <!-- System Selector -->
                     <form method="GET" action="/fronting" class="system-selector">
-                        <label for="system-select">Select System:</label>
+                        <label for="system-select"><?= __('fronting.select_system') ?></label>
                         <select id="system-select" name="system" onchange="this.form.submit()"
                             disabled="<?= count($systems) === 1 ? 'disabled' : '' ?>">
                             <?php foreach ($systems as $system): ?>
@@ -265,28 +262,28 @@ function formatDuration(int $seconds): string
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <noscript><button type="submit">Go</button></noscript>
+                        <noscript><button type="submit"><?= __('fronting.go') ?></button></noscript>
                     </form>
 
                     <!-- Active Session -->
                     <?php if ($active_session): ?>
                         <div class="active-session">
-                            <h2>Currently Fronting</h2>
+                            <h2><?= __('fronting.currently_fronting') ?></h2>
                             <div class="session-info">
                                 <div class="info-item info-members">
-                                    <strong>Members</strong>
-                                    <span><?= htmlspecialchars($active_session['member_names'] ?? 'Unknown') ?></span>
+                                    <strong><?= __('fronting.members') ?></strong>
+                                    <span><?= htmlspecialchars($active_session['member_names'] ?? __('fronting.unknown')) ?></span>
                                 </div>
                                 <div class="info-item info-time">
-                                    <strong>Started</strong>
+                                    <strong><?= __('fronting.started') ?></strong>
                                     <span><?= date('g:i A', strtotime($active_session['started_at'])) ?></span>
                                 </div>
                                 <div class="info-item info-duration">
-                                    <strong>Duration</strong>
+                                    <strong><?= __('fronting.duration') ?></strong>
                                     <?php if (!$active_session['started_at']): ?>
-                                        <span>Unknown</span>
+                                        <span><?= __('fronting.unknown') ?></span>
                                     <?php else: ?>
-                                        <span class="duration-display" data-started="<?= $active_session['started_at'] ?>"></span>
+                                        <span class="duration-display" data-started="<?= $active_session['started_at'] ?>" data-hours-label="<?= __('dashboard.duration.hours', '') ?>" data-minutes-label="<?= __('dashboard.duration.minutes', '') ?>" data-seconds-label="<?= __('dashboard.duration.seconds', '') ?>"></span>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -298,7 +295,7 @@ function formatDuration(int $seconds): string
                                 <input type="hidden" name="system_id" value="<?= $system_id ?>">
                                 <input type="hidden" name="session_id" value="<?= $active_session['id'] ?>">
 
-                                <div class="subform-label">Adjust Members</div>
+                                <div class="subform-label"><?= __('fronting.adjust_members') ?></div>
                                 <div class="member-selector">
                                     <?php foreach ($members as $member): ?>
                                         <?php $checked = in_array($member['id'], $active_session['member_ids'] ?? []); ?>
@@ -311,7 +308,7 @@ function formatDuration(int $seconds): string
                                         </label>
                                     <?php endforeach; ?>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-sm">Update Members</button>
+                                <button type="submit" class="btn btn-primary btn-sm"><?= __('fronting.update_members') ?></button>
                             </form>
 
                             <!-- Edit Note -->
@@ -321,10 +318,10 @@ function formatDuration(int $seconds): string
                                 <input type="hidden" name="system_id" value="<?= $system_id ?>">
                                 <input type="hidden" name="session_id" value="<?= $active_session['id'] ?>">
 
-                                <div class="subform-label">Session Note</div>
+                                <div class="subform-label"><?= __('fronting.session_note') ?></div>
                                 <textarea name="note" class="note-field"
-                                    placeholder="Add a note..."><?= htmlspecialchars($active_session['note'] ?? '') ?></textarea>
-                                <button type="submit" class="btn btn-primary btn-sm">Save Note</button>
+                                    placeholder="<?= __('fronting.note_placeholder') ?>"><?= htmlspecialchars($active_session['note'] ?? '') ?></textarea>
+                                <button type="submit" class="btn btn-primary btn-sm"><?= __('fronting.save_note') ?></button>
                             </form>
 
                             <!-- End Session -->
@@ -333,21 +330,21 @@ function formatDuration(int $seconds): string
                                 <input type="hidden" name="action" value="end_session">
                                 <input type="hidden" name="system_id" value="<?= $system_id ?>">
                                 <input type="hidden" name="session_id" value="<?= $active_session['id'] ?>">
-                                <button type="submit" class="btn btn-danger btn-full">End Session</button>
+                                <button type="submit" class="btn btn-danger btn-full"><?= __('fronting.end_session') ?></button>
                             </form>
                         </div>
 
                     <?php elseif (!empty($members)): ?>
                         <!-- Start Session Form -->
                         <div class="session-form">
-                            <h2>Start New Session</h2>
+                            <h2><?= __('fronting.start_new_session') ?></h2>
                             <form method="POST" action="/fronting">
                                 <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
                                 <input type="hidden" name="action" value="start_session">
                                 <input type="hidden" name="system_id" value="<?= $system_id ?>">
 
                                 <div class="form-group">
-                                    <label>Select Members</label>
+                                    <label><?= __('fronting.select_members') ?></label>
                                     <div class="member-checkboxes">
                                         <?php foreach ($members as $member): ?>
                                             <label class="checkbox-label">
@@ -361,26 +358,25 @@ function formatDuration(int $seconds): string
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="note">Notes (Optional)</label>
+                                    <label for="note"><?= __('fronting.notes_optional') ?></label>
                                     <textarea id="note" name="note"
-                                        placeholder="Add any notes about this fronting session..."></textarea>
+                                        placeholder="<?= __('fronting.notes_placeholder') ?>"></textarea>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary">Start Session</button>
+                                <button type="submit" class="btn btn-primary"><?= __('fronting.start_session') ?></button>
                             </form>
                         </div>
 
                     <?php else: ?>
                         <div class="alert-box alert-info">
-                            <p>This system has no members yet. <a href="/manage/members?system=<?= $system_id ?>">Add
-                                    members</a> to start tracking fronting sessions.</p>
+                                <p><?= __('fronting.no_members') ?> <a href="/manage/members?system=<?= $system_id ?>"><?= __('fronting.add_members') ?></a> <?= __('fronting.start_tracking') ?></p>
                         </div>
                     <?php endif; ?>
 
                 <?php endif; ?>
 
-                <a href="/dashboard" class="btn-secondary">Back to Dashboard</a>
-                <a href="/history" class="btn-secondary">View History</a>
+                <a href="/dashboard" class="btn-secondary"><?= __('fronting.back_to_dashboard') ?></a>
+                <a href="/history" class="btn-secondary"><?= __('fronting.view_history') ?></a>
             </div>
 
             <?php include $includesDir . '/footer.php'; ?>

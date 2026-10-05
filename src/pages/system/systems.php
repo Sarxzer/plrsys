@@ -10,7 +10,7 @@
 // Show all system (dev)
 
 if ($_ENV['APP_DEBUG'] !== 'true') {
-    Alert::error("This page is only accessible in debug mode.");
+    Alert::error(__('system.list.error.debug_only'));
     header('Location: /');
     exit;
 }
@@ -49,7 +49,7 @@ $systems = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Systems | plrsys</title>
+    <title><?= __('system.list.page_title') ?></title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir?>" defer></script>
@@ -65,13 +65,13 @@ $systems = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
             <div class="main">
-                <h1>Systems</h1>
+                <h1><?= __('system.list.title') ?></h1>
                 <?php if (count($systems) === 0): ?>
-                    <p>No systems found.</p>
+                    <p><?= __('system.list.empty') ?></p>
                 <?php else: ?>
                     <ul>
                         <?php foreach ($systems as $system): ?>
-                            <li><a href='/s/<?= htmlspecialchars($system['handle']) ?>'><?= htmlspecialchars($system['name']) ?></a> (/s/<?= htmlspecialchars($system['handle']) ?>) - <?= $system['is_public'] ? 'Public' : 'Private' ?></li>
+                            <li><a href='/s/<?= htmlspecialchars($system['handle']) ?>'><?= htmlspecialchars($system['name']) ?></a> (/s/<?= htmlspecialchars($system['handle']) ?>) - <?= $system['is_public'] ? __('system.list.public') : __('system.list.private') ?></li>
                         <?php endforeach; ?>
                     </ul>
                 <?php endif; ?>

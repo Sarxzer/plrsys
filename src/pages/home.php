@@ -12,7 +12,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content, viewport-fit=cover">
-    <title>plrsys</title>
+    <title><?= __('common.page_title') ?></title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
@@ -41,7 +41,7 @@
                             <a href="/login" class="btn btn-secondary"><?= __('home.login') ?></a>
                         <?php endif; ?>
                     </div>
-                    <nav class="home-menu" aria-label="Home menu">
+                    <nav class="home-menu" aria-label="<?= __('common.home_menu') ?>">
                         <a href="/about"><?= __('common.about') ?></a>
                         <span class="home-menu-sep">&middot;</span>
                         <a href="/changelog"><?= __('common.changelog') ?></a>

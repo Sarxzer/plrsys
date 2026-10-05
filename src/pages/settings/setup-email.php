@@ -21,38 +21,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
 
     if ($newEmail === '' || $confirmEmail === '' || $password === '') {
-        Alert::error('All fields are required.');
+        Alert::error(__('settings.email.error.required'));
         header('Location: /settings/email');
         exit;
     }
 
     if (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
-        Alert::error('Please enter a valid email address.');
+        Alert::error(__('settings.email.error.invalid'));
         header('Location: /settings/email');
         exit;
     }
 
     if ($newEmail !== $confirmEmail) {
-        Alert::error('The email addresses do not match.');
+        Alert::error(__('settings.email.error.mismatch'));
         header('Location: /settings/email');
         exit;
     }
 
     if (!$auth->verifyPassword($userId, $password)) {
-        Alert::error('Incorrect password.');
+        Alert::error(__('settings.error.password'));
         header('Location: /settings/email');
         exit;
     }
 
     if (strcasecmp($newEmail, $user['email']) === 0) {
-        Alert::info('That is already your current email address.');
+        Alert::info(__('settings.email.info.current'));
         header('Location: /settings');
         exit;
     }
 
     $token = $auth->requestEmailChange($userId, $newEmail);
     if ($token === null) {
-        Alert::error('That email address is already in use.');
+        Alert::error(__('settings.email.error.in_use'));
         header('Location: /settings/email');
         exit;
     }
@@ -60,12 +60,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mailer = new Mailer();
     if (!$mailer->sendEmailChangeConfirmation($newEmail, $userId, $token)) {
         $auth->clearPendingEmailChange($userId);
-        Alert::error('We could not send the confirmation email. Please try again later.');
+        Alert::error(__('settings.email.error.send_failed'));
         header('Location: /settings/email');
         exit;
     }
 
-    Alert::info("A confirmation link has been sent to $newEmail. Open it to finish updating your email.");
+    Alert::info(__('settings.email.info.sent', $newEmail));
     header('Location: /settings');
     exit;
 }
@@ -80,7 +80,7 @@ $pendingExpiresAt = $user['pending_email_expires_at'] ?? null;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Set up Email | plrsys</title>
+    <title><?= __('settings.email.page_title') ?></title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
@@ -97,52 +97,52 @@ $pendingExpiresAt = $user['pending_email_expires_at'] ?? null;
             <div class="main">
                 <div class="setup-container">
                     <div class="setup-header">
-                        <div class="setup-step-badge">EMAIL CONFIRMATION</div>
-                        <div class="setup-title">Update your email</div>
-                        <div class="setup-subtitle">We will send a one-time confirmation link before making the change</div>
+                        <div class="setup-step-badge"><?= __('settings.email.confirmation_badge') ?></div>
+                        <div class="setup-title"><?= __('settings.email.update_title') ?></div>
+                        <div class="setup-subtitle"><?= __('settings.email.update_subtitle') ?></div>
                     </div>
 
                     <div class="setup-steps">
                         <div class="setup-step">
-                            <div class="step-number">// CURRENT</div>
+                            <div class="step-number"><?= __('settings.email.current_step') ?></div>
                             <?php if (empty($user['email'])): ?>
-                                <div class="step-title">No email set</div>
-                                <div class="step-body">You currently don't have an email address associated with your account.</div>
+                                <div class="step-title"><?= __('settings.email.none') ?></div>
+                                <div class="step-body"><?= __('settings.email.none_description') ?></div>
                             <?php else: ?>
-                                <div class="step-title">Your account email</div>
+                                <div class="step-title"><?= __('settings.email.account') ?></div>
                                 <div class="step-body"><?= htmlspecialchars($user['email']) ?></div>
                             <?php endif; ?>
                             <?php if (!empty($pendingEmail)): ?>
-                                <div class="step-body">Pending confirmation: <strong><?= htmlspecialchars($pendingEmail) ?></strong><?php if (!empty($pendingExpiresAt)): ?> until <?= htmlspecialchars($pendingExpiresAt) ?><?php endif; ?>.</div>
+                                <div class="step-body"><?= __('settings.email.pending') ?> <strong><?= htmlspecialchars($pendingEmail) ?></strong><?php if (!empty($pendingExpiresAt)): ?> <?= __('settings.email.until') ?> <?= htmlspecialchars($pendingExpiresAt) ?><?php endif; ?>.</div>
                             <?php endif; ?>
                         </div>
 
                         <div class="setup-step">
-                            <div class="step-number">// STEP 01</div>
-                            <div class="step-title">Enter the new email</div>
-                            <div class="step-body">Type the address you want to use, then confirm it to avoid typos.</div>
+                            <div class="step-number"><?= __('settings.email.step_one') ?></div>
+                            <div class="step-title"><?= __('settings.email.enter_new') ?></div>
+                            <div class="step-body"><?= __('settings.email.enter_description') ?></div>
                             <form method="POST" action="/settings/email">
                                 <div class="form-group">
-                                    <label for="email">New email address</label>
-                                    <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                                    <label for="email"><?= __('settings.email.new_address') ?></label>
+                                    <input type="email" id="email" name="email" required placeholder="<?= __('settings.email.address_placeholder') ?>">
                                 </div>
                                 <div class="form-group">
-                                    <label for="email_confirm">Confirm new email address</label>
-                                    <input type="email" id="email_confirm" name="email_confirm" required placeholder="repeat.your.email@example.com">
+                                    <label for="email_confirm"><?= __('settings.email.confirm_address') ?></label>
+                                    <input type="email" id="email_confirm" name="email_confirm" required placeholder="<?= __('settings.email.confirm_placeholder') ?>">
                                 </div>
                                 <div class="form-group">
-                                    <label for="password">Current password</label>
-                                    <input type="password" id="password" name="password" required placeholder="Enter your password">
+                                    <label for="password"><?= __('settings.email.password') ?></label>
+                                    <input type="password" id="password" name="password" required placeholder="<?= __('settings.email.password_placeholder') ?>">
                                 </div>
                                 <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
-                                <button type="submit">Send confirmation link</button>
+                                <button type="submit"><?= __('settings.email.send') ?></button>
                             </form>
                         </div>
 
                         <div class="setup-step">
-                            <div class="step-number">// STEP 02</div>
-                            <div class="step-title">Confirm from email</div>
-                            <div class="step-body">Open the message we send and click the confirmation link to apply the change.</div>
+                            <div class="step-number"><?= __('settings.email.step_two') ?></div>
+                            <div class="step-title"><?= __('settings.email.confirm_from_email') ?></div>
+                            <div class="step-body"><?= __('settings.email.confirm_description') ?></div>
                         </div>
                     </div>
                 </div>

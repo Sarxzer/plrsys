@@ -21,13 +21,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validate input
     if (empty($name) || empty($handle)) {
-        Alert::error("Name and handle are required.");
+        Alert::error(__('manage.system_new.error.required'));
         header('Location: /manage/systems/new');
         exit;
     }
 
     if (!preg_match('/^[a-z0-9\-]+$/', $handle)) {
-        Alert::error("Handle can only contain lowercase letters, numbers, and hyphens.");
+        Alert::error(__('manage.system_new.error.handle_format'));
         header('Location: /manage/systems/new');
         exit;
     }
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $pdo->prepare('SELECT COUNT(*) FROM systems WHERE handle = ?');
     $stmt->execute([$handle]);
     if ($stmt->fetchColumn() > 0) {
-        Alert::error("Handle already exists. Please choose a different one.");
+        Alert::error(__('manage.system_new.error.handle_exists'));
         header('Location: /manage/systems/new');
         exit;
     }
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New System | plrsys</title>
+    <title><?= __('manage.system_new.page_title') ?></title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
@@ -72,22 +72,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php include $includesDir . '/alerts.php'; ?>
             </div>
             <div class="main">
-                <h1>Create a new system</h1>
-                <p>Welcome to the system creation page!</p>
+                <h1><?= __('manage.system_new.title') ?></h1>
+                <p><?= __('manage.system_new.subtitle') ?></p>
 
                 <form action="/manage/system/new" method="POST">
-                    <label for="name">System Name:</label>
+                    <label for="name"><?= __('manage.system_new.name') ?></label>
                     <input type="text" id="name" name="name" required>
 
-                    <label for="handle">System Handle (lowercase, no spaces):</label>
+                    <label for="handle"><?= __('manage.system_new.handle') ?></label>
                     <div class="input-wrapper">
                         <span class="input-prefix">@</span>
                         <input type="text" id="handle" name="handle" pattern="[a-z0-9\-]+"
-                            title="Lowercase letters, numbers, and hyphens only." required>
+                            title="<?= __('manage.system_new.handle_title') ?>" required>
                     </div>
 
                     <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
-                    <button type="submit">Create System</button>
+                    <button type="submit"><?= __('manage.system_new.submit') ?></button>
                 </form>
             </div>
 

@@ -10,7 +10,7 @@
 // Parse privacy policy markdown file and render it as HTML using parsedown
 $markdownFile = __DIR__ . '/privacy.md';
 if (!file_exists($markdownFile)) {
-    Alert::error('Privacy Policy Not Found');
+    Alert::error(__('privacy.error.missing_file'));
     header('Location: /home');
     exit;
 }
@@ -24,7 +24,8 @@ $htmlContent = $Parsedown->text($markdownContent);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy - plrsys</title>
+    <title><?= __('privacy.page_title') ?></title>
+    <meta name="description" content="<?= __('privacy.meta_description') ?>">
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>

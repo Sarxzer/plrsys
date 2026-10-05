@@ -3,14 +3,14 @@ Guards::requireLogin();
 
 // verify state to prevent CSRF
 if (($_GET['state'] ?? '') !== $_SESSION['csrf_token']) {
-    Alert::error('Invalid state. Please try again.');
+    Alert::error(__('settings.discord.error.state'));
     header('Location: /settings');
     exit;
 }
 
 $code = $_GET['code'] ?? null;
 if (!$code) {
-    Alert::error('Discord authorization failed.');
+    Alert::error(__('settings.discord.error.authorization'));
     header('Location: /settings');
     exit;
 }
@@ -32,7 +32,7 @@ $response = file_get_contents('https://discord.com/api/oauth2/token', false, str
 
 $token_data = json_decode($response, true);
 if (empty($token_data['access_token'])) {
-    Alert::error('Failed to get Discord token.');
+    Alert::error(__('settings.discord.error.token'));
     header('Location: /settings');
     exit;
 }
@@ -46,7 +46,7 @@ $user_response = file_get_contents('https://discord.com/api/users/@me', false, s
 
 $discord_user = json_decode($user_response, true);
 if (empty($discord_user['id'])) {
-    Alert::error('Failed to get Discord user info.');
+    Alert::error(__('settings.discord.error.user'));
     header('Location: /settings');
     exit;
 }
@@ -77,6 +77,6 @@ $stmt->execute([
 $pdo->prepare('UPDATE users SET discord_id = ? WHERE id = ?')
     ->execute([$discord_user['id'], $_SESSION['user_id']]);
 
-Alert::success('Discord account linked as ' . $discord_user['username'] . '!');
+Alert::success(__('settings.discord.success.linked', $discord_user['username']));
 header('Location: /settings');
 exit;

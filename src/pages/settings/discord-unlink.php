@@ -7,6 +7,6 @@ $pdo->prepare('DELETE FROM oauth_connections WHERE user_id = ? AND provider = "d
 $pdo->prepare('UPDATE users SET discord_id = NULL WHERE id = ?')
     ->execute([$_SESSION['user_id']]);
 
-Alert::success('Discord account unlinked.');
+Alert::success(__('settings.discord.success.unlinked'));
 header('Location: /settings');
 exit;
