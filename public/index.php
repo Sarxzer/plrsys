@@ -5,6 +5,7 @@ require_once __DIR__ . '/../src/php/auth.php';
 require_once __DIR__ . '/../src/php/alert.php';
 require_once __DIR__ . '/../src/php/utils.php';
 require_once __DIR__ . '/../src/php/discord.php';
+require_once __DIR__ . '/../src/php/translation.php';
 
 $sessionSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
     || (!empty($_SERVER['SERVER_PORT']) && (int) $_SERVER['SERVER_PORT'] === 443);
@@ -72,6 +73,28 @@ if (($_ENV['DISCORD_WEBHOOK_LOGGING'] ?? 'false') === 'true') {
     });
 }
 
+// Load translations
+if (!isset($_GET['lang'])) {
+    $_GET['lang'] = $_SESSION['language'] ?? 'en';
+} else {
+    $_SESSION['language'] = $_GET['lang'];
+}
+$language = $_SESSION['language'] ?? 'en';
+$language = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $language) ?: 'en';
+$translationFile = __DIR__ . '/../src/lang/' . $language . '.php';
+
+if (!is_file($translationFile)) {
+    $language = 'en';
+    $translationFile = __DIR__ . '/../src/lang/en.php';
+}
+
+$translator = new Translation($language);
+$translator->loadTranslations(require __DIR__ . '/../src/lang/en.php');
+
+if ($language !== 'en') {
+    $translator->loadTranslations(require $translationFile);
+}
+
 $pagesDir = __DIR__ . '/../src/pages';
 $includesDir = __DIR__ . '/../src/includes';
 
@@ -116,27 +139,27 @@ if ($parts[0] === 's' && isset($parts[1])) {
 $breadcrumbs = [];
 $accumulated_path = '';
 if ($parts[0] !== '' && $parts[0] !== 'home') {
-    $breadcrumbs[] = ['name' => 'Home', 'url' => '/home'];
+    $breadcrumbs[] = ['name' => __('nav.home'), 'url' => '/home'];
 }
 foreach ($parts as $index => $part) {
     $accumulated_path .= '/' . $part;
     $name = ucfirst(htmlspecialchars($part));
 
     // Special handling for certain parts to make them more user-friendly
-    if ($part === 's' && isset($parts[1])) {
-        $name = 'System';
+    if (($part === 's' && isset($parts[1])) || $part === 'system') {
+        $name = __('nav.system');
     } elseif ($part === 'manage') {
-        $name = 'Manage';
+        $name = __('nav.manage');
     } elseif ($part === 'dashboard') {
-        $name = 'Dashboard';
+        $name = __('nav.dashboard');
     } elseif ($part === 'fronting') {
-        $name = 'Fronting';
+        $name = __('nav.fronting');
     } elseif ($part === 'history') {
-        $name = 'History';
+        $name = __('nav.history');
     } elseif ($part === 'settings') {
-        $name = 'Settings';
+        $name = __('nav.settings');
     } elseif ($part === 'friends') {
-        $name = 'Friends';
+        $name = __('nav.friends');
     }
 
     if (isset($system_name, $parts[1]) && $part === $parts[1]) {
