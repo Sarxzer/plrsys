@@ -4,7 +4,10 @@ uploads/pfps/
 .idea/
 .vscode/
 diff.txt
-.gitignore
+
 nogit/
 dev.session.sql
 __pycache__/
+
+.gitignore
+.devcontainer/
