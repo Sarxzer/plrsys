@@ -22,13 +22,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $totpCode = $_POST['totp_code'] ?? '';
 
     if (!$auth->verifyPassword($userId, $password)) {
-        Alert::error('Incorrect password');
+        Alert::error(__('settings.delete.error.password'));
         header('Location: /settings/delete');
         exit;
     }
 
     if ($hasTotp && !totp_verify($auth->getTotpSecret($userId), $totpCode) && !totp_verify_backup($pdo, $userId, $totpCode)) {
-        Alert::error('Invalid 2FA code');
+        Alert::error(__('settings.delete.error.2fa'));
         header('Location: /settings/delete');
         exit;
     }
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Log the user out and redirect to home
     session_regenerate_id(true); // Invalidate the session
-    Alert::success('Account deleted successfully');
+    Alert::success(__('settings.delete.success'));
     header('Location: /home');
     exit;
 
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delete Account | plrsys</title>
+    <title><?= __('settings.delete.page_title') ?></title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
@@ -71,32 +71,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="settings-wrapper">
                     <!-- Header -->
                     <div class="settings-header">
-                        <div class="settings-header-badge">DANGER ZONE</div>
-                        <div class="settings-header-title">Delete Account</div>
-                        <div class="settings-header-sub">This action permanently deletes your account and data.</div>
+                        <div class="settings-header-badge"><?= __('settings.delete.badge') ?></div>
+                        <div class="settings-header-title"><?= __('settings.delete.title') ?></div>
+                        <div class="settings-header-sub"><?= __('settings.delete.subtitle') ?></div>
                     </div>
 
                     <!-- Summary -->
                     <div class="settings-section danger-zone">
                         <div class="settings-section-header">
                             <span class="settings-section-icon is-danger">!</span>
-                            <span class="settings-section-label">// Account deletion</span>
+                            <span class="settings-section-label"><?= __('settings.delete.section') ?></span>
                         </div>
                         <div class="settings-section-body">
-                            <div class="settings-info-title">Review before you continue</div>
+                            <div class="settings-info-title"><?= __('settings.delete.review') ?></div>
                             <div class="settings-info-desc">
-                                Deleting your account removes your profile, login credentials, and all associated
-                                system data. This cannot be undone.
+                                <?= __('settings.delete.review_description') ?>
                             </div>
 
                             <div class="settings-divider"></div>
 
                             <div class="settings-info-row">
                                 <div class="info-left">
-                                    <div class="settings-info-title">Account</div>
+                                    <div class="settings-info-title"><?= __('settings.delete.account') ?></div>
                                     <div class="settings-info-desc">
                                         <span class="settings-current">
-                                            <span class="current-label">current</span>
+                                            <span class="current-label"><?= __('settings.current') ?></span>
                                             <?= htmlspecialchars($user['username']) ?>
                                         </span>
                                     </div>
@@ -107,12 +106,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                             <div class="settings-info-row">
                                 <div class="info-left">
-                                    <div class="settings-info-title">Data removed</div>
+                                    <div class="settings-info-title"><?= __('settings.delete.data_removed') ?></div>
                                     <div class="settings-info-desc">
-                                        <div>- Profile, login credentials, and email</div>
-                                        <div>- System, member, and fronting data</div>
-                                        <div>- OAuth connections and linked providers</div>
-                                        <div>- Backup codes and security settings</div>
+                                        <div><?= __('settings.delete.profile_data') ?></div>
+                                        <div><?= __('settings.delete.system_data') ?></div>
+                                        <div><?= __('settings.delete.oauth_data') ?></div>
+                                        <div><?= __('settings.delete.security_data') ?></div>
                                     </div>
                                 </div>
                             </div>
@@ -123,41 +122,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="settings-section">
                         <div class="settings-section-header">
                             <span class="settings-section-icon">#</span>
-                            <span class="settings-section-label">// Verify identity</span>
+                            <span class="settings-section-label"><?= __('settings.delete.verify') ?></span>
                         </div>
                         <div class="settings-section-body">
                             <div class="settings-info-desc">
-                                Confirm your password and 2FA code to delete this account.
+                                <?= __('settings.delete.verify_description') ?>
                             </div>
 
                             <form method="POST" action="/settings/delete" class="settings-form">
                                 <div class="settings-field">
-                                    <label class="settings-label" for="delete_password">// password</label>
+                                    <label class="settings-label" for="delete_password"><?= __('settings.delete.password') ?></label>
                                     <input class="settings-input" type="password" id="delete_password" name="password"
                                         required autocomplete="current-password">
                                 </div>
 
                                 <?php if ($hasTotp): ?>
                                     <div class="settings-field">
-                                        <label class="settings-label" for="delete_totp">// 2fa code or backup code</label>
+                                        <label class="settings-label" for="delete_totp"><?= __('settings.delete.2fa') ?></label>
                                         <input class="settings-input settings-input--otp" type="text" id="delete_totp"
                                             name="totp_code" placeholder="_ _ _ _ _ _" maxlength="8" inputmode="numeric"
                                             autocomplete="one-time-code" required>
                                     </div>
                                     <div class="settings-info-desc">
-                                        Use the 6-digit code from your authenticator app or a backup code.
+                                        <?= __('settings.delete.2fa_description') ?>
                                     </div>
                                 <?php endif; ?>
 
                                 <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
                                 <button type="submit" class="settings-submit danger">
-                                    Delete account permanently ->
+                                    <?= __('settings.delete.submit') ?>
                                 </button>
                             </form>
 
                             <div class="settings-divider"></div>
 
-                            <a href="/settings" class="settings-link-btn">Back to settings</a>
+                            <a href="/settings" class="settings-link-btn"><?= __('settings.delete.back') ?></a>
                         </div>
                     </div>
                 </div>

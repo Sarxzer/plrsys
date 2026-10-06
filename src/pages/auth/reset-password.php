@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        Alert::error('Invalid email address.');
+        Alert::error(__('reset.error.email'));
         header('Location: /reset-password');
         exit;
     }
@@ -34,25 +34,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mailer->sendPasswordResetEmail($email, $token);
     }
 
-    Alert::info('If that email is registered, you\'ll receive a reset link shortly.');
+    Alert::info(__('reset.info.sent'));
     header('Location: /reset-password');
     exit;
 }
 ?>
 <!-- <form method="POST" action="/reset-password">
-    <label for="email">Email address</label>
+    <label for="email"><?= __('reset.email') ?></label>
     <input type="email" id="email" name="email" required>
     <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
-    <button type="submit">Send reset link</button>
+    <button type="submit"><?= __('reset.submit') ?></button>
 </form>
-<p><a href="/login">← back to login</a></p> -->
+<p><a href="/login"><?= __('reset.back_to_login') ?></a></p> -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password | plrsys</title>
+    <title><?= __('reset.page_title') ?></title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
@@ -66,14 +66,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php include $includesDir . '/alerts.php'; ?>
             </div>
             <div class="main">
-                <h1>Reset Password</h1>
+                <h1><?= __('reset.title') ?></h1>
                 <form method="POST" action="/reset-password" class="settings-card">
-                    <label for="email">Email address</label>
+                    <label for="email"><?= __('reset.email') ?></label>
                     <input type="email" id="email" name="email" required>
                     <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
-                    <button type="submit">Send reset link</button>
+                    <button type="submit"><?= __('reset.submit') ?></button>
                 </form>
-                <p><a href="/login">← back to login</a></p>
+                <p><a href="/login"><?= __('reset.back_to_login') ?></a></p>
             </div>
             <?php include $includesDir . '/footer.php'; ?>
         </div>

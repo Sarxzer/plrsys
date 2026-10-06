@@ -31,7 +31,7 @@
 // Get changelog from CHANGELOG.md
 $markdownFile = __DIR__ . '/../../CHANGELOG.md';
 if (!file_exists($markdownFile)) {
-    Alert::error('Changelog Not Found');
+    Alert::error(__('changelog.error.missing_file'));
     header('Location: /home');
     exit;
 }
@@ -45,7 +45,7 @@ $htmlContent = $Parsedown->text($markdownContent);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Changelog | plrsys</title>
+    <title><?= __('changelog.page_title') ?></title>
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="/assets/js/main.js?v=<?= filemtime(__DIR__ . '/../../public/assets/js/main.js') ?>" defer></script>
@@ -60,7 +60,8 @@ $htmlContent = $Parsedown->text($markdownContent);
             </div>
 
             <div class="main">
-                <p>Latest version: <?= $version ?? 'Unknown' ?></p>
+                <h1><?= __('changelog.title') ?></h1>
+                <p><?= __('changelog.latest_version', $version ?? 'N/A') ?></p>
                 <div class="changelog-content">
                     <?= $htmlContent ?>
                 </div>

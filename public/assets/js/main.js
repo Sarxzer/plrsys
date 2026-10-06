@@ -106,9 +106,9 @@ function formatDurationSeconds(seconds) {
     const secs = seconds % 60;
     
     const parts = [];
-    if (hours > 0) parts.push(hours + 'h');
-    if (minutes > 0) parts.push(minutes + 'm');
-    parts.push(secs + 's');
+    if (hours > 0) parts.push(hours + (durationDisplays[0]?.dataset.hoursLabel ?? 'h'));
+    if (minutes > 0) parts.push(minutes + (durationDisplays[0]?.dataset.minutesLabel ?? 'm'));
+    parts.push(secs + (durationDisplays[0]?.dataset.secondsLabel ?? 's'));
     return parts.join(' ');
 }
 

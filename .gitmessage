@@ -1,0 +1,7 @@
+
+# <type>(<scope>): <short description, lowercase, imperative, no period>
+#
+# types:  feat fix docs style refactor perf test build ci chore
+# scopes: i18n api auth devcontainer release changelog
+#
+# body (optional): bullets about what and why

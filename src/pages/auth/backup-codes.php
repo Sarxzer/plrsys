@@ -17,7 +17,7 @@ unset($_SESSION['show_backup_codes']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Backup Codes | plrsys</title>
+    <title><?= __('backup.page_title') ?></title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
@@ -34,22 +34,21 @@ unset($_SESSION['show_backup_codes']);
             <div class="main">
                 <div class="backup-container">
                     <div class="backup-header">
-                        <div class="backup-warn-badge">⚠ IMPORTANT</div>
-                        <div class="backup-title">Backup Codes</div>
-                        <div class="backup-subtitle">Save these before continuing</div>
+                        <div class="backup-warn-badge"><?= __('backup.important') ?></div>
+                        <div class="backup-title"><?= __('backup.title') ?></div>
+                        <div class="backup-subtitle"><?= __('backup.subtitle') ?></div>
                     </div>
 
                     <div class="backup-warning">
                         <span class="backup-warning-icon">⚠</span>
                         <div class="backup-warning-text">
-                            <strong>These codes won't be shown again.</strong><br>
-                            Each code works once. If you lose access to your authenticator app, these are your only way
-                            back in. Store them somewhere safe.
+                            <strong><?= __('backup.not_shown_again') ?></strong><br>
+                            <?= __('backup.warning') ?>
                         </div>
                     </div>
 
                     <div class="backup-codes-panel">
-                        <div class="backup-codes-label">// BACKUP_CODES</div>
+                        <div class="backup-codes-label"><?= __('backup.codes_label') ?></div>
                         <div class="backup-codes-grid">
                             <?php foreach ($codes as $code): ?>
                                 <div class="backup-code-item">
@@ -59,11 +58,11 @@ unset($_SESSION['show_backup_codes']);
                             <?php endforeach; ?>
                         </div>
                         <button class="backup-copy-btn" id="copy-btn"
-                            data-codes="<?= htmlspecialchars(implode("\n", $codes)) ?>">⎘ copy all codes</button>
+                            data-codes="<?= htmlspecialchars(implode("\n", $codes)) ?>" data-copy-label="<?= __('backup.copy') ?>" data-copied-label="<?= __('backup.copied') ?>"><?= __('backup.copy') ?></button>
                     </div>
 
-                    <a href="/dashboard" class="backup-cta">I've saved them → go to dashboard</a>
-                    <div class="backup-disclaimer">you won't be able to access these again</div>
+                    <a href="/dashboard" class="backup-cta"><?= __('backup.saved') ?></a>
+                    <div class="backup-disclaimer"><?= __('backup.disclaimer') ?></div>
                 </div>
             </div>
             <?php include $includesDir . '/footer.php'; ?>
@@ -74,10 +73,10 @@ unset($_SESSION['show_backup_codes']);
         document.getElementById('copy-btn').addEventListener('click', function () {
             const codes = this.dataset.codes;
             navigator.clipboard.writeText(codes).then(() => {
-                this.textContent = '✓ copied to clipboard';
+                this.textContent = this.dataset.copiedLabel;
                 this.classList.add('copied');
                 setTimeout(() => {
-                    this.textContent = '⎘ copy all codes';
+                    this.textContent = this.dataset.copyLabel;
                     this.classList.remove('copied');
                 }, 2500);
             });

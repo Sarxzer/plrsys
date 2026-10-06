@@ -19,7 +19,7 @@ $stmt = $pdo->prepare('SELECT * FROM systems WHERE handle = ?');
 $stmt->execute([$handle]);
 $system = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$system) {
-    Alert::error("System not found or you don't have permission to manage it.");
+    Alert::error(__('manage.member_new.error.system'));
     header('Location: /dashboard');
     exit;
 }
@@ -35,13 +35,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $memberColor = trim($_POST['color']);
 
     if (empty($memberHandle) || empty($memberName)) {
-        Alert::error("Member handle and name are required.");
+        Alert::error(__('manage.member_new.error.required'));
         header('Location: /manage/s/' . htmlspecialchars($handle) . '/new');
         exit;
     }
 
     if (!preg_match('/^[a-z0-9\-]+$/', $memberHandle)) {
-        Alert::error("Member handle can only contain lowercase letters, numbers, and hyphens.");
+        Alert::error(__('manage.member_new.error.handle_format'));
         header('Location: /manage/s/' . htmlspecialchars($handle) . '/new');
         exit;
     }
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $pdo->prepare('SELECT COUNT(*) FROM members WHERE system_id = ? AND handle = ?');
     $stmt->execute([$system['id'], $memberHandle]);
     if ($stmt->fetchColumn() > 0) {
-        Alert::error("Member handle already exists in this system. Please choose a different one.");
+        Alert::error(__('manage.member_new.error.handle_exists'));
         header('Location: /manage/s/' . htmlspecialchars($handle) . '/new');
         exit;
     }
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Member | plrsys</title>
+    <title><?= __('manage.member_new.page_title') ?></title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
@@ -88,8 +88,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <div class="member-form-header">
                         <div class="member-form-badge"><?= htmlspecialchars($system['name']) ?></div>
-                        <div class="member-form-title">New Member</div>
-                        <div class="member-form-subtitle">Add someone to your system</div>
+                        <div class="member-form-title"><?= __('manage.member_new.title') ?></div>
+                        <div class="member-form-subtitle"><?= __('manage.member_new.subtitle') ?></div>
                     </div>
 
                     <form action="/manage/s/<?= htmlspecialchars($handle) ?>/new" method="post"
@@ -97,45 +97,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <!-- Handle -->
                         <div class="field-group">
-                            <label class="field-label" for="handle">// handle <span
+                            <label class="field-label" for="handle"><?= __('manage.member_new.handle') ?> <span
                                     class="required-star">*</span></label>
                             <div class="handle-wrapper">
                                 <span class="handle-at">@</span>
                                 <input type="text" id="handle" name="handle" class="handle-input"
-                                    placeholder="e.g. nova" pattern="[a-z0-9\-]+"
-                                    title="Lowercase letters, numbers, and hyphens only." autocomplete="off" required>
+                                    placeholder="<?= __('manage.member_new.handle_placeholder') ?>" pattern="[a-z0-9\-]+"
+                                    title="<?= __('manage.member_new.handle_title') ?>" autocomplete="off" required>
                             </div>
-                            <span class="field-hint">lowercase, numbers, hyphens only</span>
+                            <span class="field-hint"><?= __('manage.member_new.handle_hint') ?></span>
                         </div>
 
                         <hr class="form-divider">
 
                         <!-- Name -->
                         <div class="field-group">
-                            <label class="field-label" for="name">// display name <span
+                            <label class="field-label" for="name"><?= __('manage.member_new.name') ?> <span
                                     class="required-star">*</span></label>
-                            <input type="text" id="name" name="name" class="field-input" placeholder="e.g. Nova"
+                            <input type="text" id="name" name="name" class="field-input" placeholder="<?= __('manage.member_new.name_placeholder') ?>"
                                 required>
                         </div>
 
                         <!-- Pronouns -->
                         <div class="field-group">
-                            <label class="field-label" for="pronouns">// pronouns</label>
+                            <label class="field-label" for="pronouns"><?= __('manage.member_new.pronouns') ?></label>
                             <input type="text" id="pronouns" name="pronouns" class="field-input"
-                                placeholder="e.g. they/them">
+                                placeholder="<?= __('manage.member_new.pronouns_placeholder') ?>">
                         </div>
 
                         <!-- Role -->
                         <div class="field-group">
-                            <label class="field-label" for="role">// role</label>
-                            <input type="text" id="role" name="role" class="field-input" placeholder="e.g. protector">
+                            <label class="field-label" for="role"><?= __('manage.member_new.role') ?></label>
+                            <input type="text" id="role" name="role" class="field-input" placeholder="<?= __('manage.member_new.role_placeholder') ?>">
                         </div>
 
                         <hr class="form-divider">
 
                         <!-- Color -->
                         <div class="field-group">
-                            <label class="field-label" for="color">// color</label>
+                            <label class="field-label" for="color"><?= __('manage.member_new.color') ?></label>
                             <div class="color-wrapper">
                                 <input type="color" id="color" name="color" class="color-picker" value="#a3c4f3">
                                 <div class="color-dot-preview" id="color-dot"></div>
@@ -146,11 +146,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <hr class="form-divider">
 
                         <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
-                        <button type="submit" class="member-submit">Create Member →</button>
+                        <button type="submit" class="member-submit"><?= __('manage.member_new.submit') ?></button>
                     </form>
 
                     <div class="member-form-footer">
-                        <a href="/manage/s/<?= htmlspecialchars($handle) ?>">← back to system</a>
+                        <a href="/manage/s/<?= htmlspecialchars($handle) ?>"><?= __('manage.member_new.back') ?></a>
                     </div>
 
                 </div>

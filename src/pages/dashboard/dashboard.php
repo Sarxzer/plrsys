@@ -62,7 +62,7 @@ $recent_sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | plrsys</title>
+    <title><?= __('dashboard.page_title') ?></title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir?>" defer></script>
@@ -77,16 +77,16 @@ $recent_sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
             <div class="main">
-                <h1>Dashboard</h1>
+                <h1><?= __('dashboard.title') ?></h1>
 
                 <!-- Quick Stats -->
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-label">Systems</div>
+                        <div class="stat-label"><?= __('dashboard.systems') ?></div>
                         <div class="stat-value"><?= $systems_count ?></div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Members</div>
+                        <div class="stat-label"><?= __('dashboard.members') ?></div>
                         <div class="stat-value"><?= $members_count ?></div>
                     </div>
                 </div>
@@ -94,26 +94,26 @@ $recent_sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <!-- Active Session -->
                 <?php if ($active_session): ?>
                     <div class="widget active-session-widget">
-                        <h2>Currently Fronting</h2>
+                        <h2><?= __('dashboard.currently_fronting') ?></h2>
                         <div class="session-details">
-                            <p><strong>System:</strong> <?= htmlspecialchars($active_session['system_name']) ?></p>
-                            <p><strong>Members:</strong> <?= htmlspecialchars($active_session['member_names'] ?? 'Unknown') ?></p>
-                            <p><strong>Started:</strong> <?= date('g:i A', strtotime($active_session['started_at'])) ?></p>
-                            <p><strong>Duration:</strong> <span class="duration-display" data-started="<?= $active_session['started_at'] ?>"></span></p>
+                            <p><strong><?= __('dashboard.system') ?></strong> <?= htmlspecialchars($active_session['system_name']) ?></p>
+                            <p><strong><?= __('dashboard.members_label') ?></strong> <?= htmlspecialchars($active_session['member_names'] ?? __('dashboard.unknown')) ?></p>
+                            <p><strong><?= __('dashboard.started') ?></strong> <?= date('g:i A', strtotime($active_session['started_at'])) ?></p>
+                            <p><strong><?= __('dashboard.duration') ?></strong> <span class="duration-display" data-started="<?= $active_session['started_at'] ?>" data-hours-label="<?= __('dashboard.duration.hours', '') ?>" data-minutes-label="<?= __('dashboard.duration.minutes', '') ?>" data-seconds-label="<?= __('dashboard.duration.seconds', '') ?>"></span></p>
                         </div>
-                        <a href="/fronting?system=<?= $active_session['system_id'] ?>" class="btn btn-primary">Manage Session</a>
+                        <a href="/fronting?system=<?= $active_session['system_id'] ?>" class="btn btn-primary"><?= __('dashboard.manage_session') ?></a>
                     </div>
                 <?php endif; ?>
 
                 <!-- Recent Sessions -->
                 <?php if (!empty($recent_sessions)): ?>
                     <div class="widget recent-sessions-widget">
-                        <h2>Recent Sessions</h2>
+                        <h2><?= __('dashboard.recent_sessions') ?></h2>
                         <div class="sessions-list">
                             <?php foreach ($recent_sessions as $session): ?>
                                 <div class="session-item">
                                     <div class="session-header">
-                                        <strong><?= htmlspecialchars($session['member_names'] ?? 'Unknown') ?></strong>
+                                        <strong><?= htmlspecialchars($session['member_names'] ?? __('dashboard.unknown')) ?></strong>
                                         <span class="system-badge"><?= htmlspecialchars($session['system_name']) ?></span>
                                     </div>
                                     <div class="session-meta">
@@ -123,25 +123,25 @@ $recent_sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 $seconds = $session['duration_seconds'];
                                                 $hours = intdiv($seconds, 3600);
                                                 $minutes = intdiv($seconds % 3600, 60);
-                                                echo ($hours > 0 ? $hours . 'h ' : '') . $minutes . 'm';
+                                                echo ($hours > 0 ? __('dashboard.duration.hours', $hours) . ' ' : '') . __('dashboard.duration.minutes', $minutes);
                                             ?>
                                         </span>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
                         </div>
-                        <a href="/history" class="btn btn-secondary btn-small">View All History</a>
+                        <a href="/history" class="btn btn-secondary btn-small"><?= __('dashboard.view_all_history') ?></a>
                     </div>
                 <?php endif; ?>
 
                 <!-- Quick Actions -->
                 <div class="quick-actions">
-                    <h2>Quick Actions</h2>
+                    <h2><?= __('dashboard.quick_actions') ?></h2>
                     <div class="button-grid">
-                        <a href="/fronting" class="btn btn-primary">Start Session</a>
-                        <a href="/systems" class="btn btn-secondary">View Systems</a>
-                        <a href="/history" class="btn btn-secondary">Session History</a>
-                        <a href="/settings" class="btn btn-secondary">Settings</a>
+                        <a href="/fronting" class="btn btn-primary"><?= __('dashboard.start_session') ?></a>
+                        <a href="/systems" class="btn btn-secondary"><?= __('dashboard.view_systems') ?></a>
+                        <a href="/history" class="btn btn-secondary"><?= __('dashboard.session_history') ?></a>
+                        <a href="/settings" class="btn btn-secondary"><?= __('dashboard.settings') ?></a>
                     </div>
                 </div>
             </div>

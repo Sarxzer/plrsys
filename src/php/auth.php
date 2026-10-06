@@ -240,19 +240,19 @@ class Auth
         }
 
         if (strlen($password) < 8) {
-            return "Password must be at least 8 characters long.";
+            return __('register.error.password_length');
         }
         if (!preg_match('/[A-Z]/', $password)) {
-            return "Password must contain at least one uppercase letter.";
+            return __('register.error.password_uppercase');
         }
         if (!preg_match('/[a-z]/', $password)) {
-            return "Password must contain at least one lowercase letter.";
+            return __('register.error.password_lowercase');
         }
         if (!preg_match('/[0-9]/', $password)) {
-            return "Password must contain at least one digit.";
+            return __('register.error.password_number');
         }
         if (!preg_match('/[\W_]/', $password)) {
-            return "Password must contain at least one special character.";
+            return __('register.error.password_special');
         }
         return true;
     }

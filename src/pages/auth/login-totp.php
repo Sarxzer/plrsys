@@ -17,18 +17,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $auth = new Auth($pdo);
     $secret = $auth->getTotpSecret($userId);
     if (!$secret || !totp_verify($secret, $code)) {
-        Alert::error("Invalid code. Please try again.");
+        Alert::error(__('totp.error.invalid_code'));
     } else {
         $auth->login($userId, false);
         unset($_SESSION['pending_2fa_user'], $_SESSION['totp_attempts']);
-        Alert::success("Login successful! Welcome back.");
+        Alert::success(__('totp.success.login'));
         header("Location: /");
         exit;
     }
     $_SESSION['totp_attempts'] = ($_SESSION['totp_attempts'] ?? 0) + 1;
     if ($_SESSION['totp_attempts'] >= 5) {
         unset($_SESSION['pending_2fa_user'], $_SESSION['totp_attempts']);
-        Alert::error("Too many failed attempts. Please log in again.");
+        Alert::error(__('totp.error.too_many_attempts'));
         header("Location: /login");
         exit;
     }
@@ -41,7 +41,7 @@ $attemptsLeft = 5 - ($_SESSION['totp_attempts'] ?? 0);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Two-Factor Auth | plrsys</title>
+    <title><?= __('totp.page_title') ?></title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
@@ -59,30 +59,30 @@ $attemptsLeft = 5 - ($_SESSION['totp_attempts'] ?? 0);
                 <div class="totp-container">
                     <div class="totp-header">
                         <span class="totp-icon">🔐</span>
-                        <div class="totp-title">Two-Factor Auth</div>
-                        <div class="totp-subtitle">Enter code from your authenticator app</div>
+                        <div class="totp-title"><?= __('totp.title') ?></div>
+                        <div class="totp-subtitle"><?= __('totp.enter_code') ?></div>
                     </div>
                     <hr class="totp-divider">
                     <form action="totp" method="POST" class="totp-form">
                         <div>
-                            <label class="totp-label" for="code">// code</label>
+                            <label class="totp-label" for="code"><?= __('totp.code') ?></label>
                             <input type="text" id="code" name="code" class="totp-code-input" maxlength="8"
                                 placeholder="_ _ _ _ _ _" autocomplete="one-time-code" inputmode="numeric" autofocus
                                 required>
-                            <div class="totp-hint">or enter a backup code</div>
+                            <div class="totp-hint"><?= __('totp.backup_hint') ?></div>
                         </div>
                         <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
-                        <button type="submit" class="totp-submit">Verify →</button>
+                        <button type="submit" class="totp-submit"><?= __('totp.verify') ?></button>
                     </form>
                     <div class="totp-attempts">
                         <?php for ($i = 0; $i < 5; $i++): ?>
                             <div class="attempt-pip <?= $i >= $attemptsLeft ? 'used' : '' ?>"></div>
                         <?php endfor; ?>
                     </div>
-                    <div class="backup-hint"><?= $attemptsLeft ?> attempt<?= $attemptsLeft !== 1 ? 's' : '' ?> remaining
+                    <div class="backup-hint"><?= $attemptsLeft === 1 ? __('totp.attempt_remaining') : __('totp.attempts_remaining', $attemptsLeft) ?>
                     </div>
                     <div class="totp-footer">
-                        <a href="/login">← back to login</a>
+                        <a href="/login"><?= __('totp.back_to_login') ?></a>
                     </div>
                 </div>
             </div>

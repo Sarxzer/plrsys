@@ -2,7 +2,7 @@
 
 use OTPHP\TOTP;
 use Endroid\QrCode\QrCode;
-use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\Writer\SvgWriter;
 use Endroid\QrCode\ErrorCorrectionLevel;
 use Symfony\Component\Clock\NativeClock;
 
@@ -21,7 +21,7 @@ function totp_generate_secret(string $userEmail, string $issuer): array
         margin: 10,
     );
 
-    $qr = (new PngWriter())->write($qrCode);
+    $qr = (new SvgWriter())->write($qrCode);
 
     return [
         'secret' => $otp->getSecret(),

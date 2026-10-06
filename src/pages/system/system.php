@@ -18,14 +18,14 @@ $stmt->execute([$system_handle]);
 $system = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$system) {
-    Alert::error('System not found.');
+    Alert::error(__('system.page.error.not_found'));
     header('Location: /');
     exit;
 }
 
 $isOwner = Guards::isSystemOwner($pdo, (int) $system['id']);
 if ((int) $system['is_public'] !== 1 && !$isOwner) {
-    Alert::error('System not found.');
+    Alert::error(__('system.page.error.not_found'));
     header('Location: /');
     exit;
 }
@@ -63,7 +63,7 @@ foreach ($fronting_session_members as $fsm) {
 
 
 $systemName = htmlspecialchars($system['name']);
-$systemDescription = htmlspecialchars($system['description'] ?? "No description provided.");
+$systemDescription = htmlspecialchars($system['description'] ?? __('system.page.no_description'));
 $systemHandle = htmlspecialchars($system['handle']);
 $canonicalUrl = htmlspecialchars('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
 ?>
@@ -73,7 +73,7 @@ $canonicalUrl = htmlspecialchars('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($system['name']) ?> | plrsys</title>
+    <title><?= __('system.page.page_title', $systemName) ?></title>
     <link rel="stylesheet" href="<?= $cssDir ?>">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir?>" defer></script>
@@ -85,7 +85,7 @@ $canonicalUrl = htmlspecialchars('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['
     <meta property="og:description" content="<?= $systemDescription ?>">
     <meta property="og:url" content="<?= $canonicalUrl ?>">
     <meta property="og:image" content="https://plrsys.xyz/assets/icons/icon-512.png"> 
-    <meta property="og:image:alt" content="<?= $systemName ?> system on plrsys">
+    <meta property="og:image:alt" content="<?= __('system.page.meta_alt', $systemName) ?>">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
@@ -108,31 +108,31 @@ $canonicalUrl = htmlspecialchars('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['
                     <div class="system-title"><?= $systemName ?></div>
                     <div class="system-meta">
                         <div class="meta-item">
-                            <div class="meta-label">Handle</div>
+                            <div class="meta-label"><?= __('system.page.handle') ?></div>
                             <div class="meta-value">@<?= htmlspecialchars($system['handle']) ?></div>
                         </div>
                         <div class="meta-item">
-                            <div class="meta-label">Owner</div>
+                            <div class="meta-label"><?= __('system.page.owner') ?></div>
                             <div class="meta-value"><?= htmlspecialchars($user['username']) ?></div>
                         </div>
                         <div class="meta-item">
-                            <div class="meta-label">Members</div>
+                            <div class="meta-label"><?= __('system.page.members') ?></div>
                             <div class="meta-value"><?= count($members) ?></div>
                         </div>
                     </div>
                     <div class="system-description"><?= nl2br($systemDescription) ?></div>
                     <div class="fronting-badge">
                         <div class="fronting-dot"></div>
-                        <div class="fronting-text"><?= $nowFrontingMembers ? "Now fronting: " . htmlspecialchars(implode(", ", $nowFrontingMembers)) : "No one is fronting" ?></div>
+                        <div class="fronting-text"><?= $nowFrontingMembers ? __('system.page.now_fronting', htmlspecialchars(implode(", ", $nowFrontingMembers))) : __('system.page.no_one_fronting') ?></div>
                     </div>
                     <div class="system-actions">
                         <?php if ($isOwner): ?>
-                            <a href="/manage/s/<?= htmlspecialchars($system['handle']) ?>" class="btn btn-secondary">Manage System</a>
+                            <a href="/manage/s/<?= htmlspecialchars($system['handle']) ?>" class="btn btn-secondary"><?= __('system.page.manage') ?></a>
                         <?php endif; ?>
                     </div>
                 </div>
 
-                <div class="section-title">Members</div>
+                <div class="section-title"><?= __('system.page.members') ?></div>
 
                 <div class="members-grid">
                     <?php foreach ($members as $member): ?>
@@ -141,11 +141,11 @@ $canonicalUrl = htmlspecialchars('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['
                             <div class="member-hex" style="color: <?= htmlspecialchars($member['color'] ?? '#000000') ?>">#<?= substr(htmlspecialchars($member['color'] ?? '#000000'), 1) ?></div>
                             <div class="member-top">
                                 <div class="color-dot" style="--color-dot: <?= htmlspecialchars($member['color']) ?>"></div>
-                                <div class="member-name"><?= htmlspecialchars($member['name'] ?? 'Unnamed') ?></div>
-                                <div class="member-role"><?= htmlspecialchars($member['role'] ?? 'Member') ?></div>
+                                <div class="member-name"><?= htmlspecialchars($member['name'] ?? __('system.page.unnamed')) ?></div>
+                                <div class="member-role"><?= htmlspecialchars($member['role'] ?? __('system.page.member_role')) ?></div>
                             </div>
-                            <div class="member-pronouns"><?= htmlspecialchars($member['pronouns'] ?? 'Not specified') ?></div>
-                            <div class="member-description"><?= nl2br(htmlspecialchars($member['description'] ?? 'No description provided.')) ?></div>
+                            <div class="member-pronouns"><?= htmlspecialchars($member['pronouns'] ?? __('system.page.not_specified')) ?></div>
+                            <div class="member-description"><?= nl2br(htmlspecialchars($member['description'] ?? __('system.page.no_description'))) ?></div>
                             <div class="card-arrow">[->]</div>
                         </a>
                     <?php endforeach; ?>
@@ -153,7 +153,7 @@ $canonicalUrl = htmlspecialchars('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['
                         <a href="/manage/s/<?= htmlspecialchars($system['handle']) ?>/new" class="member-card new-member-card">
                             <div class="new-member-content">
                                 <div class="plus-icon">+</div>
-                                <div class="label">Add New Member</div>
+                                <div class="label"><?= __('system.page.add_member') ?></div>
                             </div>
                         </a>
                     <?php endif; ?>
