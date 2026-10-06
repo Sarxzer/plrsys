@@ -1311,11 +1311,19 @@ h2,
     max-width: 400px;
   }
 }
+.auth.form, .auth input {
+  width: 100%;
+}
+.auth.form {
+  padding-bottom: 1rem;
+  gap: 22px;
+  display: flex;
+  flex-direction: column;
+}
 .login-container, .register-container {
   max-width: 400px;
-  margin: 5.6rem auto; /* bon, c'est un peu près centré... */
+  margin: 5.6rem auto;
 }
-
 .login-box, .register-box {
   max-width: 400px;
   padding: 2rem;
@@ -1379,13 +1387,6 @@ h2,
 .login-form input[type=submit]:active {
   transform: translate(1px, 1px);
 } */
-.login-subtext {
-  text-align: center;
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  color: #9d9ab5;
-}
-
 .totp-container {
   max-width: 420px;
   margin: 3rem auto;
@@ -1613,7 +1614,7 @@ h2,
   transform: translate(1px, 1px);
 }
 
-.register-subtext {
+.auth.subtext {
   text-align: center;
   margin-top: 1rem;
   font-size: 0.9rem;
