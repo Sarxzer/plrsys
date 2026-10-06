@@ -35,10 +35,10 @@
                     <p class="home-subtitle"><?= __('home.subtitle') ?></p>
                     <div class="home-actions">
                         <?php if (isset($current_user)): ?>
-                            <a href="/dashboard" class="btn btn-primary"><?= __('home.dashboard') ?></a>
+                            <a href="/dashboard" class="btn primary"><?= __('home.dashboard') ?></a>
                         <?php else: ?>
-                            <a href="/register" class="btn btn-primary"><?= __('home.get_started') ?></a>
-                            <a href="/login" class="btn btn-secondary"><?= __('home.login') ?></a>
+                            <a href="/register" class="btn primary"><?= __('home.get_started') ?></a>
+                            <a href="/login" class="btn secondary"><?= __('home.login') ?></a>
                         <?php endif; ?>
                     </div>
                     <nav class="home-menu" aria-label="<?= __('common.home_menu') ?>">

@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </label>
 
                             <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
-                            <input type="submit" value="<?= __('login.submit') ?>">
+                            <input type="submit" class="btn primary" value="<?= __('login.submit') ?>">
                         </form>
                         <p class="login-subtext"><a href="/register"><?= __('login.register_prompt') ?></a></p>
                         <p class="login-subtext"><a href="/reset-password"><?= __('login.forgot_password') ?></a></p>
