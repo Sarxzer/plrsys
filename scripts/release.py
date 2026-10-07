@@ -124,6 +124,7 @@ class ReleaseManager:
         self.changelog     = self.root / "CHANGELOG.md"
         self.current       = self._read_version()
         self.new_version   = None
+        self.changelog_edited = False
 
     # ---- Version ------------------------------------------------------------
 
@@ -226,11 +227,15 @@ class ReleaseManager:
             sys.exit(1)
         ok(f"On branch {GIT_BRANCH}")
 
-        if run("git status --porcelain"):
-            warn("You have uncommitted changes. They will NOT be part of this release.")
+        changelog_status = run("git status --porcelain -- CHANGELOG.md")
+        other_status = run("git status --porcelain -- . ':(exclude)CHANGELOG.md'")
+        if other_status:
+            warn("You have uncommitted changes outside CHANGELOG.md. They will NOT be part of this release.")
             if not confirm("Continue anyway?", default="n"):
                 err("Release cancelled")
                 sys.exit(1)
+        elif changelog_status:
+            ok("Pre-written CHANGELOG.md changes will be included in this release")
         else:
             ok("Working tree clean")
 
@@ -297,21 +302,33 @@ class ReleaseManager:
             warn("No commits found since last tag")
 
         print()
-        print("  Enter changelog lines (empty line to finish):")
-        print(c(DIM, "  Examples: '- Added fronting session tracking'"))
-        print(c(DIM, "            '- Fixed CSRF token rotation bug'"))
+        print("  Opening CHANGELOG.md in your text editor.")
+        print(c(DIM, "  Add or update the release section, then save and close the editor."))
         print()
 
-        lines = []
-        while True:
-            line = input("  > ").strip()
-            if not line:
-                break
-            if not line.startswith("-"):
-                line = f"- {line}"
-            lines.append(line)
+        editor = os.environ.get("VISUAL") or os.environ.get("EDITOR") or "nano"
+        editor_command = shlex.split(editor)
+        if not editor_command:
+            editor_command = ["nano"]
+        if Path(editor_command[0]).name in ("code", "code-insiders", "codium"):
+            editor_command.append("--wait")
+        editor_command.append(str(self.changelog))
 
-        return "\n".join(lines) if lines else None
+        result = subprocess.run(editor_command)
+        if result.returncode != 0:
+            err(f"Text editor exited with status {result.returncode}")
+            sys.exit(1)
+
+        changes = run("git diff HEAD -- CHANGELOG.md", check=False)
+        if changes:
+            self.changelog_edited = True
+            print(f"\n  {c(BOLD, 'CHANGELOG.md changes to be committed')}")
+            div()
+            print(changes)
+        else:
+            warn("No changes were made to CHANGELOG.md")
+
+        return None
 
     def write_changelog(self, version, entry):
         date   = datetime.now().strftime("%Y-%m-%d")
@@ -468,7 +485,7 @@ class ReleaseManager:
 
         # 4. Changelog
         entry = self.build_changelog_entry()
-        if not entry:
+        if not entry and not self.changelog_edited:
             if not confirm("No changelog entry. Continue anyway?", default="n"):
                 err("Release cancelled")
                 sys.exit(1)
