@@ -92,30 +92,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="main">
-                <div class="register-layout">
-                    <div class="register-container">
-                        <h1 class="register-title"><?= __('register.title') ?></h1>
-
+                <div class="register-container">
+                    <h1 class="register-title"><?= __('register.title') ?></h1>
+                    <div class="register-box">
                         <form action="register" method="post" class="register-form">
-                            <label for="username"><?= __('register.username') ?></label><br>
-                            <input type="text" id="username" name="username"
-                                value="<?= htmlspecialchars($_SESSION['last_failed_username'] ?? '') ?>"
-                                required><br><br>
+                            <div class="auth form">
+                                <div class="login username">
+                                    <label for="username"><?= __('register.username') ?></label>
+                                    <input type="text" id="username" name="username"
+                                        value="<?= htmlspecialchars($_SESSION['last_failed_username'] ?? '') ?>"
+                                        required>
+                                </div>
 
-                            <label for="password"><?= __('register.password') ?></label><br>
-                            <input type="password" id="password" name="password" required><br><br>
-
+                                <div class="login password">
+                                    <label for="password"><?= __('register.password') ?></label>
+                                    <input type="password" id="password" name="password" required><br>
+                                </div>
+                            </div>
                             <label for="totp" class="checkbox-label">
                                 <input type="checkbox" name="totp" id="totp" value="1"
                                     <?= isset($_SESSION['last_failed_totp']) && $_SESSION['last_failed_totp'] === 'checked' ? 'checked' : '' ?>>
                                 <?= __('register.enable_totp') ?>
-                            </label><br>
+                            </label>
 
                             <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
-                            <input type="submit" value="<?= __('register.submit') ?>">
+                            <input type="submit" class="btn primary" value="<?= __('register.submit') ?>">
                         </form>
 
-                        <p class="register-subtext"><a href="/login"><?= __('register.login_prompt') ?></a></p>
+                        <p class="auth subtext"><a href="/login"><?= __('register.login_prompt') ?></a></p>
                     </div>
 
                     <aside class="password-requirements" aria-labelledby="password-requirements-title">
@@ -170,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </body>
 <script>
-    (function () {
+    (function() {
         const input = document.getElementById('password');
         const aside = document.querySelector('.password-requirements');
         if (!input || !aside) return;
@@ -201,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             el.classList.toggle('failed', dirty && !met);
         }
 
-        input.addEventListener('input', function () {
+        input.addEventListener('input', function() {
             const v = this.value;
             const dirty = v.length > 0;
 

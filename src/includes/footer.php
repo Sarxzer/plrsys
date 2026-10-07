@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Footer template for the site.
  *
@@ -6,19 +7,21 @@
  */
 ?>
 <footer class="site-footer">
-    <span class="footer-version"><?= $version ?></span>
-    <span class="footer-sep">-</span>
-    <span class="footer-credit"><?= __('footer.credit') ?></span>
-    <span class="footer-sep">-</span>
-    <nav class="footer-links">
-        <a href="/about"><?= __('common.about') ?></a>
-        <span class="footer-dot">·</span>
-        <a href="/changelog"><?= __('common.changelog') ?></a>
-        <span class="footer-dot">·</span>
-        <a href="/legal/privacy"><?= __('common.privacy') ?></a>
-        <span class="footer-dot">·</span>
-        <a href="/legal/tos"><?= __('common.terms') ?></a>
-    </nav>
+      <div class="footer-texts">
+        <span class="footer-version"><?= $version ?></span>
+        <span class="footer-sep">-</span>
+        <span class="footer-credit"><?= __('footer.credit') ?></span>
+        <span class="footer-sep">-</span>
+        <nav class="footer-links">
+            <a href="/about"><?= __('common.about') ?></a>
+            <span class="footer-dot">·</span>
+            <a href="/changelog"><?= __('common.changelog') ?></a>
+            <span class="footer-dot">·</span>
+            <a href="/legal/privacy"><?= __('common.privacy') ?></a>
+            <span class="footer-dot">·</span>
+            <a href="/legal/tos"><?= __('common.terms') ?></a>
+        </nav>
+    </div>
 </footer>
 
 <div class="cookie-banner" data-cookie-banner role="dialog" aria-live="polite" aria-label="Cookie consent">

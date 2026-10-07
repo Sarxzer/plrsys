@@ -1,5 +1,8 @@
 @charset "UTF-8";
-@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap");
+@font-face {
+  font-family: "Press Start 2P";
+  src: url(/assets/fonts/PressStart2P.ttf);
+}
 .dash-header {
   margin-bottom: 1.5rem;
 }
@@ -1114,6 +1117,10 @@ h2,
 .about-cta a:hover {
   transform: translate(-2px, -2px);
 }
+
+.btn:hover {
+  transform: translate(-2px, -2px);
+} 
 .about-cta .cta-primary {
   background: #a3c4f3;
   color: #0f3460;
@@ -1126,13 +1133,17 @@ h2,
   border: 2px solid rgba(163, 196, 243, 0.4);
   box-shadow: 3px 3px 0 #0a0a1a;
 }
-.about-cta .cta-primary:hover {
+.about-cta .cta-primary:hover, .about-cta .cta-secondary:hover {
   box-shadow: 5px 5px 0 #0a0a1a;
 }
 .about-cta .cta-secondary:hover {
-  box-shadow: 5px 5px 0 #0a0a1a;
   border-color: #a3c4f3;
 }
+
+.about-cta .cta-primary:active, .about-cta .cta-secondary:active {
+  box-shadow: 2px 2px 0 #0a0a1a;
+}
+
 
 @media (max-width: 768px) {
   .about-oss {
@@ -1157,7 +1168,6 @@ h2,
   margin-bottom: 2rem;
 }
 .home-hero .home-actions {
-  display: flex;
   gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
@@ -1178,21 +1188,21 @@ h2,
 .home-hero .home-actions .btn:active {
   transform: translate(1px, 1px);
 }
-.home-hero .home-actions .btn.btn-primary {
+.home-hero .home-actions .btn.primary {
   background: #a3c4f3;
   border-color: #a3c4f3;
   color: #0f3460;
 }
-.home-hero .home-actions .btn.btn-primary:hover {
+.home-hero .home-actions .btn.primary:hover {
   background: rgb(208.1153846154, 224.9326923077, 248.8846153846);
   border-color: rgb(208.1153846154, 224.9326923077, 248.8846153846);
 }
-.home-hero .home-actions .btn.btn-secondary {
+.home-hero .home-actions .btn.secondary {
   background: rgba(163, 196, 243, 0.1);
   border-color: rgba(163, 196, 243, 0.2);
   color: #e8e6f0;
 }
-.home-hero .home-actions .btn.btn-secondary:hover {
+.home-hero .home-actions .btn.secondary:hover {
   background: rgba(163, 196, 243, 0.15);
   border-color: rgba(163, 196, 243, 0.4);
 }
@@ -1219,7 +1229,6 @@ h2,
 .home-hero .home-menu .home-menu-sep {
   color: rgba(163, 196, 243, 0.35);
 }
-
 .home-features {
   display: flex;
   gap: 1.5rem;
@@ -1302,16 +1311,28 @@ h2,
     max-width: 400px;
   }
 }
-.login-container {
+.auth.form, .auth input {
+  width: 100%;
+}
+.auth.form {
+  padding-bottom: 1rem;
+  gap: 22px;
+  display: flex;
+  flex-direction: column;
+}
+.login-container, .register-container {
   max-width: 400px;
-  margin: 3rem auto;
+  margin: 5.6rem auto;
+}
+.login-box, .register-box {
+  max-width: 400px;
   padding: 2rem;
   background: #16213e;
   border: 2px solid rgba(163, 196, 243, 0.25);
   box-shadow: 4px 4px 0px #0a0a1a;
 }
 
-.login-title {
+.login-title, .register-title {
   font-family: "Press Start 2P", monospace;
   font-size: 24px;
   margin-bottom: 1rem;
@@ -1351,29 +1372,21 @@ h2,
   margin-right: 8px;
 }
 .login-form input[type=submit] {
-  background: #a3c4f3;
+  /* background: #a3c4f3;
   border: none;
-  color: #0f3460;
+  color: #0f3460; */
   padding: 0.75rem;
   font-family: "VT323", monospace;
   font-size: 28px;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.08s;
+  /* cursor: pointer;
+  transition: background-color 0.2s, transform 0.08s; */
 }
-.login-form input[type=submit]:hover {
+ /* .login-form input[type=submit]:hover {
   background-color: rgb(208.1153846154, 224.9326923077, 248.8846153846);
 }
 .login-form input[type=submit]:active {
   transform: translate(1px, 1px);
-}
-
-.login-subtext {
-  text-align: center;
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  color: #9d9ab5;
-}
-
+} */
 .totp-container {
   max-width: 420px;
   margin: 3rem auto;
@@ -1538,26 +1551,19 @@ h2,
   margin-top: 0.75rem;
 }
 
-.register-layout {
+.register-container {
   position: relative;
   width: 100%;
 }
 
-.register-container {
+/* .register-box {
   max-width: 400px;
   margin: 3rem auto;
   padding: 2rem;
   background: #16213e;
   border: 2px solid rgba(163, 196, 243, 0.25);
   box-shadow: 4px 4px 0px #0a0a1a;
-}
-
-.register-title {
-  font-family: "Press Start 2P", monospace;
-  font-size: 24px;
-  margin-bottom: 1rem;
-  text-align: center;
-}
+} */
 
 .register-form {
   display: flex;
@@ -1608,7 +1614,7 @@ h2,
   transform: translate(1px, 1px);
 }
 
-.register-subtext {
+.auth.subtext {
   text-align: center;
   margin-top: 1rem;
   font-size: 0.9rem;
@@ -3415,17 +3421,17 @@ textarea:not(.note-field):focus {
   flex-wrap: wrap;
 }
 
-.btn-primary {
+.btn.primary {
   background: #a3c4f3;
   color: #0f3460;
   box-shadow: 4px 4px 0px #0a0a1a;
 }
-.btn-primary:hover {
+.btn.primary:hover {
   background: rgb(199.0923076923, 219.1461538462, 247.7076923077);
   box-shadow: 5px 5px 0 #0a0a1a;
   transform: translate(-1px, -1px);
 }
-.btn-primary:active {
+.btn.primary:active {
   box-shadow: 2px 2px 0 #0a0a1a;
   transform: translate(2px, 2px);
 }
@@ -3886,7 +3892,7 @@ textarea:not(.note-field):focus {
 }
 
 .main {
-  padding: 2rem 1.5rem;
+  padding: 1.5rem;
   flex: 1;
 }
 
@@ -4039,7 +4045,7 @@ textarea:not(.note-field):focus {
   border-top: 3px solid #a3c4f3;
   box-shadow: 0 -4px 0 #0a0a1a;
   padding: 0.75rem 1.5rem;
-  display: flex;
+  /* display: flex; */
   align-items: center;
   gap: 0.75rem;
   font-family: "VT323", monospace;
@@ -4047,6 +4053,11 @@ textarea:not(.note-field):focus {
   color: #9d9ab5;
   margin-top: auto;
 }
+
+.site-footer .footer-texts {
+  display: inline-flex;
+}
+
 .site-footer .footer-version {
   color: #a3c4f3;
   letter-spacing: 1px;
@@ -4167,6 +4178,7 @@ img {
   }
   .bottom-nav-item {
     display: flex;
+    flex: auto;
     flex-direction: column;
     align-items: center;
     gap: 0.15rem;

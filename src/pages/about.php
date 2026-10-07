@@ -103,8 +103,8 @@
                         <?php if (isset($current_user)): ?>
                             <a href="/dashboard" class="cta-primary"><?= __('home.dashboard') ?> →</a>
                         <?php else: ?>
-                            <a href="/register" class="cta-primary"><?= __('home.get_started') ?> →</a>
-                            <a href="/login" class="cta-secondary"><?= __('home.login') ?></a>
+                            <a href="/register" class="btn cta-primary"><?= __('home.get_started') ?> →</a>
+                            <a href="/login" class="btn cta-secondary"><?= __('home.login') ?></a>
                         <?php endif; ?>
                     </div>
 

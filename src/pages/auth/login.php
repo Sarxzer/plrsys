@@ -81,28 +81,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="main">
                 <div class="login-container">
                     <h1 class="login-title"><?= __('login.title') ?></h1>
+                    <div class="login-box">
+                        <form action="login" method="post" class="login-form">
+                            <div class="auth form">
+                                <div class="login username">
+                                    <label for="username"><?= __('login.username') ?></label>
+                                    <input type="text" id="username" name="username"
+                                        value="<?= htmlspecialchars($_SESSION['last_failed_username'] ?? '') ?>" required>
+                                </div>
+                                <div class="login password">
+                                    <label for="password"><?= __('login.password') ?></label>
+                                    <input type="password" id="password" name="password" required><br>
+                                </div>
+                            </div>
+                            <label for="remember" class="checkbox-label">
+                                <input type="checkbox" id="remember" name="remember"> <?= __('login.remember_me') ?>
+                            </label>
 
-                    <form action="login" method="post" class="login-form">
-                        <label for="username"><?= __('login.username') ?></label><br>
-                        <input type="text" id="username" name="username"
-                            value="<?= htmlspecialchars($_SESSION['last_failed_username'] ?? '') ?>" required><br><br>
-
-                        <label for="password"><?= __('login.password') ?></label><br>
-                        <input type="password" id="password" name="password" required><br><br>
-
-                        <label for="remember" class="checkbox-label">
-                            <input type="checkbox" id="remember" name="remember"> <?= __('login.remember_me') ?>
-                        </label>
-                        <br><br>
-
-                        <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
-                        <input type="submit" value="<?= __('login.submit') ?>">
-                    </form>
-                    <p class="login-subtext"><a href="/register"><?= __('login.register_prompt') ?></a></p>
-                    <p class="login-subtext"><a href="/reset-password"><?= __('login.forgot_password') ?></a></p>
+                            <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
+                            <input type="submit" class="btn primary" value="<?= __('login.submit') ?>">
+                        </form>
+                        <p class="auth subtext"><a href="/register"><?= __('login.register_prompt') ?></a></p>
+                        <p class="auth subtext"><a href="/reset-password"><?= __('login.forgot_password') ?></a></p>
+                    </div>
                 </div>
             </div>
-
             <?php include $includesDir . '/footer.php'; ?>
         </div>
     </div>
