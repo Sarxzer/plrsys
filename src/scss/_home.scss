@@ -22,7 +22,6 @@
     }
 
     .home-actions {
-        display: flex;
         gap: 1rem;
         justify-content: center;
         flex-wrap: wrap;
@@ -48,7 +47,7 @@
                 transform: translate(1px, 1px);
             }
 
-            &.btn-primary {
+            &.primary {
                 background: $color-light-blue;
                 border-color: $color-light-blue;
                 color: $color-text-inverted;
@@ -65,7 +64,7 @@
                 }
             }
 
-            &.btn-secondary {
+            &.secondary {
                 background: rgba($color-light-blue, 0.1);
                 border-color: rgba($color-light-blue, 0.2);
                 color: $color-text-main;

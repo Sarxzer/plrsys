@@ -6,16 +6,35 @@
 @use "variables" as *;
 @use "sass:color";
 
-.login-container {
+.auth.form,
+.auth input {
+    width: 100%;
+}
+
+.auth.form {
+    padding-bottom: 1rem;
+    gap: 22px;
+    display: flex;
+    flex-direction: column;
+}
+
+.login-container,
+.register-container {
     max-width: 400px;
-    margin: 3rem auto;
+    margin: 5.6rem auto;
+}
+
+.login-box,
+.register-box {
+    max-width: 400px;
     padding: 2rem;
     background: $color-bg-card;
     border: $border-pixel rgba($color-light-blue, 0.25);
     box-shadow: $pixel-shadow;
 }
 
-.login-title {
+.login-title,
+.register-title {
     font-family: $font-pixel;
     font-size: 24px;
     margin-bottom: 1rem;
@@ -59,28 +78,13 @@
     }
 
     input[type="submit"] {
-        background: $color-light-blue;
-        border: none;
-        color: $color-text-inverted;
         padding: 0.75rem;
         font-family: $font-retro;
         font-size: 28px;
-        cursor: pointer;
-        transition:
-            background-color 0.2s,
-            transform 0.08s;
-
-        &:hover {
-            background-color: color.adjust($color-light-blue, $lightness: 10%);
-        }
-
-        &:active {
-            transform: translate(1px, 1px);
-        }
     }
 }
 
-.login-subtext {
+.auth.subtext {
     text-align: center;
     margin-top: 1rem;
     font-size: 0.9rem;

@@ -25,9 +25,38 @@ The database schema (`database/schema.sql`) is imported automatically the first 
 
 To create a test account without the email flow, use `scripts/manual-signup.php` from the container terminal.
 
-The stylesheets are written in SCSS in `src/scss/` and compiled to `public/assets/css/style.css`.
+### Compiling stylesheets
 
-<!-- TODO (maintainer): add the exact SCSS build command here -->
+The stylesheets are written in SCSS in `src/scss/`. The entrypoint is
+`src/scss/style.scss`, which imports the partials used by the application.
+The compiled files are written to `public/assets/css/`:
+
+- `style.css` - the compiled stylesheet used by the site
+- `style.css.map` - the source map used by browser developer tools
+
+The repository includes a standalone Dart Sass workflow, so Node.js and a VS
+Code extension are not required:
+
+```sh
+scripts/install-sass.sh
+scripts/compile-scss.sh
+```
+
+To recompile automatically while editing:
+
+```sh
+scripts/compile-scss.sh --watch
+```
+
+The installer downloads the platform-specific Dart Sass binary into `.tools/`,
+which is ignored by git. The compiler script always uses
+`src/scss/style.scss` as the entrypoint and writes to `public/assets/css/`.
+The optional `.vscode/settings.json` also configures Live Sass Compiler for
+contributors who prefer to use VS Code.
+
+Do not edit the generated CSS or source map by hand. If the compiled output is
+wrong, fix the SCSS source and compile it again. Keep the generated files in
+the pull request when the project tracks an output change.
 
 ## Project layout
 
@@ -46,6 +75,10 @@ The stylesheets are written in SCSS in `src/scss/` and compiled to `public/asset
 - Never commit secrets: `.env` stays out of git, and new settings go into `.env.example` with placeholder values
 - If you change the database, update `database/schema.sql` in the same pull request
 - Keep pull requests focused: one change per PR is much easier to review
+
+### Do not modify CSS files directly
+
+Do not modify CSS files directly. See the "Compiling stylesheets" section above for how to edit SCSS and compile it into CSS.
 
 ## Pull requests
 

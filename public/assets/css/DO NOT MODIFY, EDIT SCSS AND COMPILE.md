@@ -1,0 +1,1 @@
+# Do not modify css files directly. See [CONTRIBUTING](.github/CONTRIBUTING.md#Do-not-modify-CSS-files-directly) for instructions on how to edit SCSS and compile it to CSS.

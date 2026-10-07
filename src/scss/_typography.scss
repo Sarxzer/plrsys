@@ -5,7 +5,15 @@
 
 @use 'variables' as *;
 
-@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap");
+@font-face {
+    font-family: "Press Start 2P";
+    src: url("/assets/fonts/PressStart2P.ttf");
+}
+
+@font-face {
+    font-family: "VT323";
+    src: url("/assets/fonts/VT323.ttf");
+}
 
 body {
     font-family: $font-retro;

@@ -225,6 +225,7 @@
 
     .bottom-nav-item {
         display: flex;
+        flex: auto;
         flex-direction: column;
         align-items: center;
         gap: 0.15rem;

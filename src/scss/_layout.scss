@@ -39,7 +39,7 @@
 }
 
 .main {
-    padding: 2rem 1.5rem;
+    padding: 1.5rem;
     flex: 1;
 }
 
@@ -214,13 +214,16 @@
     border-top: 3px solid $color-light-blue;
     box-shadow: 0 -4px 0 $shadow-dark;
     padding: 0.75rem 1.5rem;
-    display: flex;
     align-items: center;
     gap: 0.75rem;
     font-family: "VT323", monospace;
     font-size: 18px;
     color: $color-text-muted;
     margin-top: auto;
+
+    .footer-texts {
+        display: inline-flex;
+    }
 
     .footer-version {
         color: $color-light-blue;

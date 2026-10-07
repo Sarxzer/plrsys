@@ -239,7 +239,8 @@
         box-shadow: 3px 3px 0 $shadow-dark;
     }
 
-    .cta-primary:hover {
+    .cta-primary:hover,
+    .cta-secondary:hover {
         box-shadow: $pixel-shadow-hover;
     }
 
@@ -247,6 +248,15 @@
         box-shadow: $pixel-shadow-hover;
         border-color: $color-light-blue;
     }
+
+    .cta-primary:active,
+    .cta-secondary:active {
+        box-shadow: 2px 2px 0 $shadow-dark;
+    }
+}
+
+.btn:hover {
+    transform: translate(-2px, -2px);
 }
 
 @media (max-width: 768px) {
