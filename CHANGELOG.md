@@ -2,6 +2,18 @@
 
 All notable changes to plrsys are documented here.
 
+## [v0.1.0-alpha.3] - 2026-10-07
+
+- Redesigned the login and register pages with a shared form layout, a new pixel-style box, and a refreshed password requirements panel.
+- Unified button styling across the home and about pages with shared `btn primary` and `btn secondary` classes.
+- Improved the footer and mobile bottom navigation spacing, plus the layout of the changelog and main content area.
+- Self-hosted the Press Start 2P and VT323 fonts instead of loading them from Google Fonts.
+- Added standalone Dart Sass install and compile scripts (`scripts/install-sass.sh`, `scripts/compile-scss.sh`) with a pinned, checksum-verified download.
+- Moved the hand-edited stylesheet changes back into the SCSS sources and recompiled the CSS.
+- Documented the stylesheet build workflow in CONTRIBUTING and added a notice not to edit the compiled CSS.
+- Added curl to the development container image.
+- Thanks to @Celestial04 for the interface and styling contributions.
+
 ## [v0.1.0-alpha.2] - 2026-10-05
 
 - Added a routed API front controller with health, login, token refresh, token management, two-factor verification, ping, echo, and API error endpoints.
