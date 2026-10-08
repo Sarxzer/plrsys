@@ -11,7 +11,7 @@
     "SSH_AUTH_SOCK": "/ssh-agent"
   },
   "features": {
-    "ghcr.io/devcontainers/features/node:1": {}
+    "ghcr.io/devcontainers/features/node:2.1.1": {}
   },
   "forwardPorts": [8000, 3306],
   "customizations": {
