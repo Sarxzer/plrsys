@@ -2,6 +2,12 @@
 
 All notable changes to plrsys are documented here.
 
+## [v0.1.0-alpha.4] - 2026-10-08
+
+- Overhauled the release manager with preflight validation, safer changelog and version handling, atomic pushes, deployment checks, health checks, and rollback support.
+- Updated page language metadata to use the active localization dynamically across the application.
+- Added a consistent timezone configuration to the development containers and documented the release configuration updates.
+
 ## [v0.1.0-alpha.3] - 2026-10-07
 
 - Redesigned the login and register pages with a shared form layout, a new pixel-style box, and a refreshed password requirements panel.
