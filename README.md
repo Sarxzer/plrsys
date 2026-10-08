@@ -49,7 +49,7 @@ The easiest way is the dev container, which gives you PHP, Nginx, and MySQL with
 ```bash
 git clone https://github.com/Sarxzer/plrsys.git
 cd plrsys
-cp .env.example .env     # then make sure DB_HOST=db
+cp .env.example .env
 code .
 ```
 
