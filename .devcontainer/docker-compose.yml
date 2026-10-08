@@ -2,7 +2,7 @@ services:
   app:
     build: .
     environment:
-      TZ: Etc/GMT-2
+      TZ: Europe/Paris
     volumes:
       - ..:/var/www/plrsys:cached
     command: sh -c "php-fpm -D && sleep infinity"
@@ -11,7 +11,7 @@ services:
   web:
     image: nginx:alpine
     environment:
-      TZ: Etc/GMT-2
+      TZ: Europe/Paris
     ports: ["8000:80"]
     volumes:
       - ..:/var/www/plrsys:cached
@@ -22,7 +22,7 @@ services:
     image: mysql:8
     ports: ["127.0.0.1:3306:3306"]
     environment:
-      TZ: Etc/GMT-2
+      TZ: Europe/Paris
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: plrsys-dev
       MYSQL_USER: plrsys-dev
