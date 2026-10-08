@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $attemptsLeft = 5 - ($_SESSION['totp_attempts'] ?? 0);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= $language ?>">
 
 <head>
     <meta charset="UTF-8">

@@ -41,7 +41,7 @@ $markdownContent = file_get_contents($markdownFile);
 $htmlContent = $Parsedown->text($markdownContent);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= $language ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

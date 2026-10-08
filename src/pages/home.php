@@ -3,11 +3,11 @@
  * @var string $includesDir
  * @var string $cssDir
  * @var string $jsDir
- * @var string $langage
+ * @var string $language
  */
 ?>
 <!DOCTYPE html>
-<html lang="<?= $langage ?>">
+<html lang="<?= $language ?>">
 
 <head>
     <meta charset="UTF-8">

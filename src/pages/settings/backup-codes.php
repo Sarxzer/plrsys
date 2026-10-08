@@ -15,7 +15,7 @@ if (!$codes) {
 unset($_SESSION['show_backup_codes']);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= $language ?>">
 
 <head>
     <meta charset="UTF-8">

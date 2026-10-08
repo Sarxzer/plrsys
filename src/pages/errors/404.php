@@ -6,7 +6,7 @@
  */
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= $language ?>">
 
 <head>
     <meta charset="UTF-8">

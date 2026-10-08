@@ -44,7 +44,7 @@ $systems = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // echo "</ul>";
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= $language ?>">
 
 <head>
     <meta charset="UTF-8">

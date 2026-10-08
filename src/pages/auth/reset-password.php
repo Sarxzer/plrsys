@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <p><a href="/login"><?= __('reset.back_to_login') ?></a></p> -->
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= $language ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

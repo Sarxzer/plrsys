@@ -5,6 +5,8 @@
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
 ![PHP 8.4](https://img.shields.io/badge/PHP-8.4-777bb4)
 ![Status: early development](https://img.shields.io/badge/status-early%20development-orange)
+![GitHub Tag](https://img.shields.io/github/v/tag/sarxzer/plrsys?label=version)
+
 
 **Live site: [plrsys.xyz](https://plrsys.xyz)**
 
