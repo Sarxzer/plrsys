@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 						<input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
 						<input type="submit" value="<?= __('logout.submit') ?>">
 					</form>
-					<p class="login-subtext"><a href="/settings"><?= __('logout.cancel') ?></a></p>
+					<p class="auth subtext"><a href="/settings"><?= __('logout.cancel') ?></a></p>
 				</div>
 			</div>
 

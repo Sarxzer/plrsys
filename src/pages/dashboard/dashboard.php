@@ -101,7 +101,7 @@ $recent_sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <p><strong><?= __('dashboard.started') ?></strong> <?= date('g:i A', strtotime($active_session['started_at'])) ?></p>
                             <p><strong><?= __('dashboard.duration') ?></strong> <span class="duration-display" data-started="<?= $active_session['started_at'] ?>" data-hours-label="<?= __('dashboard.duration.hours', '') ?>" data-minutes-label="<?= __('dashboard.duration.minutes', '') ?>" data-seconds-label="<?= __('dashboard.duration.seconds', '') ?>"></span></p>
                         </div>
-                        <a href="/fronting?system=<?= $active_session['system_id'] ?>" class="btn btn-primary"><?= __('dashboard.manage_session') ?></a>
+                        <a href="/fronting?system=<?= $active_session['system_id'] ?>" class="btn primary"><?= __('dashboard.manage_session') ?></a>
                     </div>
                 <?php endif; ?>
 
@@ -130,7 +130,7 @@ $recent_sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </div>
                             <?php endforeach; ?>
                         </div>
-                        <a href="/history" class="btn btn-secondary btn-small"><?= __('dashboard.view_all_history') ?></a>
+                        <a href="/history" class="btn secondary btn-small"><?= __('dashboard.view_all_history') ?></a>
                     </div>
                 <?php endif; ?>
 
@@ -138,10 +138,10 @@ $recent_sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="quick-actions">
                     <h2><?= __('dashboard.quick_actions') ?></h2>
                     <div class="button-grid">
-                        <a href="/fronting" class="btn btn-primary"><?= __('dashboard.start_session') ?></a>
-                        <a href="/systems" class="btn btn-secondary"><?= __('dashboard.view_systems') ?></a>
-                        <a href="/history" class="btn btn-secondary"><?= __('dashboard.session_history') ?></a>
-                        <a href="/settings" class="btn btn-secondary"><?= __('dashboard.settings') ?></a>
+                        <a href="/fronting" class="btn primary"><?= __('dashboard.start_session') ?></a>
+                        <a href="/systems" class="btn secondary"><?= __('dashboard.view_systems') ?></a>
+                        <a href="/history" class="btn secondary"><?= __('dashboard.session_history') ?></a>
+                        <a href="/settings" class="btn secondary"><?= __('dashboard.settings') ?></a>
                     </div>
                 </div>
             </div>

@@ -118,7 +118,7 @@ $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <input type="search" name="search" placeholder="<?= __('history.search_placeholder') ?>" value="<?= htmlspecialchars($search) ?>" class="search-input">
                             <button type="submit" class="btn btn-small"><?= __('history.search') ?></button>
                             <?php if (!empty($search)): ?>
-                                <a href="/history?system=<?= $system_id ?>" class="btn btn-small btn-secondary"><?= __('history.clear') ?></a>
+                                <a href="/history?system=<?= $system_id ?>" class="btn-small btn secondary"><?= __('history.clear') ?></a>
                             <?php endif; ?>
                         </form>
 
@@ -235,8 +235,8 @@ $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 <?php endif; ?>
 
-                <a href="/fronting" class="btn-secondary"><?= __('history.start_session') ?></a>
-                <a href="/dashboard" class="btn-secondary"><?= __('history.back_to_dashboard') ?></a>
+                <a href="/fronting" class="btn secondary"><?= __('history.start_session') ?></a>
+                <a href="/dashboard" class="btn secondary"><?= __('history.back_to_dashboard') ?></a>
             </div>
 
             <?php include $includesDir . '/footer.php'; ?>

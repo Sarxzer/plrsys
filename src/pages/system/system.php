@@ -127,7 +127,7 @@ $canonicalUrl = htmlspecialchars('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['
                     </div>
                     <div class="system-actions">
                         <?php if ($isOwner): ?>
-                            <a href="/manage/s/<?= htmlspecialchars($system['handle']) ?>" class="btn btn-secondary"><?= __('system.page.manage') ?></a>
+                            <a href="/manage/s/<?= htmlspecialchars($system['handle']) ?>" class="btn secondary"><?= __('system.page.manage') ?></a>
                         <?php endif; ?>
                     </div>
                 </div>

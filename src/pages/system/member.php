@@ -95,7 +95,7 @@ $canonicalUrl = htmlspecialchars('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['
                 <p><?= __('system.member.color') ?> <span style='color: <?= htmlspecialchars($member['color']) ?>'><?= htmlspecialchars($member['color']) ?></span></p>
 
                 <?php if ($isOwner): ?>
-                    <a href="/manage/s/<?= htmlspecialchars($system['handle']) ?>/@<?= htmlspecialchars($member['handle']) ?>" class="btn btn-secondary"><?= __('system.member.edit') ?></a>
+                    <a href="/manage/s/<?= htmlspecialchars($system['handle']) ?>/@<?= htmlspecialchars($member['handle']) ?>" class="btn secondary"><?= __('system.member.edit') ?></a>
                 <?php endif; ?>
             </div>
 

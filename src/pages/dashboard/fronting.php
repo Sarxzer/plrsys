@@ -308,7 +308,7 @@ function formatDuration(int $seconds): string
                                         </label>
                                     <?php endforeach; ?>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-sm"><?= __('fronting.update_members') ?></button>
+                                <button type="submit" class="btn primary btn-sm"><?= __('fronting.update_members') ?></button>
                             </form>
 
                             <!-- Edit Note -->
@@ -321,7 +321,7 @@ function formatDuration(int $seconds): string
                                 <div class="subform-label"><?= __('fronting.session_note') ?></div>
                                 <textarea name="note" class="note-field"
                                     placeholder="<?= __('fronting.note_placeholder') ?>"><?= htmlspecialchars($active_session['note'] ?? '') ?></textarea>
-                                <button type="submit" class="btn btn-primary btn-sm"><?= __('fronting.save_note') ?></button>
+                                <button type="submit" class="btn primary btn-sm"><?= __('fronting.save_note') ?></button>
                             </form>
 
                             <!-- End Session -->
@@ -363,7 +363,7 @@ function formatDuration(int $seconds): string
                                         placeholder="<?= __('fronting.notes_placeholder') ?>"></textarea>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary"><?= __('fronting.start_session') ?></button>
+                                <button type="submit" class="btn primary"><?= __('fronting.start_session') ?></button>
                             </form>
                         </div>
 
@@ -375,8 +375,8 @@ function formatDuration(int $seconds): string
 
                 <?php endif; ?>
 
-                <a href="/dashboard" class="btn-secondary"><?= __('fronting.back_to_dashboard') ?></a>
-                <a href="/history" class="btn-secondary"><?= __('fronting.view_history') ?></a>
+                <a href="/dashboard" class="btn secondary"><?= __('fronting.back_to_dashboard') ?></a>
+                <a href="/history" class="btn secondary"><?= __('fronting.view_history') ?></a>
             </div>
 
             <?php include $includesDir . '/footer.php'; ?>

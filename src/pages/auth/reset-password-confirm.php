@@ -63,6 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="<?= $language ?>">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -71,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/png">
     <script src="<?= $jsDir ?>" defer></script>
 </head>
+
 <body>
     <div class="page">
         <div class="pixel-scanlines"></div>
@@ -80,66 +82,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php include $includesDir . '/alerts.php'; ?>
             </div>
             <div class="main">
-                <div class="register-layout">
-                    <div class="register-container">
-                        <h1 class="register-title"><?= __('reset.title') ?></h1>
-                        <form method="POST" action="/reset-password/confirm?token=<?= htmlspecialchars($token) ?>&user=<?= $userId ?>" class="register-form">
-                            <label for="password"><?= __('reset.confirm.new_password') ?></label>
-                            <input type="password" id="password" name="password" required>
-                            <label for="password_confirm"><?= __('reset.confirm.confirm_password') ?></label>
-                            <input type="password" id="password_confirm" name="password_confirm" required>
-                            <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
-                            <input type="submit" value="<?= __('reset.confirm.submit') ?>">
-                        </form>
-                    </div>
-
-                    <aside class="password-requirements" aria-labelledby="password-requirements-title">
-                        <h2 class="title" id="password-requirements-title"><?= __('register.password_requirements') ?></h2>
-
-                        <div class="group">
-                            <div class="label"><?= __('register.passphrase_option') ?></div>
-                            <ul class="list">
-                                <li class="item" data-rule="passphrase">
-                                    <span class="pip"></span>
-                                    <?= __('register.passphrase_rule') ?>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="or"><?= __('register.or') ?></div>
-
-                        <div class="group">
-                            <div class="label"><?= __('register.classic_option') ?></div>
-                            <ul class="list">
-                                <li class="item" data-rule="length">
-                                    <span class="pip"></span>
-                                    <?= __('register.password_length') ?>
-                                </li>
-                                <li class="item" data-rule="uppercase">
-                                    <span class="pip"></span>
-                                    <?= __('register.password_uppercase') ?>
-                                </li>
-                                <li class="item" data-rule="lowercase">
-                                    <span class="pip"></span>
-                                    <?= __('register.password_lowercase') ?>
-                                </li>
-                                <li class="item" data-rule="number">
-                                    <span class="pip"></span>
-                                    <?= __('register.password_number') ?>
-                                </li>
-                                <li class="item" data-rule="special">
-                                    <span class="pip"></span>
-                                    <?= __('register.password_special') ?>
-                                </li>
-                            </ul>
-                        </div>
-                    </aside>
+                <div class="register-container">
+                    <h1 class="register-title"><?= __('reset.title') ?></h1>
+                    <form method="POST" action="/reset-password/confirm?token=<?= htmlspecialchars($token) ?>&user=<?= $userId ?>" class="register-form">
+                        <label for="password"><?= __('reset.confirm.new_password') ?></label>
+                        <input type="password" id="password" name="password" required>
+                        <label for="password_confirm"><?= __('reset.confirm.confirm_password') ?></label>
+                        <input type="password" id="password_confirm" name="password_confirm" required>
+                        <input type="hidden" name="csrf_token" value="<?= Csrf::token() ?>">
+                        <input type="submit" value="<?= __('reset.confirm.submit') ?>">
+                    </form>
                 </div>
+
+                <aside class="password-requirements" aria-labelledby="password-requirements-title">
+                    <h2 class="title" id="password-requirements-title"><?= __('register.password_requirements') ?></h2>
+
+                    <div class="group">
+                        <div class="label"><?= __('register.passphrase_option') ?></div>
+                        <ul class="list">
+                            <li class="item" data-rule="passphrase">
+                                <span class="pip"></span>
+                                <?= __('register.passphrase_rule') ?>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="or"><?= __('register.or') ?></div>
+
+                    <div class="group">
+                        <div class="label"><?= __('register.classic_option') ?></div>
+                        <ul class="list">
+                            <li class="item" data-rule="length">
+                                <span class="pip"></span>
+                                <?= __('register.password_length') ?>
+                            </li>
+                            <li class="item" data-rule="uppercase">
+                                <span class="pip"></span>
+                                <?= __('register.password_uppercase') ?>
+                            </li>
+                            <li class="item" data-rule="lowercase">
+                                <span class="pip"></span>
+                                <?= __('register.password_lowercase') ?>
+                            </li>
+                            <li class="item" data-rule="number">
+                                <span class="pip"></span>
+                                <?= __('register.password_number') ?>
+                            </li>
+                            <li class="item" data-rule="special">
+                                <span class="pip"></span>
+                                <?= __('register.password_special') ?>
+                            </li>
+                        </ul>
+                    </div>
+                </aside>
             </div>
             <?php include $includesDir . '/footer.php'; ?>
         </div>
     </div>
     <script>
-        (function () {
+        (function() {
             const input = document.getElementById('password');
             const aside = document.querySelector('.password-requirements');
             if (!input || !aside) return;
@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 el.classList.toggle('failed', dirty && !met);
             }
 
-            input.addEventListener('input', function () {
+            input.addEventListener('input', function() {
                 const v = this.value;
                 const dirty = v.length > 0;
 
@@ -183,4 +183,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         })();
     </script>
 </body>
+
 </html>
