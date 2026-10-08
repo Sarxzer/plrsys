@@ -51,8 +51,6 @@ scripts/compile-scss.sh --watch
 The installer downloads the platform-specific Dart Sass binary into `.tools/`,
 which is ignored by git. The compiler script always uses
 `src/scss/style.scss` as the entrypoint and writes to `public/assets/css/`.
-The optional `.vscode/settings.json` also configures Live Sass Compiler for
-contributors who prefer to use VS Code.
 
 Do not edit the generated CSS or source map by hand. If the compiled output is
 wrong, fix the SCSS source and compile it again. Keep the generated files in
