@@ -6,11 +6,13 @@
 @use 'variables' as *;
 
 @font-face {
+    font-display: swap;
     font-family: "Press Start 2P";
     src: url("/assets/fonts/PressStart2P.ttf");
 }
 
 @font-face {
+    font-display: swap;
     font-family: "VT323";
     src: url("/assets/fonts/VT323.ttf");
 }
