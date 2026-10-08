@@ -5,10 +5,8 @@
  * @var string $includesDir
  * @var string $cssDir
  * @var string $jsDir
-
  */
 require_once __DIR__ . '/../../php/totp.php';
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -84,12 +82,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="login-box">
                         <form action="login" method="post" class="login-form">
                             <div class="auth form">
-                                <div class="login username">
+                                <div>
                                     <label for="username"><?= __('login.username') ?></label>
                                     <input type="text" id="username" name="username"
                                         value="<?= htmlspecialchars($_SESSION['last_failed_username'] ?? '') ?>" required>
                                 </div>
-                                <div class="login password">
+                                <div>
                                     <label for="password"><?= __('login.password') ?></label>
                                     <input type="password" id="password" name="password" required><br>
                                 </div>

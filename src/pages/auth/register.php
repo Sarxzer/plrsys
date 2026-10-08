@@ -97,14 +97,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="register-box">
                         <form action="register" method="post" class="register-form">
                             <div class="auth form">
-                                <div class="login username">
+                                <div>
                                     <label for="username"><?= __('register.username') ?></label>
                                     <input type="text" id="username" name="username"
                                         value="<?= htmlspecialchars($_SESSION['last_failed_username'] ?? '') ?>"
                                         required>
                                 </div>
 
-                                <div class="login password">
+                                <div>
                                     <label for="password"><?= __('register.password') ?></label>
                                     <input type="password" id="password" name="password" required><br>
                                 </div>
